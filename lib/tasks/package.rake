@@ -2,11 +2,12 @@
 namespace :package do
 	desc "Package application to archive"
 	task :app, [:file] => [:environment] do |t, args|
-		args.with_defaults(:file => "#{Rails.root}/public/snupy.tar.gz")
+		args.with_defaults(:file => "snupy.tar.gz")
  		tarfile = args[:file]
  		
  		puts "Find files to package..."
- 		files = (`svn ls --recursive`.split("\n") + Dir["doc/**/**"]).uniq
+ 		# files = (`svn ls --recursive`.split("\n") + Dir["doc/**/**"]).uniq
+ 		files = (`git ls-files`.split("\n") + Dir["doc/**/**"]).uniq
  		files.reject!{|f| f == "config/database.yml"}
  		files.reject!{|f| f == "config/variant_effect_predictor.yaml"}
  		files.reject!{|f| f == "doc/TODO.txt"}
@@ -14,8 +15,9 @@ namespace :package do
  		files.reject!{|f| f == "lib/tasks/migrate.rake"}
  		
  		# create archive
- 		puts "Creating tar archive with #{files.size} files to #{tarfile}..."
+ 		puts "Creating tar archive with #{files.size} files to #{tarfile}...".green
  		system("tar --no-recursion -czf #{tarfile} #{files.map{|f| "'#{f}'" }.join(" ")}")
+		puts "Done".green
 	end
 	
 	desc "Package current sample tags"
