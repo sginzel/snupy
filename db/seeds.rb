@@ -2,11 +2,11 @@
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 if User.count == 0 then
 	puts "No User found. Please enter a default user name: ".cyan
-	name = STDIN.gets.strip
+	name = (ENV["SNUPY_DEFAULT_USER_NAME"] || STDIN.gets.strip)
 	puts "Full name: ".cyan
-	fullname = STDIN.gets.strip
+	fullname = (ENV["SNUPY_DEFAULT_USER_FULLNAME"] || STDIN.gets.strip)
 	puts "E-Mail: ".cyan
-	email = STDIN.gets.strip
+	email = (ENV["SNUPY_DEFAULT_USER_EMAIL"] || STDIN.gets.strip)
 	if name == ""
 		puts "using default user: snupy".yellow
 		name = "snupy"
@@ -27,7 +27,8 @@ end
 Organism.create(name: "homo sapiens") if Organism.find_by_name("homo sapiens").nil?
 Organism.create(name: "mus musculus") if Organism.find_by_name("mus musculus").nil?
 
-Institution.create(name: "UKD", contact: "Prof. Dr. med. Borkhardt", email: "lesch@med.uni-duesseldorf.de", phone: "+49 (0)2241/865-747") if Institution.find_by_name("UKD").nil? 
+Institution.create(name: "BRS", contact: "Prof. Dr. Thiele", email: "ralf.thiele@h-brs.de", phone: "+49 (0)2241/865-281") if Institution.find_by_name("BRS").nil?
+Institution.create(name: "UKD", contact: "Prof. Dr. med. Borkhardt", email: "Monika.Brockmann-Metz@med.uni-duesseldorf.de", phone: "+49 (0)211/81-17680") if Institution.find_by_name("UKD").nil?
 
 # setup sample annotation
 if SampleTag.count == 0 then
