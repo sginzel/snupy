@@ -1,0 +1,46 @@
+<div>
+	<h2>Creating a new specimen or editing a new one</h2>
+	A specimen represents a single biological probe. Multiple biological 
+	probes of the same status should get their own specimen, unless it is
+	justified to expect no genomic differences due to external factors 
+	(transport, storage, probe age etc.). Merging specimens of the same state
+	as the data is queried is simple and straight forward. 
+	
+	<h3>Required inforamtion</h3>
+	<ul>
+		<li>Institution</li>
+		<li>Entity Group</li>
+		<li>Entity</li>
+		<li>Name</li>
+		<li>Tissue Tag</li>
+		<li>Status Tag</li>
+	</ul>
+	
+	<h3>Notes</h3>
+	<ul>
+		<li>Specimens can be created on the fly when creating a new, or editing an existing Entity. </li>
+		<li>Notes should be used to document any important information about the biological probe.</li>
+		<li>The name of the lab can be filled out with any name, the auto complete feature reduces typos and redunancy. </li>
+		<li>Tumor content is always a float. Use tumor content notes for additional information. </li>
+		<li>Days after treatment is only meaningful for remission-like probes that underwent treatment. </li>
+		<li>The treatment tag should be filled out with all previously applied treatments to this biological probe. Biological probes after transplantation event should not include the treatments previous to the transplant. </li>
+		<li>Multiple Anitgen representation can be selected to indicate states such as CD4-/CD8-. Do not select any Antigen Presentation if the state is unknown for the specimen. </li>
+	</ul>
+	
+	<h3>Assign samples to the specimen</h3>
+	Redirects you to the <%=link_to "Specimen overview", specimen_probes_path %> where you can link a specimen more specifically.
+</div>
+<div>
+	<h2>List of Specimen</h2>
+	Filters specified on top of the list can be used to reduce the number of specimens shown in the table. 
+	This is to prevent long loading times when many specimens are registered in the database. 
+	<h3>Filter Usage</h3> 
+		<ul>
+			<li>To find an exact match just enter the query string to thte field.</li>
+			<li>Regular expressions can be used as a filter using /REGEXP/, where the REGEXP is transformed to .*REGEXP.*</li>
+			<li>Numeric values can be queried exactly if only the number is submitted. Using &gt;, &lt;, &gt;=, &lt; can be using in front of a number to query one sided ranged. </li>
+			<li>With "," as a seperator one field can contain multiple query statements. </li>
+		</ul>
+	<h4>Notes</h4>
+		When filtering for tags, the displayed tag columns are reduced. 
+</div>

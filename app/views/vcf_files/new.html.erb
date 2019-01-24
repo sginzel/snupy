@@ -1,0 +1,8 @@
+<h1>New Vcf File</h1>
+<% if 1 == 0 %>
+	<%= render 'form' %>
+
+	<%= link_to 'Back', vcf_files_path %>
+<% else %>
+	<%= link_to 'Please use the batch upload feature.', batch_submit_vcf_files_path(method: 'GET', number: 10) %>
+<% end %>

@@ -1,0 +1,91 @@
+
+<%# @author Schlee-Guimaraes%>
+<h1> PPI Network </h1>
+<h2 style="margin-top:0"> Tool for mapping of proteins interactions </h2>
+<div id="GraphEditor">
+	<%=form_tag(tools_ppi_network_path, method: 'post') do %>
+
+		<div class="box_target_genes">
+			<p>
+				<h2>Target genes</h2>
+				<%= label_tag(:genesinput, "Paste your genes here:") %>
+				<br>
+				<%= text_area_tag(:genesinput, params[:genesinput], size: "25x10")%>
+			</p>
+		</div>
+		<div class="box_interaction_sources" >
+			<p>
+				<h2> Interaction sources </h2>
+				<p>
+					<%= hidden_field_tag  'all', "0" %>
+					<%= check_box_tag 'all', "1", (params[:all].nil?)?true:(params[:all] == "1" ) %>
+					<%= label_tag( "all sources except text mining") %>
+				</p>
+				<p>
+					<%= hidden_field_tag  'textmining', "0" %>
+					<%= check_box_tag 'textmining', "1" %>
+					<%= label_tag( "text mining") %>
+				</p>
+				<p>
+					<%= hidden_field_tag  'neighborhood', "0" %>
+					<%= check_box_tag 'neighborhood', "1" %>
+					<%= label_tag("neighborhood") %>
+				</p>
+				<p>
+					<%= hidden_field_tag 'fusion', "0" %>
+					<%= check_box_tag 'fusion', "1" %>
+					<%= label_tag( "fusion") %>
+				</p>
+				<p>
+					<%= hidden_field_tag 'cooccurence', "0" %>
+					<%= check_box_tag 'cooccurence', "1" %>
+					<%= label_tag("cooccurence") %>
+				</p>
+				<p>
+					<%= hidden_field_tag 'experimental', "0" %>
+					<%= check_box_tag 'experimental', "1"%>
+					<%= label_tag("experimental") %>
+				</p>
+				<p>
+					<%= hidden_field_tag 'database', "0" %>
+					<%= check_box_tag 'database', "1" %>
+					<%= label_tag("database") %>
+				</p>
+			</p>
+			<p>
+				<h2> Combined score </h2>
+				<%= label_tag(:scorelabel, "PPI Score:") %>
+				<br>
+				<%= text_field_tag(:scoretext, params[:scoretext],:value => '900')%>
+			</p>
+		</div>
+		<div class="box_interaction_partners" >
+			<p>
+				<p>
+					<h2> Possible interaction partners <small><i><sub> (optional)</sub></i></small></h2>
+					<%= label_tag(:genelistfilter, "Please select a gene panel:") %>
+					<br>
+					<%= select_tag "genelistfilter", options_from_collection_for_select(GenericGeneList.all, :id, :name) , :include_blank => true%>
+				</p>
+				and/or
+				<p>
+					<%= label_tag(:genesfilter, "Please set genes:") %>
+					<br>
+					<%= text_area_tag(:genesfilter, params[:genesfilter])%>
+				</p>
+				<p>
+
+					<%= hidden_field_tag 'interaction_between_list_items', "0" %>
+				  	<%= check_box_tag 'interaction_between_list_items', "1" %>
+					<%= label_tag("Show just links between target genes and  interaction partners, if specified") %>
+				</p>
+			</p>
+		</div>
+
+		<br style="clear:both" />
+		<%= submit_tag 'Submit' , class: 'button' %>
+	 <% end %>
+</div>
+<div graphplaceholder>
+	<%=render_ppi_graph(@edges, @nodes, @url_template, @colors, @groups, @missing)%>
+</div>

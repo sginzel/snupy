@@ -1,0 +1,32 @@
+// $=jQuery;
+function refreshJobList(periodically, show_loader){
+	periodically = typeof periodically !== 'undefined' ? periodically : "yes";
+	show_loader = typeof periodically !== 'undefined' ? show_loader : false;
+	// get list of jobs
+	if(!isNaN(periodically)){
+		setTimeout(function(){},periodically);
+	}
+	if (show_loader){
+		$(".joblist").html('<div>loading jobs...<br><%= image_tag asset_path("ajax-loader.gif"), style: "width: 32px; background: #EF; border-radius: 100px;" %></div>');
+	}
+	$.ajax({url:"/long_jobs/list",
+		data: {count: 500},
+	  	dataType: "html", 
+			success: function(data, xh){
+				$(".joblist").each(function(){
+					$(this).html(data);
+					register_context_menu(this);
+				});
+			}
+		});
+	if (periodically == "yes"){
+		every_minute = 5;
+		setTimeout(refreshJobList, every_minute * 60 * 1000);
+	}
+};
+
+$(document).ready(function() {
+	refreshJobList("yes", true);
+});
+
+

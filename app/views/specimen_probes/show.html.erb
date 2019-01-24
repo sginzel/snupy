@@ -1,0 +1,96 @@
+<h1>Specimen <%=@specimen_probe.name%></h1>
+<p id="notice">
+	<%= notice %>
+</p>
+<p>
+	<%= link_to 'Edit', edit_specimen_probe_path(@specimen_probe) %> |
+	<%= link_to 'Back', specimen_probes_path %> | 
+	<%= link_to "Link with samples", {controller: params[:controller], action: "index", ids: [@specimen_probe.id]} %>
+	<% if current_user.is_admin? then %>
+		| <%= link_to "Destroy", @specimen_probe, method: :delete, data: {confirm: 'Are you sure? This will remove all links to the associated samples.'} %>
+	<% end %>
+</p>
+<p>
+	<b>Name:</b>
+	<%= @specimen_probe.name %>
+</p>
+
+<p>
+	<b>Date:</b>
+	<%= @specimen_probe.date_day %>.<%= @specimen_probe.date_month %>.<%= @specimen_probe.date_year %>
+</p>
+
+<p>
+	<b>Lab:</b>
+	<%= @specimen_probe.lab %>
+</p>
+
+<p>
+	<b>Lab contact:</b>
+	<%= @specimen_probe.lab_contact %>
+</p>
+
+<p>
+	<b>Internal identifier:</b>
+	<%= @specimen_probe.internal_identifier %>
+</p>
+
+<p>
+	<b>Tumor content:</b>
+	<%= @specimen_probe.tumor_content %>
+</p>
+
+<p>
+	<b>Tumor content notes:</b>
+	<%= @specimen_probe.tumor_content_notes %>
+</p>
+
+<p>
+	<b>Days after treatment:</b>
+	<%= @specimen_probe.days_after_treatment %>
+</p>
+
+<div class="field">
+	<%=render partial: "users/list", locals: {users: @specimen_probe.users, compact: true, selectbox: false, title: "Users (via entity group #{@specimen_probe.entity_group.name})"}%>
+</div>
+
+<p>
+	<%=render_table(@selected_entity,
+							id: "entity_id", 
+							title: "Entity",
+							columns: %w(name nickname created_at),
+							selectbox: false,
+							collapsecell: 30
+							)
+			%>
+</p>
+<div class="field" style="width: 60%;">
+	<br />
+		<%= render partial: "tags/tags", locals: {
+			tags: @selected_tags,
+			selected_tags: @selected_tags,
+			selectbox: false,
+			category_color: {
+				"STATUS" => "palegreen",
+				"TISSUE" => "palegreen"
+			},
+			category_text: {
+				"STATUS" => "required",
+				"TISSUE" => "required"
+			}
+		}%>
+</div>
+
+<%= field_set_tag "Samples", style: "width: 60%" do %>
+<%=render_table(@selected_samples,
+							id: "sample_ids", 
+							title: "Samples",
+							columns: %w(name nickname created_at),
+							selectbox: false,
+							collapsecell: 30
+							)
+			%>
+<% end %>
+
+<%= link_to 'Edit', edit_specimen_probe_path(@specimen_probe) %> |
+<%= link_to 'Back', specimen_probes_path %>

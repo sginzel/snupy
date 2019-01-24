@@ -1,0 +1,333 @@
+/**
+ * Created by schlee-guimaraes on 11.02.14.
+ */
+
+var actualGraph = {
+	container : null,
+	svg : null,
+	force : null,
+	links : [],
+	nodes : [],
+	nodesInput : [],
+	urlTemplate : "",
+	colors : [],
+	r : 6,
+	size : null,
+	margin: null,
+	experiment : null,
+	linkedByIndex : []
+};
+
+SimpleGraph = function (container) {
+	if (defaultValue($(container).data("edges"),[]).length > 0){
+		actualGraph.container = $(container);
+
+		// clear network, if available
+		if(d3.select("#actualgraph") !== null) {
+			d3.selectAll("#actualgraph").remove();
+		}
+		if(actualGraph.force !== null) {
+			actualGraph.force.stop();
+			actualGraph.links = [];
+			actualGraph.nodes = [];
+			actualGraph.nodesInput = [];
+			actualGraph.colors = [];
+			actualGraph.urlTemplate = "";
+			actualGraph.experiment = "";
+		}
+
+		//set default values
+		actualGraph.margin = {
+			"top": 20,
+			"right": 150,
+			"bottom": 20,
+			"left": 20
+		};
+
+
+		//Extract data from container
+		actualGraph.size = {
+			"width":  defaultValue($(actualGraph.container).data("width"), 1024),
+			"height": defaultValue($(actualGraph.container).data("height"), 786)
+		};
+
+		$(container).width(actualGraph.size.width);
+		$(container).height(actualGraph.size.height);
+
+		actualGraph.colors = clone($(actualGraph.container).data("colors"));
+		actualGraph.links = clone($(actualGraph.container).data("edges"));
+		actualGraph.nodesInput = clone($(actualGraph.container).data("nodes"));
+		actualGraph.urlTemplate = clone($(actualGraph.container).data("url-template"));
+		actualGraph.experiment = $(actualGraph.container).data("experiment");
+
+		// Compute the distinct nodes.
+		actualGraph.nodesInput.forEach(function(node) {
+			node.gene = actualGraph.nodes[node.gene] || (actualGraph.nodes[node.gene] = {
+				gene: node.gene,
+				alias: node.alias,
+				group: node.group,
+				url: node.url
+			});
+		});
+
+		// Compute links.
+		actualGraph.links.forEach(function(link) {
+			link.source = actualGraph.nodes[link.source];
+			link.target = actualGraph.nodes[link.target];
+			link.value = link.value;
+		});
+
+		this.drawGraph();
+
+	} else {
+		container.html("No interactions found");
+	}
+}
+
+
+/**
+ * SimpleGraph methods: drawGraph
+ */
+var zoomOK = true;
+SimpleGraph.prototype.drawGraph = function() {
+
+	// set svg
+	actualGraph.svg = d3.select("#" + $(actualGraph.container).attr("id"))
+			.append("svg:svg")
+			.attr("id", "actualppigraph")
+			.attr("class", "ppigraphsvg")
+			.attr("width", actualGraph.size.width)
+			.attr("height", actualGraph.size.height);
+
+
+	// zoom function
+	function zoomHandler() {
+		if (zoomOK) {
+			features.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");
+		}
+	}
+
+	//append rect to svg
+	actualGraph.svg .append('svg:rect')
+			.attr("class", "overlay")
+			.attr('width', actualGraph.size.width)
+			.attr('height', actualGraph.size.height)
+			.attr("transform", "translate(" + actualGraph.margin.left + "," + actualGraph.margin.top + ")")
+			.attr('fill', 'none')
+			.call(d3.behavior.zoom()// create a zoomListener
+					.scaleExtent([0.25, 8])//specifies the two min and max scaling ratio
+					.on("zoom", zoomHandler))//define the zoom event)
+			.on("dblclick.zoom", null);// double click off)
+
+
+	//append legend to svg
+	var svg_legend = actualGraph.svg
+			.append("svg:svg")
+			.attr("id", "actual_svg_legend")
+			.attr("class", "svg_legend")
+			.attr("width", actualGraph.size.width)
+			.attr("height", actualGraph.size.height);
+
+	//Legend
+	var keys = []
+	for(var key in actualGraph.colors) {
+		keys.push( key );
+	}
+
+	var legend = svg_legend .selectAll(".legend")
+			.data(keys.slice())
+			.enter().append("g")
+			.attr("class", "legend")
+			.attr("transform",
+			function(d, i) {
+				return "translate(0," + i * 20 + ")";
+			});
+
+	legend.append("rect")
+			.attr("x", actualGraph.size.width - 150)
+			.attr("width", 18)
+			.attr("height", 18)
+			.style("fill", function(d) { return actualGraph.colors[d]; } );
+
+	legend.append("text")
+			.attr("x", actualGraph.size.width - 24)
+			.attr("y", 9)
+			.attr("dy", ".35em")
+			.style("text-anchor", "end")
+			.text(function(d) { return d } );
+
+	//append svg for graph elements
+	var features = actualGraph.svg.append('svg:g')
+			.attr("class", "features")
+			.attr('fill', 'white');
+
+	//force
+	actualGraph.force = d3.layout.force()
+			.nodes(d3.values(actualGraph.nodes))
+			.links(actualGraph.links)
+			.size([actualGraph.size.width, actualGraph.size.height])
+			.linkDistance(200)
+			.gravity(.05)
+			.distance(80)
+			.friction(0.5)
+			.charge(-300)
+
+	//Links:
+	actualGraph.links.forEach(function(d) {
+		actualGraph.linkedByIndex[d.source.gene + "," + d.target.gene] = 1;
+	});
+
+	//Graph layout: add the links and the arrows
+	var link = features
+			.selectAll(".link")
+			.data(actualGraph.force.links())
+			.enter().append("line")
+			.attr("class",
+			function(d) {
+				return "link " + d.value;
+			})
+			.attr("class", "link");
+
+	actualGraph.force .on("tick", tick_straight).start();
+
+	//Layout function
+	function tick_straight() {
+		link.attr("x1", function(d) { return d.source.x; })
+				.attr("y1", function(d) { return d.source.y; })
+				.attr("x2", function(d) { return d.target.x; })
+				.attr("y2", function(d) { return d.target.y; });
+
+		node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+	}
+
+	//drag
+	var drag = d3.behavior.drag()
+			.origin(function(d) { return d; })
+			.on("dragstart", dragstarted)
+			.on("drag", dragged)
+			.on("dragend", dragended);
+
+	//Drag funtions
+	function dragstarted(d, i) {
+		zoomOK = false
+		actualGraph.force.stop() // stops the force auto positioning before you start dragging
+	}
+
+	function dragged(d, i) {
+		d.px += d3.event.dx;
+		d.py += d3.event.dy;
+		d.x += d3.event.dx;
+		d.y += d3.event.dy;
+		tick_straight(); // this is the key to make it work together with updating both px,py,x,y on d !
+	}
+
+	function dragended(d, i) {
+		zoomOK = true
+		d.fixed = true; // of course set the node to fixed so the force doesn't include the node in its auto positioning stuff
+		tick_straight();
+		actualGraph.force.resume();
+	}
+
+	//define the nodes and add nodes to svg
+	var node = features.selectAll(".node")
+			.data(actualGraph.force.nodes())
+			.enter()
+			.append("g")
+			.attr("id",
+			function(d) {
+				return (d.name);
+			})
+			.attr("class", "node")
+			.style("fill",
+			function(d) {
+				return actualGraph.colors[d.group];
+			})
+			.on("dblclick",
+			function(d) {
+				popup(d);
+			})
+			.on("mouseover", fade(.1))
+			.on("mouseout", fade(1))
+			.call(drag);
+
+	// add the nodes
+	node.append("circle")
+			.attr("r", actualGraph.r - .75);
+
+	// add the text
+	node.append("text")
+			.attr("dx", 12)
+			.attr("dy", ".35em")
+			.text(function(d) {return d.alias;});
+
+
+	//Highlighting links
+	function fade(opacity) {
+		return function(d) {
+
+			if(opacity == .1){
+				d3.select(this).select("circle").transition().duration(150).attr("r", 16);
+				d3.select(this).select("text").transition().duration(150).attr("x", 22).style("stroke-width", ".5px").style("font", "20px sans-serif");
+			}else if (opacity == 1){
+				d3.select(this).select("circle").transition().duration(250).attr("r", 6);
+				d3.select(this).select("text").transition().duration(250).attr("x", 12).style("stroke", "none").style("stroke", "none").style("font", "10px sans-serif");
+			}
+
+			node.style("stroke-opacity",
+					function(o) {
+						thisOpacity = isConnected(d, o) ? 1 : opacity;
+						this.setAttribute('fill-opacity', thisOpacity);
+						return thisOpacity;
+					}
+			);
+
+			link.style("stroke-opacity",
+					function(o) {
+						return o.source === d || o.target === d ? 1 : opacity;
+					}
+			);
+		};
+	}
+	//check if two nodes are linked
+	function isConnected(a, b) {
+		return actualGraph.linkedByIndex[a.gene + "," + b.gene] || actualGraph.linkedByIndex[b.gene + "," + a.gene] || a.gene == b.gene;
+	}
+
+	//node double click: jquery dialog
+	function popup(node) {
+		var node_details_dialog = $(document.createElement('div'))
+				.attr('id', 'interaction_details')
+				.attr('style', 'width: 80%; height: 80%;');
+		node_details_dialog.html('').dialog({
+			title : node.alias,
+			width: "auto",
+			height: "auto",
+			closeOnEscape : true,
+			position : ['left', 'top'],
+			draggable : true,
+			resizable : true,
+			buttons : {
+				"Ok" : function() {
+					$(this).dialog("close");
+					delete oTables[$(".snupytable", this).attr("id")];
+				}
+			}
+		});
+
+		node_details_dialog.load(actualGraph.urlTemplate, {
+			genes: node.gene,
+			alias: node.alias,
+			group: node.group,
+			url: node.url,
+			experiment: actualGraph.experiment
+		}, function(response, status, xhr) {
+			$(this).html(response);
+			tmp = this;
+			makeDataTable($(".snupytable", $(this)));
+		});
+	}
+
+};
+
+
+

@@ -1,0 +1,35 @@
+category	subcategory	value	description
+STATUS		CELL	General term for a cells of unknown origin
+STATUS		CELLLINE	Established cell line
+STATUS		CELLOTHR	Other cells eligiable for use as control
+STATUS		CFAMLY	Control from unspecific family member
+STATUS		CFBRTHR	Control from brother
+STATUS		CFFTHR	Control from father
+STATUS		CFMTHR	Control from mother
+STATUS		CFOTHR	Control from other family member
+STATUS		CFSSTR	Control from sister
+STATUS		CGRML	Patient germline control
+STATUS		CGTISSUE	Patient tissue not related to tissue under investigation
+STATUS		FOUNDER	Patient sample of tissue that is a pre-cursor to the tumor. It is highly unlikely to have that on your hands. 
+STATUS		INIT	Initial sample carrying the disease
+STATUS		REMI	Remission sample after first treatment
+STATUS		RLPS	1st Relapse
+STATUS		RREMI	Remission after 1st Relapse
+STATUS		RRLPS	2nd Relapse (relapse after 1st relapse)
+STATUS		RRREMI	Remission after 2nd relapse
+STATUS		RRRLPS	3rd relapse
+STATUS		RRRREMI	Remission after 3rd relapse
+STATUS		RRRRLPS	4th relapse
+STATUS		RRRRREMI	Remission after 4th Relapse
+STATUS		TRANS	Transplan probe (unrelated)
+STATUS		TRANSF	Transplant sample (from genetic family)
+STATUS		TREMI	Remission after Transplant
+STATUS		TRLPS	1st Relapse after 1st  transplant
+STATUS		TRREMI	Remission after 1st relapse after 1st transplant
+STATUS		TRRLPS	2nd Relapse after transplant
+STATUS		TRRREMI	Remission after 2nd relapse after transplant
+STATUS		TTREMI	Remission after 2nd transplan
+STATUS		TTRLPS	1st Relapse after 2nd transplant
+STATUS		TTRREMI	Remission after 1st relapse after 2nd transplant
+STATUS		TTRRLPS	2nd relapse after 2nd transplant
+STATUS		TTRRREMI	Remission after 2nd relpase after 2nd tralsplant

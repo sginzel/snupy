@@ -1,0 +1,22 @@
+<div class="data_overview">
+<p>
+	<%= render_table(data_overview,
+									title: "Dataset summary", 
+									id: "data_overview_#{Time.now.to_i}",
+									selectbox: true,
+									columns: ["Institution", "Entity Group", "Entity", "Specimen", "Sample", "VcfFile", "Queryable?", "Reason"],
+									record_color: {
+										"Institution" => Aqua.color_factor(data_overview.map{|rec| strip_tags rec["Institution"] }.uniq, :light),
+										"Entity Group" => Aqua.color_factor(data_overview.map{|rec| strip_tags rec["Entity Group"] }.uniq, :light),
+										"Entity" => Aqua.color_factor(data_overview.map{|rec| strip_tags rec["Entity"] }.uniq, :light).merge({"NEW" => "#98fb98"}),
+										"Specimen" => Aqua.color_factor(data_overview.map{|rec| strip_tags rec["Specimen"] }.uniq, :light).merge({"NEW" => "#98fb98"}),
+										# "Sample" => Aqua.color_factor(data_overview.map{|rec| strip_tags rec["Sample"] }.uniq, :light),
+										# "VcfFile" => Aqua.color_factor(data_overview.map{|rec| strip_tags rec["VcfFile"] }.uniq, :light),
+										"Queryable?" => Aqua.color_bool()
+									}
+	){|rec, egroup|
+		rec["id"] = rec["_raw"].to_yaml
+		rec
+	}%>
+</p>
+</div>

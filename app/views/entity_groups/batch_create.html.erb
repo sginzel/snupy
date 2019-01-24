@@ -1,0 +1,55 @@
+<h1>Batch Create Datasets</h1>
+<% if @sheet.nil? then %>
+	<%= form_tag batch_create_entity_groups_path, multipart: true, method: :post do %>
+		<div class="field">
+			<%= render_form_table(EntityGroup,
+								  title: "Dataset sheet",
+								  id: "sheet_form",
+								  count: (params[:count] || 10).to_i,
+								  attributes: @dataset_sheet_template
+			
+				)%>
+		</div>
+		<div class="field">
+			<%= submit_tag 'Download this template' %>
+		</div>
+		<div class="field">
+			<%= label_tag "Dataset sheet" %> (TSV, UTF-8 or ASCII encoded, double-quotes as quote characters)
+			<br />
+			<%= file_field_tag 'sheet' %>
+		</div>
+		<div class="field">
+			<%= label_tag "Dry run" %> (for testing purpose):
+			<%= check_box_tag :dryrun, "1", !params[:dryrun].nil? %>
+		</div>
+		<%= submit_tag 'Submit' %>
+	<% end %>
+<% else %>
+	<p>
+		<%= link_to "Upload another sheet", batch_create_entity_groups_path, count: 10 %>
+	</p>
+	<%= render_table(@sheet,
+					 title: 'Uploaded content',
+					 base_model: EntityGroup,
+					 actions:       {
+						 "Show dataset summary" => show_dataset_summary_entity_groups_path
+					 },
+					 colors: {
+							 'ERROR' => {
+									 /.*/ => 'salmon'
+							 },
+							 'Message' => {
+									 'OK' => 'palegreen'
+							 }
+					 },
+					 record_color: {
+							 organism: :factor,
+							 entity_group: :factor,
+							 entity: :factor,
+							 specimen_probe: :factor,
+							 sample: :factor,
+							 entity_tags: :factor,
+							 specimen_probe_tags: :factor
+					 }
+	) %>
+<% end %>

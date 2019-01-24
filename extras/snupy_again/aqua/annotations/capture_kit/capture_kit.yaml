@@ -1,0 +1,179 @@
+development:
+  version: 1.0
+  capturekitdir: <%= Rails.root %>/extras/snupy_again/aqua/annotations/capture_kit
+  workdir: <%=Rails.root%>/tmp/capture_kits
+  basedir: <%=CaptureKitAnnotation.config("capturekitdir")%>/<%=CaptureKitAnnotation.config("version")%>
+  datadir: <%=CaptureKitAnnotation.config("basedir")%>/data
+  bindir: <%=CaptureKitAnnotation.config("basedir")%>/bin
+  bedops_url: https://github.com/bedops/bedops/releases/download/v2.4.35/bedops_linux_x86_64-v2.4.35.tar.bz2
+  remove_chr: true
+  maxdist: 5000 # be aware that the maximum distance is 32768 (2 bytes)
+  species:
+    homo sapiens:
+      AgilentHumanExomeV4plusUTR:
+        description: Agilent SureSelect All Exon V4
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V4plusUTRs_S03723424.bed
+        capture_type: exome_capture
+      AgilentHumanExomeV5plusUTR:
+        description: Agilent SureSelect All Exon V5
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V5plusUTRs_S04380219.bed
+        capture_type: exome_capture
+      AgilentSureSelectHumanAllExonV6:
+        description: Agilent SureSelect All Exon V6
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V6plusUTR_r2_S07604624.bed
+        capture_type: exome_capture
+      SureSelect_Human_All_Exon_V7:
+        description: SureSelect Human All Exon V7
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V7_S31285117_hs_hg19.bed
+        capture_type: exome_capture
+      IlluminTruSeqDNAExome_V1.2:
+        description: TruSeq DNA Exome v1.2 - IDT
+        capture_type: exome_capture
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/Illumina/truseq-dna-exome-targeted-regions-manifest-v1-2.bed
+      SeqCap_EZ_Exome_v2:
+        description: SeqCap EZ Exome Library 2.0 kit
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SeqCap_EZ_Exome_v2_target_without_bait.bed
+        capture_type: exome_capture
+    mus musculus:
+      AgilentMouseExomeMM10:
+        description: Agilent MM10 exome
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Mouse_All_Exon_V1_S0276129.bed
+        capture_type: exome_capture
+  target_file_list:
+    SeqCap_EZ_Exome_v2:
+      description: SeqCap EZ Exome Library 2.0 kit
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SeqCap_EZ_Exome_v2_target_without_bait.bed
+      capture_type: exome_capture
+      active: true
+    ClearSeq_Comprehensive_Cancer:
+      description: ClearSeq_Comprehensive_Cancer extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/ClearSeq_Comprehensive_Cancer_S04380110.bed
+      capture_type: exome_capture
+      active: true
+    ClearSeq_DNA_Kinome:
+      description: ClearSeq_DNA_Kinome extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/ClearSeq_DNA_Kinome_S0292632.bed
+      capture_type: exome_capture
+      active: true
+    ClearSeq_Inherited_Disease:
+      description: ClearSeq_Inherited_Disease extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/ClearSeq_Inherited_Disease_S0684402.bed
+      capture_type: exome_capture
+      active: true
+    SureSelect_Clinical_Research_Exome:
+      description: SureSelect_Clinical_Research_Exome extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Clinical_Research_Exome_S06588914.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_Clinical_Research_Exome_V2:
+      description: SureSelect_Clinical_Research_Exome_V2 extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Clinical_Research_Exome_V2_S30409818.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_Focused_Exome:
+      description: SureSelect_Focused_Exome extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Focused_Exome_S07084713.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_Human_All_Exon_V4plusUTRs:
+      description: SureSelect_Human_All_Exon_V4plusUTRs extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V4plusUTRs_S03723424.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_Human_All_Exon_V4:
+      description: SureSelect_Human_All_Exon_V4 extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V4_S03723314.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_Human_All_Exon_V5plusUTRs:
+      description: SureSelect_Human_All_Exon_V5plusUTRs extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V5plusUTRs_S04380219.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_Human_All_Exon_V5:
+      description: SureSelect_Human_All_Exon_V5 extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V5_S04380110.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_Human_All_Exon_V6plusCOSMIC_r2:
+      description: SureSelect_Human_All_Exon_V6plusCOSMIC_r2 extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V6plusCOSMIC_r2_S07604715.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_Human_All_Exon_V6plusUTR_r2:
+      description: SureSelect_Human_All_Exon_V6plusUTR_r2 extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V6plusUTR_r2_S07604624.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_Human_All_Exon_V6_r2:
+      description: SureSelect_Human_All_Exon_V6_r2 extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V6_r2_S07604514.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_Human_All_Exon_V7_S31285117_hs_hg19.bed:
+      description: SureSelect_Human_All_Exon_V7_S31285117_hs_hg19.bed extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V7_S31285117_hs_hg19.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_Human_Methyl-Seq:
+      description: SureSelect_Human_Methyl-Seq extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_Methyl-Seq_S03770311.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_Mouse_All_Exon_V1:
+      description: SureSelect_Mouse_All_Exon_V1 extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Mouse_All_Exon_V1_S0276129.bed
+      capture_type: exome_capture
+      active: false
+    SureSelect_NCC_Oncopanel_0471501.bed:
+      description: SureSelect_NCC_Oncopanel_0471501.bed extracted from AgilentSureDesign Platform.
+      file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_NCC_Oncopanel_0471501.bed
+      capture_type: exome_capture
+      active: false
+    IlluminTruSeqDNAExome:
+      description: TruSeq DNA Exome
+      capture_type: exome_capture
+      file: extras/snupy_again/aqua/annotations/capture_kit/bed_files/Illumina/truseq-dna-exome-targeted-regions-manifest-v1-2.bed
+      url: https://support.illumina.com/content/dam/illumina-support/documents/downloads/productfiles/truseq/truseq-dna-exome/truseq-dna-exome-targeted-regions-manifest-v1-2-bed.zip
+test: None.
+production:
+  version: 1.0
+  capturekitdir: <%= Rails.root %>/extras/snupy_again/aqua/annotations/capture_kit
+  workdir: <%=Rails.root%>/tmp/capture_kits
+  basedir: <%=CaptureKitAnnotation.config("capturekitdir")%>/<%=CaptureKitAnnotation.config("version")%>
+  datadir: <%=CaptureKitAnnotation.config("basedir")%>/data
+  bindir: <%=CaptureKitAnnotation.config("basedir")%>/bin
+  bedops_url: https://github.com/bedops/bedops/releases/download/v2.4.35/bedops_linux_x86_64-v2.4.35.tar.bz2
+  remove_chr: true
+  maxdist: 5000 # be aware that the maximum distance is 32768 (2 bytes)
+  species:
+    homo sapiens:
+      AgilentHumanExomeV4plusUTR:
+        description: Agilent SureSelect All Exon V4
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V4plusUTRs_S03723424.bed
+        capture_type: exome_capture
+      AgilentHumanExomeV5plusUTR:
+        description: Agilent SureSelect All Exon V5
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V5plusUTRs_S04380219.bed
+        capture_type: exome_capture
+      AgilentSureSelectHumanAllExonV6:
+        description: Agilent SureSelect All Exon V6
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V6plusUTR_r2_S07604624.bed
+        capture_type: exome_capture
+      SureSelect_Human_All_Exon_V7:
+        description: SureSelect Human All Exon V7
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V7_S31285117_hs_hg19.bed
+        capture_type: exome_capture
+      IlluminTruSeqDNAExome_V1.2:
+        description: TruSeq DNA Exome v1.2 - IDT
+        capture_type: exome_capture
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/Illumina/truseq-dna-exome-targeted-regions-manifest-v1-2.bed
+      SeqCap_EZ_Exome_v2:
+        description: SeqCap EZ Exome Library 2.0 kit
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SeqCap_EZ_Exome_v2_target_without_bait.bed
+        capture_type: exome_capture
+    mus musculus:
+      AgilentMouseExomeMM10:
+        description: Agilent MM10 exome
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Mouse_All_Exon_V1_S0276129.bed
+        capture_type: exome_capture

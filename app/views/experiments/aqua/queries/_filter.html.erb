@@ -1,0 +1,39 @@
+<td>
+	<%=label_tag query_filter.label%>	
+	<% if query_filter.tooltip.to_s != "" %>
+		<span class='ui-icon ui-icon-info ui-corner-all' style='display:inline-block; margin: 0px 0px 3px -5px' title="<%=query_filter.tooltip%>"></span>
+	<% end %>
+</td>
+<td>
+	<%=case query_filter.input_type
+				when :text then 
+					text_field_tag("query_filter[#{query_filter.id}]", 
+												 (value || query_filter.default_value), 
+												 {class: "ui-corner-all"})
+				when :select then 
+					select_tag("query_filter[#{query_filter.id}]", 
+						options_for_select(
+							query_filter.default_value.to_s.split(/[, ;]/).map{|x| [x.to_s.html_safe,x.to_s.html_safe]},
+							selected: value.to_s
+						), {class: "ui-corner-all"}
+					)
+				when :checkbox then 
+					hidden_field_tag("query_filter[#{query_filter.id}]", "0") + 
+					check_box_tag("query_filter[#{query_filter.id}]",  "1", 
+												(value || query_filter.default_value) == "1")
+			 when :boolean then
+				 hidden_field_tag("query_filter[#{query_filter.id}]", "0") +
+						 check_box_tag("query_filter[#{query_filter.id}]",  "1",
+													 (value || query_filter.default_value) == "1")
+				when :collection then
+					text_field_tag("query_filter[#{query_filter.id}]", 
+													 (value || query_filter.default_value), 
+													 {readonly: true, 
+													 	onclick: "loadSelectionWidget(this, '#{filterCollection_query_filter_path(query_filter, format: :html, experiment: experiment.id)}')",
+													 	style: "background-color: #E9E9E9;",
+													 	class: "ui-corner-all"
+													 }
+												 ) # + "<span class='ui-icon ui-icon-newwin ui-corner-all' style='background-color: white; display:inline-block; margin: 0px 0px -3px -19px'></span>".html_safe
+			end
+	%>
+</td>

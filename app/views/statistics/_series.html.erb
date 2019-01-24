@@ -1,0 +1,43 @@
+<% if plotdata.present? %>
+	<% points = (defined?points)?points:false %>
+	<%
+		# we need to make sure that the plotdata has does not contain keys with invalid characters
+		plotdata.keys.each do |k|
+			if (k.index(/[ \/_,\-\\]/))
+				newk = k.gsub(/[ \/_,\-\\]/, ".")
+				plotdata[newk] = plotdata.delete(k)
+			end
+		end
+	%>
+	<div style="width: 100%" class="plot_container">
+		<%=content_tag(:div, 
+				id: "chart_#{plotdata.hash}",
+				class: 'plot', 
+				style: "float: left",
+				data: {
+					data: plotdata, 
+					opts: {width: (defined?width)?(width):(1024), height: (defined?height)?(height):(768), points: points}
+				}) do %>
+		<% end %>
+		<div style="float: left; height: 100%;">
+			<h4>Legend</h4>
+			<div id="chart_<%=plotdata.hash%>_legend" class="snupyplotlegend" style="overflow: auto; width: 600px; height: 30%" %>
+			</div>
+			<div id="snupyplotsettings_<%=plotdata.hash%>" class="snupyplotsettings" style="overflow: auto; width: 600px; height: 70%" %>
+				<div style="border-bottom: #444 1px solid">
+					<%= check_box_tag "select_all_#{plotdata.hash}", "select_all", true, "class" => "plot_select_all" %>
+					<h4 style="margin-bottom: 4px; display: inline;">Series</h4>	
+				</div>
+				<% plotdata.each do |name, data| %>
+					<div style="display: list-item;">
+						<%= check_box_tag name, name.gsub(/[ \/_,\-\\]/, "."), true, "class" => "plot_select" %>	
+						<%= label_tag name%>
+					</div>
+				<% end %>
+			</div>
+		</div>
+		<br style="clear: both" />
+	</div>
+<% else %>
+	No data to plot for series without points. 
+<% end %>

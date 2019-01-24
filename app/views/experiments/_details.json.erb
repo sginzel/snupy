@@ -1,0 +1,5 @@
+<%= (details || []).map{|rec|
+	rec.update(rec){|k, v, v1|
+		strip_tags(v.to_s)
+	}
+}.to_json.html_safe %>

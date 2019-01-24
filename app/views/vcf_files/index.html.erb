@@ -1,0 +1,89 @@
+<h1>VCF Files</h1>
+<%= render_table(@vcf_files, 
+									title: "#{params[:count] || @vcf_files.size} most recently updated",
+									id: "vcf_files",
+									columns: %w(name filename status contact md5checksum created_at updated_at),
+									column_order: %w(VCFid name filename samplenames extracted_samples status organism Action created_at md5checksum institution contact Download Show Edit Destroy),
+									colors: {
+										"status" => {
+											"CREATED" => "PowderBlue",
+											"INCOMPLETE" => "#ffff99",
+											"ERROR" => "salmon",
+											"DONE" => "palegreen",
+											"ENQUEUED" => "#ffff99",
+											"ANNOTATIONPROCESS" => "#ffff99"
+										}
+									},
+									record_colors: {
+										"annotation_status" => {/\(OK\)/ => "palegreen", /REVOKED/ => "salmon", /ERROR/ => "salmon", /FAIL/ => "salmon", /PENDING/ => "#ffff99",/INCOMPLETE/ => "#ffff99"}
+									},
+									actions: {
+												"Create sample sheet" => create_sample_sheet_vcf_files_path(),
+												"Assign tool tags" => assign_tags_vcf_files_path(),
+												"Show BAF Plot" => baf_plot_vcf_files_path(),
+												"Destroy selected" => mass_destroy_vcf_files_path()
+												}
+									){|rec, vcf|
+										sample_ids = vcf.sample_ids
+										rec["VCFid"] = link_to vcf.id, vcf_file_path(vcf)
+										rec["Edit"] = link_to 'Edit', edit_vcf_file_path(vcf)
+										rec["Destroy"] = link_to 'Destroy', vcf, method: :delete, data: { confirm: 'Are you sure?' }
+										rec["Download"] = link_to 'Download', download_vcf_file_path(vcf)
+										rec["extracted_samples"] = (sample_ids.size > 0)?(vcf.samples.map{|s| link_to s.name, sample_path(s)}.join(" | ")):""#      link_to .map(&:name).join(" | "), samples_path(ids: sample_ids)):""
+										rec["institution"] = "Institution not found"
+										rec["institution"] = link_to vcf.institution.name, vcf.institution unless vcf.institution.nil?
+										smpls = vcf.sample_names
+										smpl_links = smpls.map{|smpl|
+											if vcf.aqua_annotation_completed? then
+												link_to "#{smpl}", new_sample_path(vcf_file_id: vcf.id, vcf_sample_name: smpl)
+											else
+												smpl
+											end
+										}
+										rec["samplenames"] = smpl_links.join(",")
+										rec["filters"] = YAML.load(vcf.filters).map{|filter, cnt| "#{filter}: #{cnt}"}.join(", ")
+										#rec["AQuA Action"] = case vcf.status
+										#when :CREATED
+										#	"<div class='running'>" +
+										#	link_to('AQuA annotation', aqua_annotate_vcf_file_path(vcf), remote: true, id: "long_job_annotation_status#{vcf.id}") +
+										#	"</div>"
+										#when :INCOMPLETE
+										#	"<div class='running'>" +
+										#	link_to('Restart AQuA annotation', aqua_annotate_vcf_file_path(vcf), remote: true, id: "long_job_annotation_status#{vcf.id}") +
+										#	"</div>"
+										#when :ERROR
+										#	"<div class='fail'> Failed (set to INCOMPLETE when fixed) </div>"
+										#when :SUCCESS
+										#	"<div class='success'> Annotation successful </div>"
+										#when :ENQUEUED
+										#	"<div class='running'> Enqueued </div>"
+										#when :ANNOTATIONPROCESS
+										#	"<div class='running'> Processing </div>"
+										#end
+										#rec["Action"] = case vcf.status
+										#when :CREATED
+										#	"<div class='running'>" + 
+										#	link_to('Start annotation', annotate_vcf_file_path(vcf), remote: true, id: "long_job_annotation_status#{vcf.id}") +
+										#	"</div>"
+										#when :ERROR
+										#	"<div class='fail'> Failed </div>"
+										#when :SUCCESS
+										#	"<div class='success'> Sucessfully annotated </div>"
+										#when :ENQUEUED
+										#	"<div class='running'> Enqueued </div>"
+										#end
+										rec["organism"] = vcf.organism.name
+										#rec["annotation_status"] = vcf.aqua_annotation_status.map{|aas| aas.source.to_s.split("/",2)[1].to_s + "(" + aas.value.to_s + ")"}.join(" | ")
+										if (vcf.aqua_status_annotations.size == 0) then
+											vcf.aqua_annotation_status # this is ugly, but initilizes the annotation status....
+										end
+										rec["annotation_status"] = vcf.aqua_status_annotations.map{|aas| aas.source.to_s.split("/",2)[1].to_s + "(" + aas.value.to_s + ")"}.join(" | ")
+										rec["tags"] = vcf.tags.map(&:value)
+										rec
+									}
+%>
+<br />
+
+<%= link_to 'New Vcf file', new_vcf_file_path %> 
+<%= link_to 'Batch Upload', batch_submit_vcf_files_path(number: 16) %>
+

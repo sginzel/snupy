@@ -1,0 +1,20 @@
+<% if not @long_job.result_json.nil? then %>
+	<% result = JSON.parse(@long_job.result_json) %>
+	
+	<table>
+		<tbody>
+			<% result.each do |rec| %>
+				<% rec = [rec] unless rec.is_a?(Array)%>
+				<tr>
+					<% rec.each do |field| %>
+						<td>
+							<%= field %>
+						</td>
+					<% end %>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+<% else %>
+	No Result Available
+<% end %>

@@ -1,0 +1,35 @@
+<h1> Query Interface </h1>
+
+<%= form_tag(api_form_path, method: 'post') do %>
+    <p>
+      <%= text_area_tag "query", params[:query], style: "width: 600px;height: 500px;" %>
+    </p>
+    <p>
+      <%= label_tag "count", "Limit to" %>:
+      <%= text_field_tag "count", (params[:count] || 5000) %>
+    </p>
+    <br/>
+    <p>
+      <%= submit_tag 'Submit', class: 'button' %>
+    </p>
+    <br>
+    <%= render_table(@result, {
+        title: "Query Result (#{params[:count].to_i})"
+    }) %>
+<% end %>
+<% if @result.size > 0 %>
+    <%= form_tag(api_path, method: 'post') do %>
+        <%= hidden_field_tag("query", params[:query]) %>
+        <p>
+          <%= label_tag "format", "Format" %>:
+          <%= select_tag "format", options_for_select(["csv", "text", "json"].map{|x| [x,x]}) %>
+        </p>
+        <p>
+          <%= label_tag "sep", "Seperator" %>:
+          <%= text_field_tag "sep", (params[:sep] || "\t"), placeholder: "Default: \t" %>
+        </p>
+        <p>
+          <%= submit_tag 'Download this result (unlimited)', class: 'button' %>
+        </p>
+    <% end %>
+<% end %>

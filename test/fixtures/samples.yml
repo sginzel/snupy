@@ -1,0 +1,102 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+sample_father1:
+  name: Sample Father1
+  nickname: trio_father
+  patient: Father1
+  notes: no notes
+  contact: no contact
+  gender: Male
+  ignorefilter: true
+  status: DONE
+  vcf_sample_name: child
+  vcf_file: vcf_file_gatk
+  filters: PASS
+  ignorefilter: true
+  min_read_depth: 5
+  sample_type: Pedigree
+  specimen_probe: trio_father
+
+sample_mother1:
+  name: Sample mother1
+  nickname: trio_mother
+  patient: mother1
+  notes: no notes
+  contact: no contact
+  gender: Male
+  ignorefilter: true
+  status: DONE
+  vcf_sample_name: father
+  vcf_file: vcf_file_gatk
+  filters: PASS
+  ignorefilter: true
+  min_read_depth: 5
+  sample_type: Pedigree
+  specimen_probe: trio_mother
+
+sample_child1:
+  name: Sample child1
+  nickname: trio_child
+  patient: child1
+  notes: no notes
+  contact: no contact
+  gender: Male
+  ignorefilter: true
+  status: DONE
+  vcf_sample_name: mother
+  vcf_file: vcf_file_gatk
+  filters: PASS
+  ignorefilter: true
+  min_read_depth: 5
+  sample_type: Pedigree
+  specimen_probe: trio_child
+
+sample_tumor_normal_child1_mutect:
+  name: Sample tumor_normal_child1 mutect
+  nickname: tumor_normal_mutect
+  patient: tumor_normal_child1
+  notes: no notes
+  contact: no contact
+  gender: Male
+  ignorefilter: true
+  status: DONE
+  vcf_sample_name: 0
+  vcf_file: vcf_file_tumor_normal_child1_mutect
+  filters: PASS
+  ignorefilter: true
+  min_read_depth: 5
+  sample_type: Pedigree
+
+sample_tumor_normal_child1_varscan:
+  name: Sample tumor_normal_child1 varscan
+  nickname: tumor_normal_varscan
+  patient: tumor_normal_child1
+  notes: no notes
+  contact: no contact
+  gender: Male
+  ignorefilter: true
+  status: DONE
+  vcf_sample_name: 0
+  vcf_file: vcf_file_tumor_normal_child1_varscan
+  filters: PASS
+  ignorefilter: true
+  min_read_depth: 5
+  sample_type: Pedigree
+  specimen_probe: tumor_normal_child_init
+
+sample_tumor_normal_child1_gatk:
+  name: Sample tumor_normal_child1 gatk
+  nickname: tumor_normal_gatk
+  patient: tumor_normal_child1
+  notes: no notes
+  contact: no contact
+  gender: Male
+  ignorefilter: true
+  status: DONE
+  vcf_sample_name: 0
+  vcf_file: vcf_file_tumor_normal_child1
+  filters: PASS
+  ignorefilter: true
+  min_read_depth: 5
+  sample_type: Pedigree
+  specimen_probe: tumor_normal_child_init

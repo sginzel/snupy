@@ -1,0 +1,50 @@
+<%
+	html_opts = {}
+	(local_assigns[:opts] || {}).each do |k,v|
+		html_opts[k] = [v].flatten
+	end
+	html_opts[:class] << "ui-corner-all" if html_opts.include?(:class)
+	html_opts[:class] = ["ui-corner-all"] if !html_opts.include?(:class)
+	html_opts[:role] = ["menuitem"] if !html_opts.include?(:role)
+	html_opts.each do |k,v|
+		html_opts[k] = v.flatten.uniq.join(" ")
+	end
+	caption = caption.to_s
+	caption = "[PLACEHOLDER]" if caption.size == 0
+	tooltip = caption
+	maxlength = 25 unless defined?maxlength
+	maxlength = 25 if maxlength.nil?
+	if caption.size > maxlength.to_i && maxlength > 0 then
+		caption = caption[0..8].to_s + ".." + caption[-15..-1].to_s 
+	end
+%>
+<% if (defined?item) && url_for(controller: controller, action: "edit", id: item.id) %>
+	<li class="ui-menu-item">
+		<a href="<%=url%>" class="ui-corner-all" role="menuitem" title=<%=tooltip%>>
+			<span class="ui-menu-icon ui-icon ui-icon-carat-1-e"></span><%= caption %>
+		</a>
+		<ul class="menu ui-menu ui-widget ui-corner-all" style="display: none; font-size: 8pt;" role="menu" aria-expanded="false" aria-hidden="true">
+			<li class="ui-menu-item" role="presentation">
+				<%= link_to "Show", url_for(controller: controller, action: "show", id: item.id) %>
+			</li>
+			<li class="ui-menu-item" role="presentation">
+				<%= link_to "Edit", url_for(controller: controller, action: "edit", id: item.id) %>
+			</li>
+			<% if (defined?links) && (links || {}).size > 0 then %>
+				<% (links || {}).each do |label, url_or_proc| %>
+					<% url = url_or_proc %>
+					<% url = url.call(item) if url.is_a?(Proc) %>
+					<li class="ui-menu-item" role="presentation">
+						<%= link_to label, url %>
+					</li>
+				<% end %>
+			<% end %>
+		</ul>
+	</li>
+<% else %>
+	<li class="ui-menu-item" role="presentation" title=<%=tooltip%>>
+		<%= link_to caption, url, html_opts%>
+	</li>
+<% end %>
+	
+

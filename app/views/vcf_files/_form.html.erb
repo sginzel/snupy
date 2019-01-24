@@ -1,0 +1,78 @@
+<%= form_for(@vcf_file) do |f| %>
+	<% if @vcf_file.errors.any? %>
+	<div id="error_explanation">
+		<h2><%= pluralize(@vcf_file.errors.count, "error") %> prohibited this vcf_file from being saved:</h2>
+	
+		<ul>
+			<% @vcf_file.errors.full_messages.each do |msg| %>
+			<li>
+				<%= msg %>
+			</li>
+			<% end %>
+		</ul>
+	</div>
+	<% end %>
+
+	<div class="field">
+		<%= f.label :name %>
+		<br />
+		<%= f.text_field :name %>
+	</div>	
+	
+	<div class="field">
+		<%= f.label :contact %>
+		<br />
+		<%= f.text_field :contact %>
+	</div>
+	
+	<div class="field">
+  	<%= f.label :institution %><br />
+  	<%= collection_select(:vcf_file, :institution_id, Institution.all, :id, :name) %>
+	</div>
+	
+	<div class="field">
+		<%= f.label :md5checksum %>
+		<br />
+		<%= f.text_field :md5checksum %>
+	</div>
+	
+	<div class="field">
+  	<%= f.label :organism %><br />
+  	<%= collection_select(:vcf_file, :organism_id, Organism.all, :id, :name, include_blank: true) %>
+	</div>
+	
+	<% if @vcf_file.content == "" then %>
+		<div class="field">
+			<%= f.label :content %>
+			<br />
+			<%= f.file_field :content %>
+		</div>
+	<% else %>
+		<div class="field">
+			<%= f.label :content %>: 
+			<%= @vcf_file.filename %>: (<%= @vcf_file.content.size %>) bytes
+		</div>
+	<% end %>
+	<div class="field">
+  	<%= f.label :type %><br />
+  	<%= f.select :type,
+  					options_for_select(
+								["VcfFile", "VcfFile"] + VcfFile.descendants.map{|x| [x.name, x.name]},
+								selected: @vcf_file.type
+						)
+		%>
+	</div>
+	
+	<div class="field">
+  	<%= f.label :status %><br />
+  	<%= f.select :status,
+  					options_for_select(
+							VcfFile::AVAILABLE_STATUS,
+							selected: ((@vcf_file.nil?)?(VcfFile::AVAILABLE_STATUS.first):(@vcf_file.status)).to_s
+						) %>
+	</div>
+	
+	<div class="actions">
+		<%= f.submit %>
+	</div>
+<% end %>

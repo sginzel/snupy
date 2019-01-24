@@ -1,0 +1,11 @@
+<%= render_table(@tbl, title: "More details",
+				 column_order: %w(samples.name samples.nickname variation_calls.sample_id samples.specimen_probe_id samples.entity_id samples.entity_group_id is.control disease
+				 samples.vcf_sample_name samples.contact
+				 variation_calls.gt variation_calls.ref_reads variation_calls.alt_reads variation_calls.dp variation_calls.gq variation_calls.filter)
+){ |rec, obj|
+	rec["variation_calls.sample_id"] = link_to(rec["variation_calls.sample_id"], sample_path(rec["variation_calls.sample_id"])) unless rec["variation_calls.sample_id"].nil?
+	rec["samples.specimen_probe_id"] = link_to(rec["samples.specimen_probe_id"], specimen_probe_path(rec["samples.specimen_probe_id"])) unless rec["samples.specimen_probe_id"].nil?
+	rec["samples.entity_id"]         = link_to(rec["samples.entity_id"], entity_path(rec["samples.entity_id"])) unless rec["samples.entity_id"].nil?
+	rec["samples.entity_group_id"]   = link_to(rec["samples.entity_group_id"], entity_group_path(rec["samples.entity_group_id"])) unless rec["samples.entity_group_id"].nil?
+rec
+}%>

@@ -1,0 +1,20 @@
+This directory is for keys that you want to use as part of SSH tunnels that you need to setup.
+
+Make sure this directory is only accessible by users with the right permissions.
+
+The best option is to use the `config` entry to point to a ssh-config file that is used for the connection.
+This allows to set more advanced options, such as keep alive.
+
+For example:
+
+Host snupydb
+    ForwardX11 no
+    HostName SOME_IP_ADRESS
+    TCPKeepAlive yes
+    Compression yes
+    CompressionLevel 9
+
+To create a key do the following
+
+> ssh-keygen -t rsa -b 4096 -f /var/www-snupy-aqua/config/tunnels/keys/production
+> ssh-copy-id -i production user@host

@@ -1,0 +1,7 @@
+<h1>Users</h1>
+
+	<%= render partial: "list", locals: {users: @users, compact: false} %>
+
+<br />
+
+<%= link_to 'New User', new_user_path %>

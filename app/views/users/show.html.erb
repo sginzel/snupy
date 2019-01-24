@@ -1,0 +1,111 @@
+<h1><%= @user.name %></h1>
+<p>
+	This page shows all available information linked to your user account.
+</p>
+<p>
+  <b>Name:</b>
+  <%= @user.name %>
+</p>
+
+<p>
+  <b>Full name:</b>
+  <%= @user.full_name %>
+</p>
+
+<p>
+  <b>Is admin:</b>
+  <%= @user.is_admin %>
+</p>
+
+<p>
+  <b>Email:</b>
+  <%= @user.email %>
+</p>
+
+<p>
+	<b>Api token: </b>
+	<%= (@user.api_key || ApiKey.new).token %>
+</p>
+
+<p>
+	<b>Created at </b>
+	<%= @user.created_at %>
+</p>
+
+<p>
+	<b>Updated at </b>
+	<%= @user.updated_at %>
+</p>
+
+<p>
+	<%=render_table(
+							(@user.institutions), 
+							title: "Affiliations",
+							id: "institutions",
+							select_type: :none,
+							columns: %w(name contact email phone roles)
+	){|rec, i|
+		rec["roles"] = link_to @user.roles(i).join('|'), institution_path(i)
+		rec
+	}
+	%>
+</p>
+<p>
+  <%= render_table  @user.experiments,
+  									title: "Experiments",
+  									id: "experiments",
+  									selected: [],
+  									selectbox: nil,
+  									columns: %w(name title description contact institution_id created_at),
+  									css: {width: "80%"}
+  
+  %>
+</p>
+<p>
+  <%= render_table  @user.entity_groups,
+  									title: "Entity Groups",
+  									id: "entity_groups",
+  									selected: [],
+  									selectbox: nil,
+  									columns: %w(name complete contact),
+  									css: {width: "80%"}
+  %>
+</p>
+
+<p>
+  <%= render_table  @user.samples,
+  									title: "Samples",
+  									id: "samples",
+  									selected: [],
+  									selectbox: nil,
+  									columns: %w(name patient gender sample_type vcf_file_id vcf_sample_name ignorefilter status),
+  									css: {width: "80%"}
+  %>
+</p>
+
+<p>
+  <%= render_table  @user.generic_lists,
+  									title: "Lists",
+  									id: "generic_lists",
+  									selected: [],
+  									selectbox: nil,
+  									columns: %w(name title description created_at),
+  									css: {width: "80%"}
+  
+  %>
+</p>
+
+<p>
+	<%= render_table  @user.long_jobs,
+										title: "Queries",
+										id: "queries",
+										selected: [],
+										selectbox: nil,
+										columns: %w(name title description created_at),
+										css: {width: "80%"}
+
+	%>
+</p>
+
+<%= link_to 'Edit', edit_user_path(@user) %> 
+<%= link_to 'Back', users_path %>

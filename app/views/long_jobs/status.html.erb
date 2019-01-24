@@ -1,0 +1,20 @@
+<h1> Status for Job #<%= @long_job.id %></h1>
+<h2> <%= @long_job.title %></h2>
+<p>
+	Status: <%= @long_job.status %>
+</p>
+<% if @long_job.error.to_s.strip != "" then %>
+	<div class="fail">
+		<%= @long_job.error.to_s.strip.gsub("<", "&lt;").gsub(">", "&gt;").gsub("\n", "<br />").html_safe %>
+	</div>
+<% end %>
+<p>
+	Result: <%= @long_job.result_json[0..100] %>
+</p>
+<p>
+	Finished: <%= @long_job.finished_at %>
+</p> 
+<p>
+	Queue: <%= @long_job.queue %>
+</p>  
+<%=link_to "Refresh", "#{long_job_status_path(@long_job.id)}", :id => "longtask", :method=>:get%>

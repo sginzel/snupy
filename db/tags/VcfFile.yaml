@@ -1,0 +1,22 @@
+---
+- category: TOOL
+  value: GATK
+  description: Data was derived from GATK
+- category: TOOL
+  value: GATK_RELAXED
+  description: Data was derived from GATK with relaxed filter settings
+- category: TOOL
+  value: GATK_TRIO
+  description: Data was derived from GATK with relaxed filter settings
+- category: TOOL
+  value: Mutect
+  description: Data was derived from Mutect
+- category: TOOL
+  value: VarScan2
+  description: Data was derived from VarScan2
+- category: TOOL
+  value: Platypus
+  description: Data was derived from Platypus
+- category: TOOL
+  value: Excavator2
+  description: Data was derived from Excavator

@@ -1,0 +1,13 @@
+<h2>Sample Overlaps</h2>
+<p>
+	<%=render_table(simmat, 
+									title: "Unsorted #{measure} similarity",
+									color: {
+										#/^(?!name).*$/ => create_color_gradient([min,(min+max)/2, max], colors = ["salmon", "lightyellow", "palegreen"])
+										# /^(?!name).*$/ => create_color_gradient([min,(min+max)/2, max], colors = ["white", "lightyellow", "palegreen"])
+										/^(?!name).*$/ => create_color_gradient([min,max], colors = ["white", "salmon"])
+										# /^(?!name).*$/ => create_color_gradient([min,(min+max)/2, max], colors = ["#ffeda0", "#feb24c", "#f03b20"]),
+									}
+									)
+	%>
+</p>

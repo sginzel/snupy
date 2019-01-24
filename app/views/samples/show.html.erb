@@ -1,0 +1,86 @@
+<h1><%=@sample.name%></h1>
+
+<p>
+	<%= link_to 'Edit', edit_sample_path(@sample) %> 
+	<%= link_to 'Back', samples_path %>
+</p>
+<p>
+	<%=render_table(@sample, 
+									title: "Sample Info",
+									selectbox: false,
+									column_order: %w(name nickname patient status vcf_sample_name gender sample_type min_read_depth ignorefilter info_matches notes contact .*)
+	
+			)
+	%>
+</p>
+<p style="width:30%;">
+	<% if @sample.tags.size > 0 %>
+		<%=render_table(@sample.tags, 
+									title: "Tags",
+									selectbox: false,
+									columns: %w(category subcategory value description)
+									)%>
+	<% end %>
+</p>
+
+<p>
+	<% if @sample.statistics.size > 0 %>
+		<%=render_table(@sample.statistics, 
+									title: "Sample Statistics",
+									selectbox: false,
+									columns: %w(name resource record_id type)
+									){|rec, stat|
+									rec["Refresh"] = "<div id='collect_stats_#{rec[:resource].hash}'>" + 
+																	(link_to "Start", 
+																		collectstats_sample_path(@sample, 
+																		resource: rec[:resource], 
+																		container: "collect_stats_#{rec[:resource].hash}", 
+																		format: "js"
+																	), remote: true , method: "PUT") +
+																"</div>"
+				rec
+			}%>
+	<% end %>
+</p>
+
+<p>
+	<% if @missing_stat_collectors.size > 0 %>
+		<% if @sample.ready_to_query? %>
+			<%=render_table(@missing_stat_collectors, 
+									title: "Other Available Sample Stats",
+									selectbox: false
+									) {|rec, stat|
+									rec["(Re-)Calculate"] = "<div id='collect_stats_#{rec[:resource].hash}'>" + 
+																	(link_to "Start", 
+																		collectstats_sample_path(@sample, 
+																		resource: rec[:resource], 
+																		container: "collect_stats_#{rec[:resource].hash}", 
+																		format: "js"
+																	), remote: true , method: "PUT") +
+																"</div>"
+				rec
+			}%>
+		<% else %>
+			<%=@missing_stat_collectors.size%> sample statistics cannot be calculate because this sample is not ready. Please check if variations are already added and if the sample is annotated adequatly.
+		<% end %>
+	<% end %>
+</p>
+
+
+<h3>Users</h3>
+<%=render partial: "users/list", locals: {users: @sample.users, compact: true, selectbox: false}%>
+
+<% if @sample.statistics.where(name: "BAF").size > 0 then %>
+	<p>
+			<%= render(partial: "baf_stats", locals: {samples: [@sample]}) %>
+	</p>
+<% end %>
+
+<% if @sample.statistics.where(name: "SampleVariation").size > 0 then %>
+	<p>
+			<%= render(partial: "variation_stats", locals: {sample: @sample}) %>
+	</p>
+<% end %>
+
+<%= link_to 'Edit', edit_sample_path(@sample) %> 
+<%= link_to 'Back', samples_path %>

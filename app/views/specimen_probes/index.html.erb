@@ -1,0 +1,40 @@
+<h1>Specimen</h1>
+
+<%= render_table(@specimen_probe,
+									title: "#{params[:count] || @specimen_probe.size} most recently updated",
+									id: "specimen_probe",
+									column_order: %w(EntityGroup Entity Specimen Samples nickname lab tags*),
+									select_type: :radio,
+									selected: params[:ids],
+									record_color: {
+										"EntityGroup" => :factor,
+										"Entity" => :factor,
+										"Specimen" => :factor,
+										"Samples" => :factor
+									},
+									actions: {
+										"Assign Samples" => assign_sample_specimen_probes_path(),
+										"Assign Entity" => assign_entity_specimen_probes_path(),
+										"Assign Tags" => assign_tags_specimen_probes_path()
+									}
+){|rec, spec|
+	spec.tags.each do |tag|
+		rec["tags[#{tag.category}]"] = [] if rec["tags[#{tag.category}]"].nil?
+		rec["tags[#{tag.category}]"] << tag.value
+	end
+	rec["EntityGroup"] = link_to spec.entity_group.name, entity_group_path(spec.entity_group), {data: {context:{"Show" => entity_group_path(spec.entity_group), "Edit" => edit_entity_group_path(spec.entity_group)}}}
+	rec["Entity"] = link_to spec.entity.name, entity_path(spec.entity), {data: {context:{"Show" => entity_path(spec.entity), "Edit" => edit_entity_path(spec.entity)}}}
+	rec["Specimen"] = link_to spec.name, specimen_probe_path(spec), {data: {context:{"Show" => specimen_probe_path(spec), "Edit" => edit_specimen_probe_path(spec)}}}
+	rec["Samples"] = spec.samples.map(&:name)
+	rec["Show"] = link_to "Show", spec, method: :get
+	rec["Destroy"] = link_to "Destroy", spec, method: :delete, data: {confirm: 'Are you sure?'}
+	rec["Edit"] = ""
+	rec["Edit"] = link_to spec.name, edit_specimen_probe_path(spec) if @my_specimen_probe.include?(spec.id)
+	rec
+}
+%>
+
+
+<br />
+
+<%= link_to 'New Specimen', new_specimen_probe_path %>

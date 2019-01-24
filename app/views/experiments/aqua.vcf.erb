@@ -1,0 +1,14 @@
+##fileformat=VCFv4.1
+##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth (only filtered reads used for calling)">
+##FORMAT=<ID=GQ,Number=1,Type=Float,Description="Genotype Quality">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=BAF,Number=1,Type=Float,Description="B-Allele frequency">
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="Normalized, Phred-scaled likelihoods for genotypes as defined in the VCF specification">
+##INFO=<ID=GENES,Number=.,Type=String,Description="Ensembl Gene Ids affected by this variant">
+##INFO=<ID=FEATURES,Number=.,Type=String,Description="Ensembl Ids affected by this variant">
+##INFO=<ID=CONSEQUENCES,Number=.,Type=String,Description="Consequences affecting the feature">
+##INFO=<ID=FATAL,Number=1,Type=Integer,Description="Number of fatal consequences for this variant">
+##INFO=<ID=GMAF,Number=1,Type=String,Description="General Minor Allele Frequency">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	<%=@selected_samples.map(&:name).join("\t")%>
+<%=create_vcf_result(@result, @selected_samples).join("\n")%>

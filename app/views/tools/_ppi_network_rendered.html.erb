@@ -1,0 +1,41 @@
+<div id="drawingGraph">
+	<h2> Rendered PPI Network </h2>
+	<%if (defined? edges) || (defined? edges) %>
+
+		<%=content_tag(:div,
+			"",
+			id: "ppigraph_#{edges.hash}",
+			class: "ppigraph",
+			data: {
+				edges: @edges,
+				nodes: @nodes,
+				url_template: @url_template,
+				colors: @colors,
+			    groups:@groups,
+			    missing:@missing
+				}
+			)%>
+
+		<%= javascript_tag  "graph = new SimpleGraph($('#ppigraph_#{edges.hash}'));" %>
+
+	<%end %>
+
+</div>
+
+<p>
+<div class="box_interactions">
+  <%if (defined? edges) || (defined? edges) %>
+      <%= render_table(edges, title: "Interactions", id: "interactions_#{Time.now.to_i}")%>
+  <%end %>
+</div>
+<div class="box_groups">
+  <%if (defined? groups) || (defined? groups)%>
+      <%= render_table(groups, title: "Groups", id: "groups_#{Time.now.to_i}")%>
+  <%end %>
+</div>
+<div class="box_missing_genes">
+  <%if (defined? missing) || (defined? missing) %>
+      <%= render_table(missing, title: "Genes without known interactions", id: "interaction_details_missing_#{Time.now.to_i}")%>
+<%end %>
+</div>
+</p>

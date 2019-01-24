@@ -1,0 +1,10 @@
+<%={
+	error: @errornous_vcfs,
+	success: @vcf_files.map{|vcf|
+		cleanvcf = vcf.attributes
+		cleanvcf[:tags] = vcf.tags
+		cleanvcf[:aqua_annotation_status] = vcf.aqua_annotation_status.map(&:attributes)
+		cleanvcf
+	}
+}.to_json.html_safe
+%>

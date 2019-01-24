@@ -1,0 +1,21 @@
+<h1>Tags</h1>
+
+<% @tags.each do |object_type, tags|%>
+	<p>
+			
+		<%= render_table(tags,
+											title: "#{object_type.underscore.humanize} Tags",
+											id: "tags[#{object_type}]",
+											idcol: "id",
+											base_model: Tag, 
+											selectbox: false,
+											columns: %w(category subcategory value description objects Show Edit)
+		){ |rec, tag|
+			rec["Edit"] = link_to "Edit", edit_tag_path(rec["id"].to_i)
+			rec
+		}%>
+	</p>
+<% end %>
+<br />
+
+<%= link_to 'New Tag', new_tag_path %>

@@ -1,0 +1,155 @@
+<%= form_for(@specimen_probe) do |f| %>
+	<% if @specimen_probe.errors.any? %>
+		<div id="error_explanation" class="field">
+			<h2><%= pluralize(@specimen_probe.errors.count, "error") %> prohibited this specimen_probe from being saved:</h2>
+			<ul>
+				<% @specimen_probe.errors.full_messages.each do |msg| %>
+				<li>
+					<%= msg %>
+				</li>
+				<% end %>
+			</ul>
+		</div>
+	<% end %>
+	
+	<div class="field required">
+		<%=render_combobox @institutions, 
+							label: "Institution", 
+							id: "institution_id", 
+							labelattr: :name, 
+							valueattr: :id,
+							selected: @institution.id, 
+							validonly: true, allowempty: false,
+							include_blank: true,
+							onchange: "location.href = '#{request.path}?institution_id=' + $('#institution_id').val() + '&entity_group_id=' + $('#entity\\\\[entity_group_id\\\\]').val()"
+		%>
+	</div>
+	
+	<div class="field required">
+		<%=render_combobox @entity_groups, 
+							label: "Entity Group", 
+							id: "entity_group_id", 
+							labelattr: :name, 
+							valueattr: :id,
+							selected: @selected_entity_group.id, 
+							validonly: true, allowempty: false,
+							include_blank: true,
+							onchange: "location.href = '#{request.path}?institution_id=' + $('#institution_id').val() + '&entity_group_id=' + $('#entity_group_id').val()"
+		%>
+	</div>
+	<% if @entities.size > 0 then %>
+		<% if @specimen_probe.persisted? then %>
+			<p>
+				<%= link_to "Assign samples to the specimen", {controller: params[:controller], action: "index", ids: [@specimen_probe.id]} %>
+			</p>
+		<% end %>
+		
+		<div class="field required">
+			<%=render_combobox @entities, 
+								label: "Entity", 
+								id: "specimen_probe[entity_id]",
+								labelattr: :name, 
+								valueattr: :id,
+								selected: @selected_entity.id, 
+								simple: true,
+								validonly: true, allowempty: false %>
+		</div>
+	
+		<div class="field required">
+			<%= f.label :name %>
+			<br />
+			<%= f.text_field :name %>
+		</div>
+		
+		<div class="field">
+			<%= f.label :notes %>
+			<br />
+			<%= f.text_area :notes %>
+		</div>
+		
+		<div class="field">
+			<%= f.label "Date DD/MM/YYYY" %>
+			<br />
+			<%= f.number_field :date_day, {in: 0..31, placeholder: "(optional)"} %>
+			<%= f.number_field :date_month, {in: 0..12, placeholder: "(optional)"} %>
+			<%= f.number_field :date_year, {in: 1900..2100, placeholder: "(optional)"} %>
+		</div>
+		
+		<div class="field">
+			<br />
+			<%=render_combobox SpecimenProbe.select(:lab).uniq.pluck(:lab).map(&:to_s).sort, 
+								label: "Lab (optional)", 
+								id: "specimen_probe[lab]", 
+								selected: (@specimen_probe.lab || ""), 
+								validonly: false, allowempty: true %>
+		</div>
+		<div class="field">
+			<%= f.label :lab_contact %>
+			<br />
+			<%= f.text_field :lab_contact, placeholder: "(optional)" %>
+		</div>
+		<div class="field">
+			<%= f.label :internal_identifier %>
+			<br />
+			<%= f.text_field :internal_identifier, placeholder: "(optional)" %>
+		</div>
+		<div class="field">
+			<%= f.label :tumor_content %>
+			<br />
+			<%= f.text_field :tumor_content, placeholder: "(optional)" %>
+		</div>
+		<div class="field">
+			<%= f.label :tumor_content_notes %>
+			<br />
+			<%= f.text_field :tumor_content_notes, placeholder: "(optional)" %>
+		</div>
+		<div class="field">
+			<%= f.label :days_after_treatment %>
+			<br />
+			<%= f.number_field :days_after_treatment, placeholder: "(optional, but only meaningful if combined with TREATMENT tag)" %>
+		</div>
+		
+		<% if current_user.is_admin? then %>
+			<div class="field required">
+				<%= f.label :queryable %>:
+				<%= f.check_box :queryable %>
+			</div>
+		<% end %>
+		
+		<%= render partial: "tags/tags", locals: {
+			tags: @tags,
+			selected_tags: @selected_tags,
+			category_color: {
+				"STATUS" => "palegreen",
+				"TISSUE" => "palegreen"
+			},
+			category_text: {
+				"STATUS" => "required",
+				"TISSUE" => "required"
+			},
+			category_select: {
+					"MRD" => :option,
+					"RISK" => :option,
+					"STATUS" => :option
+				}
+		}%>
+		
+		<% if @samples.size > 0 %>
+			<%= field_set_tag "Samples", style: "width: 80%" do %>
+			<%=render_table(@samples,
+										id: "sample_ids", 
+										title: "Samples",
+										selected: @selected_samples,
+										columns: %w(name nickname created_at),
+										selectbox: true,
+										collapsecell: 30
+										)
+						%>
+			<% end %>
+		<% end %>
+	
+		<div class="actions">
+			<%= f.submit %>
+		</div>
+	<% end %>
+<% end %>

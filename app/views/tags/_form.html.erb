@@ -1,0 +1,65 @@
+<%= form_for(@tag) do |f| %>
+	<% if @tag.errors.any? %>
+	<div id="error_explanation">
+		<h2><%= pluralize(@tag.errors.count, "error") %> prohibited this tag from being saved:</h2>
+	
+		<ul>
+			<% @tag.errors.full_messages.each do |msg| %>
+			<li>
+				<%= msg %>
+			</li>
+			<% end %>
+		</ul>
+	</div>
+	<% end %>
+	
+	<div class="field">
+		<%= f.label "Data description level" %>
+		<br />
+		<%= select_tag "tag[object_type]", 
+													options_for_select([""] + [
+														Sample, VcfFile, SpecimenProbe, Entity, EntityGroup
+													].map{|x| [x.name, x.name]}, 
+													selected: @tag.object_type),
+													onchange: "location.href = '#{new_tag_path}?object_type=' + $(this).val() + ''"
+						%>
+	</div>
+	<% if !@tag.object_type.nil? then %>
+		<div class="field">
+			<br />
+			<%=render_combobox Tag.where(object_type: @tag.object_type).select(:category).uniq.pluck(:category).sort, 
+									label: "Category", 
+									id: "tag[category]", 
+									selected: @tag.category,
+									include_blank: true,
+									validonly: false,
+						 			allowempty: false %>
+		</div>
+		<div class="field">
+			<%= f.label :subcategory %>
+			<br />
+			<%= f.text_field :subcategory %>
+		</div>
+		<div class="field">
+			<%= f.label :value %>
+			<br />
+			<%= f.text_area :value %>
+		</div>
+		
+		<div class="field">
+			<%= f.label :description %>
+			<br />
+			<%= f.text_area :description %>
+		</div>
+		
+			<%= render_table(@tag.available_objects,
+				title: "Objects",
+				id: "object_ids",
+				selected: @tag.object_ids
+			)%>
+		
+		<div class="actions">
+			<%= f.submit %>
+		</div>
+	<% end %>
+<% end %>

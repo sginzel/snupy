@@ -1,0 +1,28 @@
+<% if defined?(@samples) and @samples %>
+## SAMPLES
+<% @samples.select{|s|(params[:samples] || []).include?(s.id.to_s)}.each do |smpl|%>
+<%=sprintf("#\t'#{smpl.name}'")%>
+<% end %>
+<% end %>
+<% if defined?(@qparams) and @qparams %>
+## QUERIES
+<% (@qparams[:queries] || []).each do |qklass, qconfs|  %>
+<% qconfs.each do |qname, qinst| %>
+<%=sprintf("##{qinst.config[:label]}")%>
+<%=sprintf("# VALUE\t#{[qinst.value].flatten.join(", ")}")%>
+<% qinst.filters.each do |finst| %>
+<%=sprintf("# FILTER\t#{(Aqua.annotations[finst.tool] || {label: "SNuPy"})[:label]}\t#{finst.label}")%>
+<% end %>
+<% end %>
+<% end %>
+<% end %>
+<%=render_table((@result || []).map{|rec|
+									rec.delete("Select")
+									rec.delete("id")
+									rec.delete(:id)
+									rec
+								}, 
+								title: "Query Results",
+								id: "query_result",
+								format: "csv"
+								)%>

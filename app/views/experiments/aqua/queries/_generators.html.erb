@@ -1,0 +1,9 @@
+<table id="query_generator_table" >
+	<% generators.each do |gklass| %>
+		<tr style="border: 1px solid steelblue">
+			<%=render partial: "experiments/aqua/queries/generator", locals: {gklass: gklass, experiment: @experiment, userid: current_user.id}%>
+		</tr>
+	<% end %>
+</table>
+
+

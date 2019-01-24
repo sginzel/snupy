@@ -1,0 +1,10 @@
+<% if defined?controller && defined?action && defined?template then %>
+	<div class="helper">
+		<span onclick="toggleHelp()" class='ui-icon ui-icon-help ui-corner-bl ui-state-hover' style='display:inline-block; margin: 0px 0px 3px -5px' title="Show help"></span>
+	</div>
+	<div class="helpertext">
+		<div class="helpercontent">
+			<%= render partial: template %>
+		</div>
+	</div> 
+<% end %>

@@ -1,0 +1,23 @@
+<h1>Projects</h1>
+
+<%=render_table(@experiments.sort{|x,y| x.name<=>y.name}, 
+								title: "",
+								path_method: "experiment_list_path",
+								column_order: %w(name title description contact Users) + ["number of samples", "institution name", ".*", "show"]
+								){|rec, exp|
+	# rec["number of samples"] = exp.samples.length
+	rec[:name] = link_to exp.name, aqua_experiment_path(exp)
+	rec["institution name"] = (exp.institution || Institution.new).name
+	rec["Users"] = exp.users.map{|u| link_to u.name, user_path(u)}.join(", ")
+	rec[:edit] = link_to 'Edit', edit_experiment_path(rec[:id])
+	rec[:show] = link_to 'Show', experiment_path(rec[:id])
+	rec[:destroy] = link_to 'Destroy', exp, method: :delete, data: { confirm: 'Are you sure?' }
+	rec.delete(:institution)
+	rec.delete(:updated_at)
+	rec.delete(:institution_id)
+	rec
+}%>
+
+<br />
+
+<%= link_to 'New Project', new_experiment_path %>

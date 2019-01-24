@@ -1,0 +1,18 @@
+<h1>Sample Tags</h1>
+
+<%=render_table(@sample_tags, 
+								title: "",
+								column_order: %w(tag_name tag_type tag_value description) + ["#Samples"],
+								selectbox: false,
+								collapsecell: -1
+								){|rec, qf|
+									rec["#Samples"] = qf.samples.count
+									rec["  "]  = link_to 'Edit', edit_sample_tag_path(qf)
+									rec["   "] = link_to 'Destroy', qf, method: :delete, data: { confirm: 'Are you sure?' }
+									rec
+								}
+%>
+
+<br />
+
+<%= link_to 'New Sample tag', new_sample_tag_path %>

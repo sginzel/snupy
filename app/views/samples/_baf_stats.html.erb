@@ -1,0 +1,48 @@
+<%if defined? samples || defined? sample %>
+	<h3>BAF Plot</h3>
+	<%
+		plotdata = {}
+		entropies = []
+	%>
+	<%
+		if defined? sample then
+			sample = [sample] unless sample.is_a?(Array)
+			samples = sample
+		end
+		samples.sort{|s1, s2| s1.nickname <=> s2.nickname}.each do |sample|
+			next if !sample.name.downcase.index("mutect").nil? && samples.size > 1
+			next if !sample.name.downcase.index("varscan").nil? && samples.size > 1
+			next if !sample.name.downcase.index("somatic").nil? && samples.size > 1
+			next if !sample.name.downcase.index("denovo").nil? && samples.size > 1
+			next if !sample.name.downcase.index("relax").nil? && samples.size > 1
+			bafs = sample.statistics.where(name: "BAF")
+			next if bafs.size == 0
+			bafs.each do |bafstat|
+				baf_dist = YAML.load(bafstat.value)
+				baf_dist_max = baf_dist.values.max
+				baf_dist_max = 0.0000001 if baf_dist_max == 0 or baf_dist_max.nil?
+				baf_dist_vals = (baf_dist.values.map{|x| x.to_f / baf_dist_max })
+				baf_description = bafstat.name + "." + sample.name.gsub(/[ \/_,\-\\]/, ".") + "(ID##{sample.id})"
+				plotdata[baf_description] = {
+																			x: baf_dist.keys,
+																			y: baf_dist_vals
+																		}
+				ent = get_entropy(baf_dist.values).to_s.to_f
+				entropies << {
+					id: sample.id,
+					name: sample.name,
+					entropy: ent
+				}
+			end
+		end 
+	%>
+	
+	<%= render partial: "statistics/series.html.erb", locals: {plotdata: plotdata}%>
+	<%= render_table(entropies,
+									 title: "BAF Entropies",
+									 colors: {
+											 entropy: Aqua.create_color_gradient([0.0, 3.5, 4.5, 5.5, 6.0], %w(salmon lightyellow palegreen lightsalmon salmon))
+									 }
+			)%>
+	
+<%end%>

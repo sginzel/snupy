@@ -1,0 +1,43 @@
+<h1>Listing entity_groups</h1>
+<%= render_table(@entity_groups,
+				 title:         "#{params[:count] || @entity_groups.count} most recently updated",
+				 id:            "entity_groups",
+				 column_order:  %w(name specimen_and_entity_annotation_complete institution contact organism created_at updated_at Show Destroy),
+				 selectbox:     true,
+				 selected:      params[:ids],
+				 record_colors: {
+					 "name"        => :factor,
+					 "institution" => :factor,
+					 "organism"    => :factor
+				 },
+				 colors:        {
+					 "specimen_and_entity_annotation_complete" => :bool
+				 },
+				 actions:       {
+					 "Show dataset summary" => show_dataset_summary_entity_groups_path,
+					 "Assign Entities"      => assign_entity_entity_groups_path
+				 }
+	) {|rec, eg|
+	rec["institution"] = link_to eg.institution.name, institution_path(eg.institution)
+	rec["organism"]    = eg.organism.name
+	rec.delete(:institution_id)
+	rec.delete(:organism_id)
+	if @my_entity_groups.include?(eg.id)
+		rec[:name] = link_to eg.name, eg, {data: {context:{"Show" => entity_group_path(eg), "Edit" => edit_entity_group_path(eg)}}}
+	else
+		rec[:name] = link_to eg.name, eg, {data: {context:{"Show" => entity_group_path(eg)}}}
+	end
+	
+	
+	rec["Edit"] = ""
+	rec["Edit"] = link_to eg.name, edit_entity_group_path(eg) if @my_entity_groups.include?(eg.id)
+	if current_user.is_admin? then
+		rec["Destroy"] = link_to "Destroy", eg, method: :delete, data: {confirm: 'Are you sure? This will delete all information on the associated Entities and Specimen'}
+	end
+	rec["specimen_and_entity_annotation_complete"] = eg.specimen_probes.all? {|sp| sp.queryable}
+	rec
+} %>
+
+<br/>
+
+<%= link_to 'New Entity group', new_entity_group_path %>

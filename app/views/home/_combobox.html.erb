@@ -1,0 +1,21 @@
+<!-- <div class="field"> -->
+<div class="ui-widget">
+	<% if defined?label && label.to_s != "" then %>
+		<label for="<%= boxid%>"><%= label%></label>
+		<br />
+	<% end %>
+	<%= select_tag boxid, 
+								options_for_select(selectoptions, selected: selected),
+								{
+									id: boxid, 
+									name: boxid,
+									onchange: onchange,
+									"class" => "#{comboboxclass}",
+									allowempty: (allowempty)?"1":"0",
+									validonly: (validonly)?"1":"0"
+								}
+	
+	%>
+	
+</div>
+<!-- </div> -->

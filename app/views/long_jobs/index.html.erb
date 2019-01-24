@@ -1,0 +1,44 @@
+<h1>Jobs</h1>
+
+<%= render_table(@long_jobs,
+				 title:        "Showing most recent #{@long_jobs.size} of your #{@num_jobs} jobs",
+				 id:           "long_jobs",
+				 columns:      %w(queue title status user created_at started_at finished_at error handle method parameter checksum Show Destroy),
+				 column_order: %w(queue title ^status$ user created_at started_at finished_at error ^result$ handle method parameter checksum Show Destroy)
+	) {|rec, long_job|
+	if long_job.status != "RUNNING" then
+		if (current_user.is_admin?) then
+			rec["Destroy"] = link_to 'Destroy', long_job_kill_path(long_job.id), method: :delete, data: {confirm: 'Are you sure?'}
+		end
+	else
+		rec["Destroy"] = "cannot be destroyed while running."
+	end
+	if (long_job.error.to_s.strip.size > 0) then
+		rec[:error] = "<div class='fail'>" +
+			(long_job.error || "").strip.gsub("<", "&lt;").gsub(">", "&gt;").gsub("\n", "<br />") +
+			"</div>"
+	end
+	if (long_job.error.to_s.strip.size > 0) then
+		rec[:result] = "<div class='fail'>" +
+			link_to("Details", long_job_status_path(long_job)) +
+			"</div>"
+	else
+		rec[:result] = link_to("Open Job", long_job_status_path(long_job))
+	end
+	rec[:status] = case rec[:status].to_s
+				   when "DONE"
+					   "<div class='success'>" + link_to(rec[:status], long_job_result_path(long_job)) + "</div>"
+				   when "FAILED"
+					   "<div class='fail'>" + rec[:status] + "</div>"
+				   when "ENQUEUED"
+					   "<div class='running'>" + rec[:status] + "</div>"
+				   else
+					   rec[:status]
+				   end
+	rec
+}
+%>
+<br/>
+<% if current_user.is_admin then %>
+	<%= link_to "Clear cache/successfull jobs", long_jobs_clear_cache_path, method: :delete, data: {confirm: 'Are you sure?'} %>
+<% end %>

@@ -1,0 +1,43 @@
+if (typeof snupy_timer_ids == "undefined"){
+	var snupy_timer_ids = Array();
+}
+snupy_timer_ids[<%= @long_job.id %>] = setInterval(function(){
+	$.ajax({
+		url: "<%= long_job_status_path(@long_job.id, format: "json") %>", 
+		cache: false, 
+		data: {
+			target: '<%=@html_container%>',
+			jobid: <%= @long_job.id %>
+		}, 
+		success : function(data){
+			console.log("requested status:" + data["status"]);
+			console.log(data)
+			$("#<%=@html_container%>").html(data["status"])
+			if (data["status"] == "<%=LongJob::DONE%>"){
+				clearInterval(snupy_timer_ids[<%= @long_job.id %>]);
+				result = data["result_json"]
+				<% if @long_job.result_view.nil? then%>
+					// put the plain result in the html container
+					$("#<%=@html_container%>").html(result);
+				<% else %>
+					// Render view for the job result and put that in the container
+					console.log("YET Another Ajax call to parse the result")
+					console.log("<%= long_job_result_path(@long_job.id, format: "html") %>")
+					$.ajax({
+						url: "<%= long_job_result_path(@long_job.id, format: "html") %>",
+						success : function(data){
+							$("#<%=@html_container%>").html(data)
+						}
+						}); 	
+				<% end %>
+			}
+			if (data["status"] == "<%=LongJob::FAILURE%>"){
+				clearInterval(snupy_timer_ids[<%= @long_job.id %>]);
+			}
+		}
+	});
+
+}, 1000);
+
+
+// alert('<%= @long_job.status%>' + ' <%= @long_job.id%>'+ ' <%= @html_container %>')

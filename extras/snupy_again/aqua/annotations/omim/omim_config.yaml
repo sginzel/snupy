@@ -1,0 +1,15 @@
+development:
+  version: 1809
+  workdir: <%=Rails.root%>/tmp/omim
+  basedir: <%= OmimAnnotation.annotationdir%>/omim/<%= OmimAnnotation.config("version")%>
+  datadir: <%= OmimAnnotation.config("basedir")%>/data
+  bindir: <%= OmimAnnotation.config("basedir")%>/bin
+  urls: <%= OmimAnnotation.annotationdir %>/omim/urls.yaml
+test: None.
+production:
+  version: 1809
+  workdir: <%=Rails.root%>/tmp/omim
+  basedir: <%= OmimAnnotation.annotationdir%>/omim/<%= OmimAnnotation.config("version")%>
+  datadir: <%= OmimAnnotation.config("basedir")%>/data
+  bindir: <%= OmimAnnotation.config("basedir")%>/bin
+  urls: <%= OmimAnnotation.annotationdir %>/omim/urls.yaml

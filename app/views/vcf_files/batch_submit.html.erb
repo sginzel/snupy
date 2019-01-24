@@ -1,0 +1,105 @@
+<h1>Upload Vcf Files</h1>
+<%= link_to 'Show all', vcf_files_path %>
+<br />
+<% if @errornous_vcfs.size > 0 then %>
+	<div class="fail">
+		<h3>Failed VCF Files</h3>
+		<table>
+			<thead>
+				<th>Name</th>
+				<th>Md5Sum</th>
+				<th>File</th>
+				<th>FileType</th>
+				<th>Reason</th>
+				<th>Error Message</th>
+			</thead>
+			<% @errornous_vcfs.each do |e| %>
+			<tr>
+				<td><%= (e[:output][:vcf_file].nil?)?(e[:input]["name"] || "UNKNOWN"):(e[:output][:vcf_file].name) %></td>
+				<td><%= (e[:output][:vcf_file].nil?)?((e[:input]["md5checksum"] || "UNKNOWN")):(e[:output][:vcf_file].md5checksum) %></td>
+				<td><%= (e[:output][:vcf_file].nil?)?((e[:input]["content"].nil?)?"No File.":(e[:input]["content"].original_filename)):(e[:output][:vcf_file].filename) %></td>
+				<td><%= (e[:output][:vcf_file].nil?)?((e[:input]["type"].nil?)?"No Type.":(e[:input]["type"])):(e[:output][:vcf_file].type) %></td>
+				<td><%= (e[:output][:notice].to_s + "<br>" + e[:output][:alert].to_s).html_safe %></td>
+				<td><%= (e[:output][:vcf_file].nil?)?"VcfFile could not be created":((e[:output][:vcf_file].errors.full_messages.join("<br />")).html_safe) %></td>
+			</tr>
+			<% end %>
+		</table>
+	</div>
+<% end %>
+
+<% if @vcf_files.size > 0 then %>
+	<div class="success">
+		<h3>Successfully added VCF Files</h3>
+		<table>
+			<thead>
+				<th>Name</th>
+				<th>Samples</th>
+				<th>File</th>
+				<th>MD5Sum</th>
+				<th>MDType</th>
+				<th>Status</th>
+				<!-- <th>Aqua Action</th> -->
+			</thead>
+			<% @vcf_files.each do |vcf_file| %>
+				<tr>
+					<td><%= vcf_file.name %></td>
+					<td><%= vcf_file.sample_names.join(",") %></td>
+					<td><%= vcf_file.filename %></td>
+					<td><%= vcf_file.md5checksum %></td>
+					<td><%= vcf_file.type %></td>
+					<td><%= vcf_file.status %></td>
+					<!--<td> <%=("<div class='running'>" +
+											link_to('AQuA annotation', aqua_annotate_vcf_file_path(vcf_file), remote: true, id: "long_job_annotation_status#{vcf_file.id}") +
+											"</div>").html_safe%> </td>
+											-->
+				</tr>
+			<% end %>
+		</table>
+	</div>
+<% end %>
+
+<% if @number_of_field.to_i > 0 %>
+	VCF file prefix: <%= text_field_tag "vcf_file_name_prefix", "#{Time.now.strftime("%Y_%m_%d")}", placeholder: "optional" %> <br />
+	<%= form_tag '/vcf_files/batch_submit', multipart: true, method: :post do %>
+		<p>
+			<div class="field">
+				<%= render_form_table(VcfFile, 
+													title: "VcfFile Properties", 
+													id: "vcf_file_templates",
+													count: @number_of_field,
+													attributes: @vcf_template,
+													attribute_to_column: @vcf_attribute_to_colname
+				
+				)%>
+			</div>
+		</p>			
+		<%=submit_tag "Create" %>
+	<% end %>
+<% end%>
+
+
+<h2> FAQ </h2>
+	<%=render_table([
+		{format: "VCF", description: "May be gzip compressed."},
+		{format: "ZIP Archive", description: "VCF files may be uploaded as an archive. By default the filename of each VCF is appended to the name given during the submit. VCF files may be configured seperatly using a configuration file, named config, in the archive (tab seperated values with header). This config file requires a filename column to identify the VCF file. Allowed columns are: filename, name, contact, type, institution, institution_id, organism, organism_id. TYPE IS REQUIRED IF THE ARCHIVE CONTAINS NON-STANDARD VCFFILES - SUCH AS VARSCAN. SUPPORTED TYPES ARE: #{[VcfFile, VcfFile.descendants].flatten.map(&:name).join(", ")}"}
+	], 
+								title: "File formats",
+								selectbox: false)%>
+	
+	
+<h3> ZIP file config example </h3>
+	<%=render_table([
+		{
+			filename: ".vcf file name in the archive", 
+			name: "Name of the VcfFile object in the database", 
+			contact: "Contact (if different from the one in the submitform)", 
+			type: "One of: #{[VcfFile, VcfFile.descendants].flatten.map(&:name).join(", ")}", 
+			institution: "Name of the institution (if different from the one in the submit form)", 
+			institution_id: "ID of the institution (overwritten by institution)", 
+			organism: "Name of the organism (if different from the one in the submit form)", 
+			organism_id: "ID of the organism (overwritten by organsim)",
+			tool: "Value or id of the tool that was used to create the VCF (#{VcfFile.available_tags.pluck(:value).sort.join(", ")})"
+		}
+	], 
+								title: "config file example (copy button for template)",
+								selectbox: false)%>

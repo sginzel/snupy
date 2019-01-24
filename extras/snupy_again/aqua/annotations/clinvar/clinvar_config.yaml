@@ -1,0 +1,15 @@
+development:
+  version: 20180805
+  workdir: <%=Rails.root%>/tmp/clinvar
+  basedir: <%= ClinvarAnnotation.annotationdir%>/clinvar/<%= ClinvarAnnotation.config("version")%>
+  datadir: <%= ClinvarAnnotation.config("basedir")%>/data
+  bindir: <%= ClinvarAnnotation.config("basedir")%>/bin
+  vcf: ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar_<%= ClinvarAnnotation.config("version")%>.vcf.gz
+test: None.
+production:
+  version: 20180805
+  workdir: <%=Rails.root%>/tmp/clinvar
+  basedir: <%= ClinvarAnnotation.annotationdir%>/clinvar/<%= ClinvarAnnotation.config("version")%>
+  datadir: <%= ClinvarAnnotation.config("basedir")%>/data
+  bindir: <%= ClinvarAnnotation.config("basedir")%>/bin
+  vcf: ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar_<%= ClinvarAnnotation.config("version")%>.vcf.gz

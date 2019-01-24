@@ -1,0 +1,24 @@
+.custom-combobox {
+		position: relative;
+		display: inline-block;
+		margin-right: 40px;
+}
+.ui-autocomplete {
+    max-height: 400px;
+    overflow-y: auto;   /* prevent horizontal scrollbar */
+    overflow-x: hidden; /* add padding to account for vertical scrollbar */
+    z-index:1000 !important;
+}
+.custom-combobox-toggle {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin-left: -1px;
+	padding: 0;
+}
+.custom-combobox-input {
+	margin: 0;
+	padding: 5px 10px;
+	background-color: #d6d6d6;
+	border: 1px solid #a6a6a6; // make it look like a select box
+}

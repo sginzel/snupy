@@ -1,0 +1,74 @@
+trio_father:
+  name: Specimen father1
+  notes: "soem notes"
+  lab: "some lab"
+  lab_contact: "some contact"
+  internal_identifier: "soem int ID"
+  date_day:
+  date_month:
+  date_year:
+  days_after_treatment:
+  tumor_content:
+  tumor_content_notes: "some notes of tumor content"
+  queryable: true
+  entity: father1
+
+trio_mother:
+  name: Specimen mother1
+  notes: "soem notes"
+  lab: "some lab"
+  lab_contact: "some contact"
+  internal_identifier: "soem int ID"
+  date_day:
+  date_month:
+  date_year:
+  days_after_treatment:
+  tumor_content:
+  tumor_content_notes: "some notes of tumor content"
+  queryable: true
+  entity: mother1
+
+trio_child:
+  name: Specimen child1
+  notes: "soem notes"
+  lab: "some lab"
+  lab_contact: "some contact"
+  internal_identifier: "soem int ID"
+  date_day: 1
+  date_month: 1
+  date_year: 2000
+  days_after_treatment: 10
+  tumor_content: 30
+  tumor_content_notes: "some notes of tumor content"
+  queryable: true
+  entity: child1
+
+tumor_normal_child_init:
+  name: Init Spec Child2
+  notes: "soem notes"
+  lab: "some lab"
+  lab_contact: "some contact"
+  internal_identifier: "soem int ID"
+  date_day: 1
+  date_month: 1
+  date_year: 2000
+  days_after_treatment: 10
+  tumor_content: 80
+  tumor_content_notes: "some notes of tumor content"
+  queryable: true
+  entity: child_tumor_normal
+
+tumor_normal_child_remi:
+  name: Remission Spec Child2
+  notes: "soem notes"
+  lab: "some lab"
+  lab_contact: "some contact"
+  internal_identifier: "soem int ID"
+  date_day: 1
+  date_month: 1
+  date_year: 2000
+  days_after_treatment: 10
+  tumor_content: 0
+  tumor_content_notes: "some notes of tumor content"
+  queryable: true
+  entity: child_tumor_normal

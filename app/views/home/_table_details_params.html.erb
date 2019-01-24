@@ -1,0 +1,73 @@
+<% if defined?(label) and label then %>
+<h4><%=label%></h4>
+<% end %>
+<% if defined?(fields) and fields then %>
+	<table>
+	<tbody>
+	<% fields.each do |name, value| %>
+		<tr>
+			<td>
+				<%=label_tag name%>
+			</td>
+			<td>
+				<% if (value.is_a?(Array) || value.is_a?(ActiveRecord::Relation)) then %>
+					<% if value.first.is_a?(Array) then %>
+						<% #select_tag name, options_for_select(value) 
+						%>
+						<%=render_combobox value, 
+							label: "", 
+							id: name, 
+							validonly: true, allowempty: false,
+							include_blank: false,
+							comboboxclass: "snupycombobox"
+						%>
+					<% elsif value.is_a?(ActiveRecord::Relation) then %>
+						<%=render_table(value.all, 
+														id: name,
+														title: name,
+														selected: value.instance_variable_get(:@_table_selected),
+														select_type: value.instance_variable_get(:@_table_select_type)
+														)%>
+					<% elsif value.first.is_a?(ActiveRecord::Base) then %>
+						<%=render_table(value, 
+														id: name,
+														title: name,
+														selected: value.instance_variable_get(:@_table_selected),
+							 							select_type: value.instance_variable_get(:@_table_select_type)
+														)%>
+					<% elsif value.first.is_a?(Hash) && !value.first[:id].nil? then %>
+						<%=render_table(value,
+										id: name,
+										title: name,
+										selected: value.instance_variable_get(:@_table_selected),
+										select_type: value.instance_variable_get(:@_table_select_type)
+						   )%>
+					<% elsif 1 == 0 %>
+						<%=select_tag name, options_for_select(value.map{|x| [x,x]}) %>
+					<% else %>
+						<%=render_combobox value, 
+							label: "", 
+							id: name, 
+							validonly: true, allowempty: false,
+							include_blank: false
+						%>
+					<% end %>
+				<% elsif value.is_a?(String) then %>
+					<%= text_field_tag name, value %>
+				<% else %>
+					Invalid field type.
+				<% end %>
+			</td>
+		</tr>
+	<% end %>
+	</tbody>
+	</table>
+<% else %>
+	Not fields defined as parameters. 
+<% end %>
+<% if defined?(otherparams) and otherparams then %>
+	<% otherparams.each do |name, value| %>
+		<%=content_tag :input, "", id: name, name: name, data:{value: value}, type: "hidden", class: "container_variables", style: "display-type: hidden"%>
+	<% end %>
+<% end %>
+<%= button_to_function "OK", "$(this).hide(); $(this).parent().append('#{image_tag asset_path("ajax-loader.gif"), class: "container_button", style: "width: 32px; border-radius: 100px;"}'); loadResourceIntoCotainer('#{resource}', null, $(this).parent());removeDataTable($(this).parent());$(this).remove();"  %>

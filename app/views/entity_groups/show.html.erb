@@ -1,0 +1,88 @@
+<h1>Entity group <%=@entity_group.name%></h1>
+
+<p id="notice">
+	<%= notice %>
+</p>
+<p>
+	<%= link_to 'Edit', edit_entity_group_path(@entity_group) %> |
+	<%= link_to 'Back', entity_groups_path %> | 
+	<%= link_to "Link with Entities", {controller: params[:controller], action: "index", ids: [@entity_group.id]} %>
+	<% if current_user.is_admin? then %>
+		| <%= link_to "Destroy", @entity_group, method: :delete, data: {confirm: 'Are you sure? This will delete all information on the associated Entities and Specimen'} %>
+	<% end %>
+</p>
+<p>
+	<b>Name:</b>
+	<%= @entity_group.name %>
+</p>
+
+<p>
+	<b>Organism:</b>
+	<%= @entity_group.organism.name %>
+</p>
+
+
+<div class="field">
+	<b>Institution:</b>
+	<%=@selected_institution.name%>
+</div>
+
+<div class="field">
+	<%=render partial: "users/list", locals: {users: @selected_users, compact: true, selectbox: false, title: "Users"}%>
+</div>
+
+
+
+<div class="field">
+	<br />
+	<%=render_table @entity_group.entities, 
+						title: "Entity", 
+						id: "entity_ids", 
+						selectbox: false
+						%>
+</div>
+
+<div class="field">
+	<br />
+	<%=render_table @selected_experiments, 
+						title: "Projects", 
+						id: "experiment_ids", 
+						selectbox: false
+						%>
+</div>
+
+<% if (@created_entities || []).size > 0 %>
+	<div class="field">
+		<%
+			ent_table = @created_entities.map{|description|
+				ent = (description[:entity] || Entity.new)
+				rec = {
+					message: description[:label],
+					"Success" => description[:category],
+					"Entity" => description[:name],
+					"Specimen" => link_to("NEW", new_specimen_probe_path(institution_id: @entity_group.institution_id, entity_group_id: @entity_group.id, entity_id: ent.id))
+				}
+				rec["Entity"] = link_to description[:name], edit_entity_path(description[:entity]), target: "_blank" unless description[:entity].nil?
+				rec
+			}
+			ent_ids = @created_entities.map{|desc| desc[:entity]}.reject(&:nil?).map(&:id)
+		%>
+		
+		<%= render_table ent_table,
+										title: "Created Entities",
+										columns: %w(message Success Entity Specimen),
+										colors: {
+											"Success" => {
+												"error" => "salmon",
+												"success" => "palegreen",
+												"exist" => "lightyellow"
+											}
+										} 
+		%>
+		
+	</div>
+<% end %>
+
+<%= link_to 'Edit', edit_entity_group_path(@entity_group) %> |
+<%= link_to 'New Entity', new_entity_path(institution_id: @entity_group.institution_id, entity_group_id: @entity_group.id) %> |
+<%= link_to 'Back', entity_groups_path %>

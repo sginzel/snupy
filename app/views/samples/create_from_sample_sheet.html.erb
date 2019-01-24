@@ -1,0 +1,24 @@
+<%=render_table(
+	@result,
+	id: "sample_sheet_result",
+	title: "Sample Sheet Import Result",
+	collapsecell: -1,
+	basemodel: Sample,
+	autolink_id: true,
+	column_order: %w(sampleID name nickname specimen Show error notice patient vcf_file_id vcf_sample_name tags users job status),
+	colors: {
+		"error" => {
+			/.+/ => "salmon"
+		}
+	}
+){|rec, smpl|
+	if rec[:id].to_s != "" then
+		rec["Show"] = link_to 'Show', sample_path(rec[:id])
+	else
+		rec["Show"] = ""
+	end
+	rec
+	}%>
+<br />
+<%= link_to 'Claim Sample', new_sample_path %>
+<%= link_to 'All samples', samples_path %>

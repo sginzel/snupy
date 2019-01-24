@@ -1,0 +1,61 @@
+<p>
+  <b>Delayed job:</b>
+  <%= @long_job.delayed_job_id %>
+</p>
+
+<p>
+  <b>Title:</b>
+  <%= @long_job.title %>
+</p>
+
+<p>
+  <b>User:</b>
+  <%= @long_job.user %>
+</p>
+
+<p>
+  <b>MD5sum:</b>
+  <%= @long_job.checksum %>
+</p>
+
+
+<p>
+  <b>Handle:</b>
+  <%= @long_job.handle %>
+</p>
+
+<p>
+  <b>Method:</b>
+  <%= @long_job.method %>
+</p>
+
+<p>
+  <b>Parameter:</b>
+  <%= @long_job.parameter %>
+</p>
+
+<p>
+  <b>Result_JSON:</b>
+  <%= @long_job.result_json %>
+</p>
+
+<p>
+  <b>Result_View:</b>
+  <%= @long_job.result_view %>
+  <%= link_to 'Show Result', long_job_result_path(@long_job) %>
+</p>
+
+<p>
+  <b>Status:</b>
+  <%= @long_job.status %>
+</p>
+
+<p>
+  <b>Success:</b>
+  <%= @long_job.success %>
+</p>
+
+
+<%= #link_to 'Edit', edit_long_job_path(@long_job) 
+%> |
+<%= link_to 'Back', long_jobs_path %>

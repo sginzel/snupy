@@ -1,0 +1,139 @@
+<ul class="menu ui-menu ui-widget ui-widget-content ui-corner-all" aria-activedescendant="ui-id-11" role="menu">
+	<h2 style="margin: 3px 0px 4px 4px;"> Navigation </h2>
+	<%= render(partial: "home/menu_item_with_subitems", locals: {
+		controller:  :experiments,
+		caption:     "Meta Projects",
+		collection:  Organism.order("updated_at DESC").first(20),
+		path_method: Proc.new() {|org| aqua_meta_path(user: current_user.id, organism: org.id)}
+	}) %>
+	<%= render(partial: "home/menu_item_with_subitems", locals: {
+		controller:  :experiments,
+		caption:     "Projects",
+		collection:  current_user.experiments.where("experiments.id > 0").order("updated_at DESC").first(20),
+		path_method: Proc.new() {|exp| aqua_experiment_path(exp)},
+		subitemlink: {
+			"Query Generator" => Proc.new() {|e| url_for(controller: :experiments, action: "query_generator", id: e.id)}
+		}
+	}) %>
+	<%= render(partial: "home/menu_item_with_subitems", locals: {
+		controller: :entity_groups,
+		caption:    "Entity Groups",
+		collection: current_user.visible(EntityGroup).order("updated_at DESC").first(20),
+		links:      (!(current_user.is_admin? or current_user.is_data_manager?)) ? {} : {
+			"Batch create" => url_for(controller: :entity_groups, action: "batch_create", count: 10)
+		}
+	}) %>
+	<%= render(partial: "home/menu_item_with_subitems", locals: {
+		controller:  :entities,
+		caption:     "Entities",
+		collection:  current_user.visible(Entity).order("updated_at DESC").first(20),
+		subitemlink: {
+			"Assign..." => Proc.new() {|item| entities_path(ids: item.id)}
+		}
+	}) %>
+	<%= render(partial: "home/menu_item_with_subitems", locals: {
+		controller:  :specimen_probes,
+		caption:     "Specimen",
+		collection:  current_user.visible(SpecimenProbe).order("updated_at DESC").first(20),
+		subitemlink: {
+			"Assign..." => Proc.new() {|item| specimen_probes_path(ids: item.id)}
+		}
+	}) %>
+	<%= render(partial: "home/menu_item_with_subitems", locals: {
+		controller: :samples,
+		caption:    "Samples",
+		collection: current_user.samples.order("updated_at DESC").first(20)
+	}) %>
+	<% if current_user.is_data_manager? then %>
+		<%= render(partial: "home/menu_item_with_subitems", locals: {
+			controller: :vcf_files,
+			caption:    "VCF Files",
+			collection: current_user.visible(VcfFile).nodata.limit(10).order('vcf_files.updated_at DESC'),
+			links:      {
+				"Batch upload" => url_for(controller: :vcf_files, action: "batch_submit")
+			}
+		}) %>
+	<% end %>
+	<%= render(partial: "home/menu_item_with_subitems", locals: {
+		controller:  :tags,
+		caption:     "Tags",
+		collection:  Tag.all(:limit => 10, :order => 'updated_at DESC'),
+		name_method: :value
+	}) %>
+	<%= render(partial: "home/menu_item_with_subitems", locals: {
+		controller:  :generic_lists,
+		caption:     "Panels",
+		name_method: :title,
+		collection:  current_user.generic_lists.order("updated_at DESC").first(10)
+	}) %>
+	<%= render(partial: "home/menu_item_with_subitems", locals: {
+		controller:  :long_jobs,
+		caption:     "Jobs",
+		collection:  current_user.jobs.select([:"long_jobs.title", :"long_jobs.id"]).limit(20).order('updated_at DESC'),
+		links:       {
+				"Statistics" => url_for(controller: :long_jobs, action: "statistics")
+		},
+		name_method: :title,
+		path_method: Proc.new() {|item| "long_jobs/#{item.id}"}
+	}) %>
+	<li>
+		<%= link_to "My Profile", user_path(current_user) %>
+	</li>
+	<li>
+		<%= link_to "Privacy", home_cookies_path %>
+	</li>
+</ul>
+<br/>
+<ul class="menu ui-menu ui-widget ui-widget-content ui-corner-all" aria-activedescendant="ui-id-11" role="menu">
+	<h2 style="margin: 3px 0px 4px 4px;"> Tools </h2>
+	<%= render(partial: "home/menu_item", locals: {
+		caption: "PPI Network",
+		url:     tools_ppi_network_path
+	}) %>
+	<li>
+		<%= link_to "Query Interface", api_form_path %>
+	</li>
+</ul>
+
+<br/>
+<% if current_user().is_admin then %>
+	<ul class="menu ui-menu ui-widget ui-widget-content ui-corner-all" aria-activedescendant="ui-id-11" role="menu">
+		<h2 style="margin: 3px 0px 4px 4px;"> Management Section </h2>
+		<!--
+            <%= render(partial: "home/menu_item", locals: {
+		caption: "Tasks",
+		url:     "/"
+	}) %>
+        -->
+		<%= render(partial: "home/menu_item_with_subitems", locals: {
+			controller: :institutions,
+			caption:    "Institutions",
+			collection: Institution.all(:limit => 20, :order => 'updated_at DESC')
+		}) %>
+		<%= render(partial: "home/menu_item_with_subitems", locals: {
+			controller:  :users,
+			caption:     "Users",
+			collection:  User.all(:limit => 25, :order => 'updated_at DESC'),
+			links:       {
+				"Access Control List" => url_for(controller: :users, action: "access_control_list")
+			},
+			subitemlink: {
+				"ACL" => Proc.new() {|u| url_for(controller: :users, action: "access_control_list", ids: u.id, users: u.id)}
+			}
+		}) %>
+		
+		<%= render(partial: "home/menu_item_with_subitems", locals: {
+			controller:  :generic_lists,
+			caption:     "Panels",
+			name_method: :title,
+			collection:  GenericList.all(:limit => 20, :order => 'updated_at DESC')
+		}) %>
+		<li>
+			<%= link_to "AQuA Information", home_aqua_path %>
+		</li>
+		<li>
+			<%= link_to "Logs", home_show_log_path %>
+		</li>
+		
+	</ul>
+<% end %>

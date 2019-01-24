@@ -1,0 +1,14 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+ukd:
+  name: UKD
+  contact: Me Boss
+  email: MyString
+  phone: MyString
+
+other_site:
+  name: foreign_institution
+  contact: Other Boss
+  email: MyString
+  phone: MyString
+

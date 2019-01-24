@@ -1,0 +1,78 @@
+<%= field_set_tag "Tags" do %>
+	<% 
+		category_color = {} if !defined?category_color or category_color.nil?
+		category_class = {} if !defined?category_class or category_class.nil?
+		category_text = {} if !defined?category_text or category_text.nil?
+		category_select = {} if !defined?category_select or category_select.nil?
+		required = [] if !defined?required or required.nil?
+		tags = @tags if !defined?tags
+		selected_tags = @selected_tags if !defined?selected_tags
+		
+		# make sure tags are in a hash by category
+		if !tags.is_a?(Hash) then
+			tmp = {}
+			tags.each do |tag|
+				tmp[tag[:category]] = [] if tmp[tag[:category]].nil?
+				tmp[tag[:category]] << tag
+			end
+			tags = tmp
+		end
+		if !selected_tags.is_a?(Hash) then
+			tmp = {}
+			selected_tags.each do |tag|
+				tmp[tag[:category]] = [] if tmp[tag[:category]].nil?
+				tmp[tag[:category]] << tag
+			end
+			selected_tags = tmp
+		end
+		required.each do |rcat|
+			tags[rcat] = [] if tags[rcat].nil? and tags[rcat.to_sym].nil?
+		end
+	%>
+	<% tags.each do |category, tags|%>
+		<%
+			catclass = category_class[category]
+			catclass = catclass.join(" ") if catclass.is_a?(Array)
+			backgroundcolor = category_color[category]
+			backgroundcolor = "background-color: #{backgroundcolor} !important;" unless backgroundcolor.to_s == ""
+			label = category.humanize
+			label = "#{label} (#{category_text[category]})" unless category_text[category].nil?
+			%>
+		<div class="field <%=catclass%>" style="<%=backgroundcolor%>padding: 10pt 10pt 10pt 10pt;">
+			<% if tags.size > 15 then %>
+				<%=render_table(tags,
+								id: "tags[#{category}]", 
+								title: label,
+								path_method: nil,
+								base_model: nil,
+								selected: (selected_tags[category] || []).map(&:id),
+								select_type: ((category_select || {})[category] || :checkbox),
+								columns: %w(subcategory value description),
+								column_order: %w(subcategory value description),
+								selectbox: (defined?selectbox)?(selectbox):(true),
+								collapsecell: 50,
+								show: false
+								)
+				%>
+			<% else %>
+				<p>
+					<h3><%=label%></h3>
+				</p>
+				<div class="col_container" style="width: 600px;">
+					<% tags.each do |tag| %>
+						<div class="col ui-corner-all" style="background-color: #fcfcfc; padding: 5px;">
+							<% if (defined?selectbox)?(selectbox):(true) %>
+								<% if ((category_select || {})[category] || :checkbox) == :checkbox %>
+									<%= check_box_tag "tags[#{category}][]", tag.id, (selected_tags[category] || []).include?(tag), id: "tags_#{category}_#{tag.value}", title: tag.description %>
+								<% else %>
+									<%= radio_button_tag "tags[#{category}][]", tag.id, (selected_tags[category] || []).include?(tag), id: "tags_#{category}_#{tag.value}", title: tag.description %>
+								<% end %>
+							<% end %>
+							<%= label_tag "tags[#{category}][]", tag.value, title: tag.description %>
+						</div>
+					<% end %>
+				</div>
+			<% end %>
+		</div>
+	<% end %>
+<% end %>

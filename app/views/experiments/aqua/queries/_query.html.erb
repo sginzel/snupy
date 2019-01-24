@@ -1,0 +1,65 @@
+<%
+	value = qconf[:default]
+	value = "#{qconf[:default][2]}-#{qconf[:default][3]}" if qconf[:type] == :range
+	value = qconf[:default][2] if qconf[:type] == :range_gt or qconf[:type] == :range_lt
+	value = nil if qconf[:type] == :select
+	
+	if !(get_from_param("queries", qklass.name.underscore, qname, "value").nil?) then
+		value = params["queries"][qklass.name.underscore][qname]["value"]
+	end
+%>
+<div class="aqua_query">
+	<%=content_tag :div, class: "aqua_label" do%>
+		<%=label_tag "queries[#{qklass.name.underscore}][#{qname}][value]", qconf[:label]%>
+		<%=content_tag :div, class: "aqua_label_icons" do%>
+			<span class='ui-icon ui-icon-help tooltipicon' style='visibility: <%=(qconf[:tooltip].to_s != "")?"visible":"hidden"%>' title="<%=(qconf[:tooltip] || "no tooltip available.")%>"></span>
+			<span class='ui-icon ui-icon-gear settingsicon' title="Change settings.", onclick="toggleFilter(this);"></span>
+		<% end %>
+	<% end %>
+	<%=content_tag :div, class: "aqua_field" do%>
+		<% if qconf[:type] == :text || qconf[:type] == :delimtext %>
+			<%= text_field_tag("queries[#{qklass.name.underscore}][#{qname}][value]", value, {placeholder: qconf[:example].to_s})%>
+		<% elsif qconf[:type] == :textarea %>
+			<%= text_area_tag("queries[#{qklass.name.underscore}][#{qname}][value]", value, {escaped: false, size: "40%", rows: 1, style: "resize:vertical;", placeholder: qconf[:example].to_s})%>
+		<% elsif qconf[:type] == :number || qconf[:type] == :numeric %>
+			<%= number_field_tag("queries[#{qklass.name.underscore}][#{qname}][value]", value, onkeypress: 'return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 0', placeholder: qconf[:example].to_s)%>
+		<% elsif qconf[:type] == :double %>
+			<%= text_field_tag("queries[#{qklass.name.underscore}][#{qname}][value]", value, onkeypress: 'return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0', placeholder: qconf[:example].to_s)%>
+		<% elsif qconf[:type] == :select %>
+			<%= select_tag "queries[#{qklass.name.underscore}][#{qname}][value]", 
+											options_for_select(
+												qconf[:default].map{|x| [x,x]}, 
+												selected: value
+											),
+											include_blank: true
+				%>
+		<% elsif qconf[:type] == :collection || qconf[:type] == :multiselect %>
+			<%=
+					text_field_tag("queries[#{qklass.name.underscore}][#{qname}][value]", 
+													 (value.is_a?(Array))?value.join(","):value, 
+													 {readonly: true, 
+													 	# onclick: "loadSelectionWidget(this, '#{filterCollection_query_filter_path(query_filter, format: :html, experiment: experiment.id)}')",
+													 	onclick: "loadSelectionWidget(this, '#{aqua_query_collection_path(qklass.name, qname, format: :html, experiment: experiment.id, user: userid)}')",
+													 	style: "background-color: #E9E9E9;",
+													 	# class: "ui-corner-all"
+													 }
+												 )
+				%>
+		<% elsif qconf[:type] == :range || qconf[:type] == :range_gt || qconf[:type] == :range_lt %>
+			<%= content_tag(:div, class: "aqua_field range_slider") do %>
+				<%= content_tag(:div, "", name: "queries[#{qklass.name.underscore}][#{qname}][value]", default: value, min: qconf[:default][0], max:qconf[:default][1], type: qconf[:type], class: "slider") %>
+				<%= text_field_tag("queries[#{qklass.name.underscore}][#{qname}][value]", value, readonly: true, class: "slider_text")%>
+			<% end %>
+		<% elsif qconf[:type] == :checkbox %>
+			<%= content_tag(:div, class: "aqua_query_checkbox") do %>
+				<%= hidden_field_tag("queries[#{qklass.name.underscore}][#{qname}][value]", "0")%>
+				<%= check_box_tag("queries[#{qklass.name.underscore}][#{qname}][value]", "1", value == "1")%>
+			<% end %>
+		<% end %>
+	<% end %>
+</div>
+<%=content_tag :div, class: "aqua_query_filter" do%>
+	<%=content_tag :div do%>
+		<%= render partial: "experiments/aqua/queries/filters", locals: {qklass: qklass, qname: qname, qconf: qconf}%>
+	<% end %>
+<% end %>

@@ -1,0 +1,40 @@
+<h2>Institution <%= @institution.name %> </h2>
+
+<p>
+  <b>Name: </b>
+  <%= @institution.name %>
+</p>
+
+<p>
+  <b>Contact: </b>
+  <%= @institution.contact %>
+</p>
+
+<p>
+  <b>E-Mail </b>
+  <%= @institution.email %>
+</p>
+
+<p>
+  <b>Phone: </b>
+  <%= @institution.phone %>
+</p>
+
+<p>
+  <b>Users:</b>
+  <%= render partial: "users/list", locals: {users: @institution.users,  compact: true, selectbox: false}%>
+</p>
+
+<p>
+	<%=render_table @institution.vcf_files.all(select: %w(id name filename md5checksum sample_names status contact created_at updated_at)),
+									selectbox: false,
+									title: "Vcf Files",
+									columns:      %w(name filename sample_names status contact md5checksum created_at updated_at) ,
+									column_order: %w(name filename sample_names status contact md5checksum created_at updated_at)
+	%>
+</p>
+
+
+
+<%= link_to 'Edit', edit_institution_path(@institution) %> 
+<%= link_to 'Back', institutions_path %>

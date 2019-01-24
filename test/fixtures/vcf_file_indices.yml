@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  vcf_file: 
+  index: 
+  compressed: false
+  format: MyString
+
+two:
+  vcf_file: 
+  index: 
+  compressed: false
+  format: MyString

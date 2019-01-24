@@ -1,0 +1,3 @@
+class GenericRegionListsController < GenericListsController
+
+end

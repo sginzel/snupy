@@ -1,0 +1,28 @@
+<%=form_tag request.path, method: "GET" do %>
+	<% if filter_names.map{|f| (params[:_filter] || {})[f]}.reject{|x| x.to_s == ""}.size > 0 then %>
+		<div style="margin-left: 5px; font-size: 1.17em; font-weight: bold; display: block; border-bottom: 1px dashed black; width: 100%;">Showing <%="#{params[:count]}"%> results filtered by: 
+		<%= filter_names.select{|f| (params[:_filter] || {})[f].to_s != ""}.map {|f|
+			"#{f}: #{params[:_filter][f]}"
+		}.join(" AND ") %>
+		</div>
+	<% end %>
+	<div class="col_container">
+		<div class="col actions">
+			<%= submit_tag "Filter list", {style: "font-size: 1.17em; font-weight: bold; padding: 3px 32px 3px 32px;"} %>
+		</div>
+		<div class="col">
+			<%
+				count_opts = [[params[:count], params[:count]], [10, 10], [100, 100],[1000, 1000],["All", -1]].reject{|x| x[0].nil?}.map{|x| x.map(&:to_s)}.uniq
+				tooltip = "Use /EXP/ to filter for regular expressions, use <, >, <=, >= in front of a number to filter for one sided ranges. Used ',' to query for multiple values at once."
+			%>
+			<%= label_tag "Limit to" %>: 
+			<%= select_tag "count", options_for_select(count_opts, selected: (params[:count] || 10)) %>
+		</div>
+		<%filter_names.each_with_index do |f, i|%>
+			<div class="col">
+			<%= text_field_tag "_filter[#{f}]", (params[:_filter] || {})[f], title: tooltip, placeholder: f.to_s.humanize, style: "width: 120px;" %>
+			</div>
+		<%end%>
+	</div>
+<% end %>
+

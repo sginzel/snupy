@@ -1,0 +1,30 @@
+.col_layout {
+	height: auto;
+	overflow: hidden;
+	.left_col {
+		display: inline-block;
+		float: left;
+		width: 45%;
+		height: 100%;
+		padding: 0px 0px 0px 0px;
+	}
+	
+	.right_col {
+		float: left;
+		width: auto;
+		height: 100%;
+		padding: 0px 0px 0px 0px;
+		display: inline-block;
+	}
+}
+
+.col_container {
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-wrap: wrap;
+	flex-wrap: wrap;
+	.col {
+		margin: 10px;
+	}
+}
+

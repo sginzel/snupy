@@ -1,0 +1,20 @@
+9606:
+  alias:
+    file: "9606.protein.aliases.v9.1.txt.gz"
+    zipped: true
+  links:
+    file: "9606.protein.links.full.v9.1.txt.gz"
+    zipped: false
+  actions:
+    file: "9606.protein.actions.detailed.v9.1.txt.gz"
+    zipped: true
+10090:
+  alias:
+    file: "10090.protein.aliases.v9.1.txt.gz"
+    zipped: true
+  links:
+    file: "10090.protein.links.full.v9.1.txt.gz"
+    zipped: false
+  actions:
+    file: "10090.protein.actions.detailed.v9.1.txt.gz"
+    zipped: true

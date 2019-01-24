@@ -1,0 +1,113 @@
+#!/usr/bin/env ruby
+
+## very naive but effective script to make sure all bed regions are merged properly - even if unsorted.
+# use this after using bedops --merge once to speed things up.
+
+fin = STDIN
+fot = STDOUT
+chr_order = ((0..22).to_a + ["X", "Y", "M", "MT"])
+chr_order = Hash[chr_order.map{|x| [x.to_s, chr_order.index(x)]}]
+
+## collect all regions
+chrs = {}
+fin.each_line do |line|
+	next if line[0] == "#"
+	line.strip!
+	chr, start, stop, rest = line.split("\t", 4)
+	chrs[chr] ||= []
+	chrs[chr] << Range.new(start.to_i, stop.to_i, true)
+end
+
+# sort all chromosomes
+chr_sorted = chrs.keys.sort{|chr1, chr2|
+	if (chr_order[chr1].nil? or chr_order[chr2].nil?)
+		chr1 <=> chr2
+	else
+		chr_order[chr1] <=> chr_order[chr2]
+	end
+	
+}
+
+chr_sorted.each do |chr|
+	chrs[chr].sort!{|x,y|
+		if (x.first != y.first) then
+			x.first <=> y.first
+		else
+			x.last <=> y.last
+		end
+	}
+end
+
+def overlaps?(r1, r2)
+	r1.cover?(r2.first) || r2.cover?(r1.first)
+end
+
+def merge_ranges(r1, r2)
+	begin
+		Range.new([r1.first, r2.first].min, ([r1.last, r2.last].max), true)
+	rescue Exception => e
+		STDERR.puts "ERROR DURING MERGE #{e.message}"
+		STDERR.puts r1
+		STDERR.puts r2
+		exit 1
+		raise e
+	end
+end
+
+# merge all ranges
+ranges = {}
+chr_sorted.each do |chr|
+	#STDERR.puts "processing chromsome #{chr}..."
+	ranges[chr] ||= []
+	total_merged = 0
+	while chrs[chr].size > 0 do
+		#STDERR.print "#{chrs[chr].size}/#{ranges[chr].size}(#{total_merged})     \r"
+		current_range = chrs[chr].delete_at(0)
+		## if there is no everlap possibe, lets get straight to the point
+		if (chrs[chr].size > 0 && current_range.last < chrs[chr][0].first) then
+			ranges[chr] << current_range
+		else
+			# remove all ranges that are included in the current, so dont need to deal with them
+			chrs[chr].reject!{|rng|
+				current_range.include?(rng) or current_range.eql?(rng)
+			}
+			to_delete = []
+			(0...chrs[chr].size).each do |i|
+				rng = chrs[chr][i]
+				if overlaps?(current_range, rng)
+					current_range = merge_ranges(current_range, rng)
+					to_delete << i
+				end
+			end
+			
+			# we merged some regions. So we add the current region to the start for further processing
+			total_merged += to_delete.size
+			if to_delete.size > 0 then
+				to_delete.each do |idx|
+					chrs[chr][idx] = nil
+				end
+				chrs[chr].delete_if(&:nil?)
+				to_delete = []
+				chrs[chr].insert(0, current_range)
+			else
+				ranges[chr] << current_range
+			end
+		end
+		current_range = nil
+	end
+end
+
+## write result
+chr_sorted.each do |chr|
+	ranges[chr].sort!{|x,y|
+		if (x.first != y.first) then
+			x.first <=> y.first
+		else
+			x.last <=> y.last
+		end
+	}
+	ranges[chr].each do |rng|
+		fot.write(sprintf("%s\t%s\t%s\n", chr, rng.first, rng.last))
+	end
+end
+exit 0

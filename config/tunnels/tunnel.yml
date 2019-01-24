@@ -1,0 +1,25 @@
+# see https://net-ssh.github.io/ssh/v2/api/classes/Net/SSH.html for options
+development_deactive:
+  user: sginze2s
+  host: biodb
+  remote_host: 194.95.66.234
+  local_port: 12345
+  remote_port: 13306
+  options:
+    compression: true
+    compression_level: 9
+    config: true
+    keys:
+      - config/tunnels/keys/development
+production_deactive:
+  user: sginze2s
+  host: biodb
+  remote_host: 194.95.66.234
+  local_port: 12345
+  remote_port: 13306
+  options:
+    compression: true
+    compression_level: 9
+    config: true
+    keys:
+    - config/tunnels/keys/production

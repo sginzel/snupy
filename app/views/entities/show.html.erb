@@ -1,0 +1,140 @@
+<p id="notice">
+	
+	<%= notice %>
+</p>
+<h1>Enitity <%=@entity.name%></h1>
+<p>
+	<%= link_to 'Edit', edit_entity_path(@entity) %> |
+	<%= link_to 'Back', entities_path %> | 
+	<%= link_to "Link with specimen", {controller: params[:controller], action: "index", ids: [@entity.id]} %>
+	<% if current_user.is_admin? then %>
+		| <%= link_to "Destroy", @entity, method: :delete, data: {confirm: 'Are you sure? This will delete all information on the associated Specimen'} %>
+	<% end %>
+</p>
+<p>
+	<b>Name:</b>
+	<%= @entity.name %>
+</p>
+
+<p>
+	<b>Nickname:</b>
+	<%= @entity.nickname %>
+</p>
+
+<p>
+	<b>Internal Identifier:</b>
+	<%= @entity.internal_identifier %>
+</p>
+
+<p>
+	<b>Date of first diagnosis</b>
+	<%= @entity.date_first_diagnosis %>
+</p>
+
+
+<p>
+	<b>Family members available?:</b>
+	<%= (@entity.family_members_available)?"YES":"NO" %>
+</p>
+
+<p>
+	<b>Notes:</b>
+	<%= @entity.notes %>
+</p>
+
+<div class="field">
+	<br />
+	<%=render_table @institution, 
+						title: "Institution", 
+						id: "institution_id", 
+						selectbox: false
+						%>
+</div>
+
+<div class="field">
+	<%=render partial: "users/list", locals: {users: @entity.users, compact: true, selectbox: false, title: "Users (via entity group)"}%>
+</div>
+
+<div class="field">
+	<br />
+	<%=render_table @entity_group, 
+						title: "Entity Group", 
+						id: "entity_group_id", 
+						selectbox: false
+						%>
+</div>
+
+<div class="field">
+	<br />
+		<%= render partial: "tags/tags", locals: {
+			tags: @entity.tags,
+			selected_tags: @entity.tags,
+			selectbox: false,
+			required: ["DISEASE", "CLASS"],
+			category_color: {
+				"DISEASE" => "palegreen",
+				"CLASS" => "palegreen"
+			},
+			category_text: {
+				"DISEASE" => "required",
+				"CLASS" => "required"
+			}
+		}%>
+</div>
+
+<div class="field">
+	<br />
+	<%=render_table @entity.specimen_probes, 
+						title: "Specimen", 
+						id: "specimen_probe_id", 
+						selectbox: false,
+						column_order: %w(name lab lab_contact internal_identifier tumor_content tumor_content_notes days_after_treatment)
+						%>
+	<p>
+	<% if @created_specimen_probes.size > 0 %>
+		<%
+			spec_table = @created_specimen_probes.map{|description|
+				rec = {
+					message: description[:label],
+					"Success" => description[:category],
+					"Specimen" => description[:name],
+					"Sample" => link_to("Link to sample", specimen_probes_path(ids: [(description[:specimen] || SpecimenProbe.new).id]))
+				}
+				rec["Specimen"] = link_to description[:name], edit_specimen_probe_path(description[:specimen]), target: "_blank" unless description[:specimen].nil?
+				rec
+			}
+			spec_ids = @created_specimen_probes.map{|desc| desc[:specimen]}.reject(&:nil?).map(&:id)
+		%>
+		
+		<%= render_table spec_table,
+										title: "Created specimen",
+										columns: %w(message Success Sample),
+										colors: {
+											"Success" => {
+												"error" => "salmon",
+												"success" => "palegreen",
+												"exist" => "lightyellow"
+											}
+										} 
+		%>
+		<%= link_to "Assign samples", specimen_probes_path(ids: spec_ids) %>
+		
+	<% end %>
+	</p>
+</div>
+
+<div class="field">
+	<%=render_table @entity.parents,
+					title: "Parents",
+					id: "entity_parents",
+					selectbox: false
+	%>
+	<%=render_table @entity.siblings,
+					title: "Siblings",
+					id: "entity_siblings",
+					selectbox: false
+	%>
+</div>
+
+<%= link_to 'Edit', edit_entity_path(@entity) %> |
+<%= link_to 'Back', entities_path %>

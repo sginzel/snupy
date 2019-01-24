@@ -1,0 +1,69 @@
+<h1>AQuA Information</h1>
+<h2>Settings</h2>
+	<%= render_table([(Aqua.settings || {state: "no settings loaded. Please create settings.yaml in lib/aqua"})],
+									 title: "AQuA settings")
+									 %>
+<h2>Annotations</h2>
+	<%= render_table(@annotations,
+									 title: "AQuA Annotations",
+									 colors: {
+									 	"Input Format"  => (x = {"csv" => "#F6E3CE", "vcf" => "#CED8F6"}; x.default = "#F6CECE"; x), # mark formats blueish and orange-ish - redish formats are not default formats
+									 	"Output Format" => (x = {"csv" => "#F6E3CE", "vcf" => "#CED8F6"}; x.default = "#F6CECE"; x),
+									 	"Satisfied?"    => :bool,
+										"Required annotations available?" => :bool,
+										"Klass" => :factor,
+										"Toolname" => :factor,
+										"Execution Rank" => create_color_gradient([0, @annotations.size-1], ["white", "lightblue"] ),
+									 	# "Ready?"        => :bool,
+									 	"Type"					=> (x = {:annotation => "#CED8F6", "annotation" => "#CED8F6"}; x.default = "#F6CECE"; x),
+									 	"Col1" => create_color_gradient([0, 0.5,1], ["blue", "white", "red"] ),
+									 	"Col2" => create_color_gradient(),
+									 	"Col3" => create_color_gradient()
+									 },
+									 record_colors: {
+									 		"Vcf Files" => {/OK:/ => "palegreen", /REVOKED/ => "salmon", /ERROR/ => "salmon", /FAIL/ => "salmon", /PENDING/ => "#ffff99", /INCOMPLETE/ => "#ffff99"},
+											"Required Annotations" => :factor
+									 }) %>
+<h2>Queries</h2>
+	<%= render_table(@queries,
+									 title: "AQuA Queries",
+									 colors: {
+									 	"Input Format"  => (x = {"csv" => "#F6E3CE", "vcf" => "#CED8F6"}; x.default = "#F6CECE"; x), # mark formats blueish and orange-ish - redish formats are not default formats
+									 	"Output Format" => (x = {"csv" => "#F6E3CE", "vcf" => "#CED8F6"}; x.default = "#F6CECE"; x),
+									 	"Satisfied?"    => :bool,
+									 	"Ready?"        => :bool,
+									 	"Col1" => create_color_gradient([0, 0.5,1], ["blue", "white", "red"] ),
+									 	"Col2" => create_color_gradient(),
+									 	"Col3" => create_color_gradient()
+									 },
+									 record_colors: {
+									 	"Filter" => {
+									 		/\[false\]/ => "salmon",
+									 		/\[true\]/ => "palegreen",
+									 	}
+									 }) %>
+<h2>Filters</h2>
+	<%= render_table(@filters,
+									 title: "AQuA Filters",
+									 colors: {
+										 	"Checked?"        => :bool,
+										 	"Applicable?" => :bool,
+										 	"Applicable_with_organism?" => {
+										 		/^([a-z A-Z]+\(true\)[, ]*)*$/ => "palegreen",
+										 		/^([a-z A-Z]+\(false\)[, ]*)*$/ => "salmon",
+										 		/^([a-z A-Z]+\((true|false)\)[, ]*)*$/ => "#FFEB7F"
+										 	},
+										 	"Collector Output" => {
+										 		"METHOD NOT FOUND" => "salmon",
+										 		"Could not determine automatically." => "#FFEB7F",
+										 		"EMPTY" => "#FFEB7F"
+										 	}
+									  }
+									  ) %>
+<h2>Aggregations</h2>
+	<%= render_table(@aggregations,
+									 title: "AQuA Aggregations",
+									 colors: {
+									 	"Applicable?" => :bool,
+									 	"checked"        => :bool
+									 }) %>

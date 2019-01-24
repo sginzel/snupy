@@ -1,0 +1,14 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+missense_variant:
+  region: missense_region
+  alteration: missense_alteration
+missense_variant2:
+  region: missense_region2
+  alteration: missense_alteration2
+silent_variant:
+  region: silent_region
+  alteration: silent_alteration
+indel_variant:
+  region: indel_region
+  alteration: indel_alteration

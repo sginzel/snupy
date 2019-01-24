@@ -1,0 +1,280 @@
+- category: BACKGOUND
+  value: predispose
+  description: Specimen carries a predisposition towards the disease
+- category: BACKGOUND
+  value: transformed
+  description: Transformed
+- category: BACKGOUND
+  value: transformed_viral
+  description: Virally transformed
+- category: BACKGOUND
+  value: sorted
+  description: Specimen was sorted from a larger cell population
+- category: BACKGOUND
+  value: commercial_cellline
+  description: Specimen is a commercially available cell line
+- category: BACKGOUND
+  value: partial
+  description: Specimen only has a partial STATUS (partial remission, partial init etc.)
+- category: BACKGOUND
+  value: xenograft
+  description: Specimen was xenografted
+- category: BACKGOUND
+  value: FFPE
+  description: Specimen is a FFPE sample
+  
+- category: RISK
+  value: low
+  description: lowest risk group
+- category: RISK
+  value: intermediate/medium
+  description: medium risk group
+- category: RISK
+  value: high
+  description: high risk group
+- category: RISK
+  value: very-high
+  description: exceptionally high risk
+
+- category: RESPONSE
+  value: full
+  description: specimen was responsive
+- category: RESPONSE
+  value: partial
+  description: specimen was partially responsive
+- category: RESPONSE
+  value: resistant
+  description: specimen was resistant to treatment
+
+- category: ANEUPLOIDY
+  value: Hyperploidy
+- category: ANEUPLOIDY
+  value: Nullisomy
+- category: ANEUPLOIDY
+  value: Monosomy
+- category: ANEUPLOIDY
+  value: Polysomy
+- category: ANEUPLOIDY
+  value: Monosomy X
+- category: ANEUPLOIDY
+  value: Trisomy 8
+- category: ANEUPLOIDY
+  value: Trisomy 9
+- category: ANEUPLOIDY
+  value: Trisomy 13
+- category: ANEUPLOIDY
+  value: Trisomy 18
+- category: ANEUPLOIDY
+  value: Trisomy 21
+- category: ANEUPLOIDY
+  value: Klinefelter Syndrome (Disomy X)
+- category: ANEUPLOIDY
+  value: 1p36 deletion syndrome
+- category: ANEUPLOIDY
+  value: 1q21.1 deletion syndrome
+- category: ANEUPLOIDY
+  value: 22q11.2 distal deletion syndrome
+- category: ANEUPLOIDY
+  value: 2q37 deletion syndrome
+- category: ANEUPLOIDY
+  value: Alfis syndrome
+- category: ANEUPLOIDY
+  value: Angelman syndrome
+- category: ANEUPLOIDY
+  value: Cri du chat 5q deletion syndrome"
+- category: ANEUPLOIDY
+  value: DiGeorge syndrome
+- category: ANEUPLOIDY
+  value: Distal 18q-Proximal 18q-
+- category: ANEUPLOIDY
+  value: Down syndrome
+- category: ANEUPLOIDY
+  value: Edwards syndrome
+- category: ANEUPLOIDY
+  value: Jacobsen syndrome
+- category: ANEUPLOIDY
+  value: Kleefstra syndrome
+- category: ANEUPLOIDY
+  value: Miller-Dieker syndrome
+- category: ANEUPLOIDY
+  value: Monosomy 10p
+- category: ANEUPLOIDY
+  value: Monosomy 10q
+- category: ANEUPLOIDY
+  value: Monosomy 8p
+- category: ANEUPLOIDY
+  value: Monosomy 8q
+- category: ANEUPLOIDY
+  value: Patau syndrome
+- category: ANEUPLOIDY
+  value: Phelan-McDermid syndrome
+- category: ANEUPLOIDY
+  value: Prader–Willi syndrome
+- category: ANEUPLOIDY
+  value: Smith-Magenis syndrome
+- category: ANEUPLOIDY
+  value: Trisomy 1
+- category: ANEUPLOIDY
+  value: Trisomy 10
+- category: ANEUPLOIDY
+  value: Trisomy 11
+- category: ANEUPLOIDY
+  value: Trisomy 12
+- category: ANEUPLOIDY
+  value: Trisomy 14
+- category: ANEUPLOIDY
+  value: Trisomy 15
+- category: ANEUPLOIDY
+  value: Trisomy 16
+- category: ANEUPLOIDY
+  value: Trisomy 17
+- category: ANEUPLOIDY
+  value: Trisomy 19
+- category: ANEUPLOIDY
+  value: Trisomy 2
+- category: ANEUPLOIDY
+  value: Trisomy 20
+- category: ANEUPLOIDY
+  value: Trisomy 22 Cat eye syndrome
+- category: ANEUPLOIDY
+  value: Trisomy 3
+- category: ANEUPLOIDY
+  value: Trisomy 4
+- category: ANEUPLOIDY
+  value: Trisomy 5
+- category: ANEUPLOIDY
+  value: Trisomy 6
+- category: ANEUPLOIDY
+  value: Trisomy 7
+- category: ANEUPLOIDY
+  value: Williams syndrome
+- category: ANEUPLOIDY
+  value: Wolf-Hirschhorn syndrome
+
+- category: ANEUPLOIDY
+  value: near-haploid
+  description: cases with 24–31 chromosomes
+- category: ANEUPLOIDY
+  value: low-hypodiploid
+  description: cases with 32–39 chromosomes
+- category: ANEUPLOIDY
+  value: high-hypodiploid
+  description: cases with 40–43 chromosomes
+- category: ANEUPLOIDY
+  value: high hyperdiploid 
+  description: cases with 51-67 chromosomes
+- category: ANEUPLOIDY
+  value: high hyperdiploid (masked)
+  description: cases with 51-67 chromosomes 'masked' hypodiploid ALL after reduplication 
+
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5"
+  value: B-cell precursor ALL
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: Hyperdiploidy with .50 chromosomes
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: Hypodiploidy with ,44 chromosomes
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: t(12;21)(p13;q22) translocation encoding ETV6-RUNX1
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: t(1;19)(q23;p13) translocation encoding TCF3-PBX1
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: t(9;22)(q34;q11.2) translocation encoding BCR-ABL1
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: Ph-like ALL 
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: t(4;11)(q21;q23) translocation encoding MLL-AF4 fusion
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: t(8;14)(q24;q32), t(2;8)(q12;q24), t(2;8) (q12;q24) encoding; MYC rearrangement
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: CRLF2 rearrangement (IGH-CRLF2;P2RY8-CRLF2)
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: ERG-dysregulated ALL 
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: PAX5 rearrangement
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: iAMP21
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: T-lineage ALL
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: t(1;7)(p32;q35) and t(1;14)(p32;q11) translocations and interstitial 1p32 deletion; TAL1 dysregulation
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: t(11;14)(p15;q11) translocation and 59 LMO2 deletion; LMO2 dysregulation
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: t(10;14)(q24;q11) and t(7;10)(q35;q24) translocations; TLX1 [HOX11] dysregulation
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: t(5;14)(q35;q32) translocation; TLX3 dysregulation
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: t(10;11)(p13;q14) translocation; PICALM-MLLT10 [CALM-AF10]
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: MLL-MLLT1 [MLL-ENL]
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: 9q34 amplification encoding NUP214-ABL1
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: t(7;9)(q34;q34) translocation 
+- category: SUBTYPE
+  subcategory: Leukemia
+  description: "Based on: Redefining ALL classification: toward detecting high-risk ALL and implementing precision medicine, Hunger and Mullighan, Blood (2015), DOI 10.1182/blood-2015-02-5" 
+  value: Early T-cell precursor ALL
+
+- category: MRD
+  value: < 10^-8
+- category: MRD
+  value: < 10^-7
+- category: MRD
+  value: < 10^-6
+- category: MRD
+  value: < 10^-5
+- category: MRD
+  value: < 10^-4
+- category: MRD
+  value: < 10^-3
+- category: MRD
+  value: < 10^-2
+- category: MRD
+  value: < 10^-1
+- category: MRD
+  value: unknown

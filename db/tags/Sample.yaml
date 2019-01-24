@@ -1,0 +1,16 @@
+---
+- category: DATA_TYPE
+  value: snv and indel
+  description: Data contains SNV and InDel information
+- category: DATA_TYPE
+  value: cnv
+  description: Data contains CNV information
+- category: DATA_TYPE
+  value: somatic
+  description: Data contains somatic mutations
+- category: DATA_TYPE
+  value: germline
+  description: Data contains germline mutations
+- category: DATA_TYPE
+  value: denovo
+  description: Data contains de-novo mutations

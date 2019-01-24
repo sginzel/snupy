@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+experiment:
+  name: All In One Experiment
+  title: Experiment 1
+  contact: MyString
+  institution: ukd
+  description: MyString
+  entity_groups: trio, tumor_normal
+  samples: sample_father1, sample_mother1, sample_child1
+  users: normal_user

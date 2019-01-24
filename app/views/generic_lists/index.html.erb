@@ -1,0 +1,34 @@
+<h1>Panels</h1>
+
+<%=render_table(@generic_lists, 
+								title: "",
+								path_method: "generic_list_path"
+								){|rec, gl|
+	rec["number of entries"] = gl.items.count
+	rec[:name] = link_to rec[:name], generic_list_path(rec[:id], count: 1000)
+	rec[:edit] = link_to 'Edit', edit_generic_list_path(rec[:id])
+	rec[:destroy] = link_to 'Destroy', gl, method: :delete, data: { confirm: 'Are you sure?' }
+	rec.delete(:updated_at)
+	rec
+}%>
+<!-- >
+
+<table>
+  <tr>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @generic_lists.each do |generic_list| %>
+  <tr>
+    <td><%= link_to 'Show', generic_list %></td>
+    <td><%= link_to 'Edit', edit_generic_list_path(generic_list) %></td>
+    <td><%= link_to 'Destroy', generic_list, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+-->
+<br />
+
+<%= link_to 'New Panel', new_generic_list_path %>

@@ -1,0 +1,119 @@
+function changeAquaSubmitOptions(opt){
+	$("#jobname").remove();
+	if (opt == "newjob"){
+		$("#jobname_text").clone().appendTo("#commit_action_section").attr("id","jobname").attr("name", "jobname").show();
+	}
+	if (opt == "load" || opt == "delete"){
+		$("#jobname_select").clone().appendTo("#commit_action_section").attr("id","jobname").attr("name", "jobname").show();
+	}
+}
+
+function initFilter(){
+	$('input:checkbox', $('.aqua_query_filter')).change(function(handler){
+		setQueryState(this);
+	});
+	$('input:checkbox', $('.aqua_query_filter')).each(function(){
+		setQueryState(this);
+	});
+}
+// set the color of the query heading to gray if no filters are active
+function setQueryState(filter){
+	active_filters = $('input:checked[type=checkbox]', $(filter).parent().parent().parent()).size();
+	if (active_filters == 0){
+		//$(this).parent().parent().parent().parent().parent().toggleClass("ui-state-disabled")
+		$("label", $(filter).parent().parent().parent().parent().parent().parent()).first().first().css({color: "#c9c9c9 !important"});
+		$("input", $(filter).parent().parent().parent().parent().parent().parent()).first().first().css({color: "#c9c9c9 !important"});
+		$("input", $(filter).parent().parent().parent().parent().parent().parent()).first().first().css({"border-color": "#c9c9c9 !important"});
+		$(".ui-slider .ui-slider-handle", $(filter).parent().parent().parent().parent().parent().parent()).css("border-color", "transparent");
+	} else {
+		$("label", $(filter).parent().parent().parent().parent().parent().parent()).first().css({color: ""});
+		$("input", $(filter).parent().parent().parent().parent().parent().parent()).first().css({color: ""});
+		$("input", $(filter).parent().parent().parent().parent().parent().parent()).first().css({"border-color": ""});
+		$(".ui-slider .ui-slider-handle", $(filter).parent().parent().parent().parent().parent().parent()).css("border-color", "");
+	}
+}
+
+function toggleFilter(span){
+	$('.aqua_query_filter', $(span).parent().parent().parent().parent()).slideToggle(100);
+}
+
+function updateSlider(elem, ui){
+	if ($(elem).slider( "option", "range" ) == true){
+		$("input:text", $(elem).parent()).val( ui.values[ 0 ] + "-" + ui.values[ 1 ] );
+	} else {
+		$("input:text", $(elem).parent()).val(ui.value);
+	}
+}
+
+function initSliders(){
+	$(".slider").each(function(){
+		slidmin = parseInt($(this).attr("min"));
+		slidmax = parseInt($(this).attr("max"));
+		if ($(this).attr("type") == "range_gt" || $(this).attr("type") == "range_lt"){
+			slidval = $("input:text", $(this).parent()).val();
+			$(this).slider({
+				min: slidmin,
+				max: slidmax,
+				value: slidval,
+				slide: function( event, ui ) {
+					updateSlider(this, ui);
+				}
+			});
+		} else {
+			fromto = $("input:text", $(this).parent()).val().split("-");
+			$(this).slider({
+				range: true,
+				min: slidmin,
+				max: slidmax,
+				values: [fromto[0], fromto[1]],
+				slide: function( event, ui ) {
+					updateSlider(this, ui);
+				}
+			});
+		}
+		
+	});
+}
+
+function initAggregation(){
+	$(".aggregationselectall").each(function(){
+		$(this).click(function(){
+			console.log(this);
+			// all check boxes of that aggregation
+			checkval = $(this).is(":checked");
+			$("div.aqua_queries input", $(this).parent().parent()).each(function(){
+				this.checked = checkval;
+			});
+		});
+	});
+}
+var tmp;
+function initQueryGroups(){
+	$(".aqua_query_group_collapse").each(function(){
+		$(this).click(function(){
+			console.log(this);
+			tmp = this;
+			container = $(tmp).siblings(".aqua_query_group_container");
+			if ($(container).is(":visible")){
+		  	$(container).hide();
+				$(".ui-icon",this).addClass("ui-icon-plus");
+				$(".ui-icon",this).removeClass("ui-icon-minus");
+			} else {
+				$(container).show();
+		  $(".ui-icon",this).removeClass("ui-icon-plus");
+		  $(".ui-icon",this).addClass("ui-icon-minus");
+			}
+
+		//$(this).siblings(".aqua_query_group_container").toggleClass("aqua_query_group_container_show").toggleClass("aqua_query_group_container_hidden")
+
+		});
+	});
+}
+
+$(document).ready(function() {
+	changeAquaSubmitOptions($("#commit_action").val());
+	initSliders();
+	initFilter();
+	initAggregation();
+	initQueryGroups();
+});

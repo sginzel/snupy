@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SnupyAgain</title>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+	<!-- https://datatables.net/download/index -->
+
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/ju/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-html5-1.4.2/b-print-1.4.2/datatables.min.css"/>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/v/ju/jszip-2.5.0/dt-1.10.16/b-1.4.2/b-html5-1.4.2/b-print-1.4.2/datatables.min.js"></script>
+
+	<!--
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/dataTables.jqueryui.min.css"/>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.18/js/dataTables.jqueryui.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.4/css/buttons.jqueryui.min.css"/>
+	<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.4/js/dataTables.buttons.min.js"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.jqueryui.min.js"></script>
+-->
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/colreorder/1.5.0/css/colReorder.jqueryui.min.css"/>
+	<script type="text/javascript" src="https://cdn.datatables.net/colreorder/1.5.0/js/dataTables.colReorder.min.js"></script>
+
+
+	<%= csrf_meta_tags %>
+</head>
+<body>
+	<div id="cookies">
+	<%= render 'cookies_eu/consent_banner', link: home_cookies_path, target: '_blank' %>
+	</div>
+	<div class="applicationheader">
+		<!--<h1><%= link_to "SNuPy Again", root_url, style: "text-decoration:none" %></h1> -->
+		<%=give_help(params[:controller], params[:action])%>
+		<h1>
+			<%= link_to "SNuPy Again - The Single NUcleotide PolYmorphism Database", root_url, class: "snupytitle"%>
+		</h1>
+	</div>
+	<div class="applicationbody ">
+		<% flash.each do |k,v| %>
+			<%= hidden_field_tag k, v.html_safe, class: "flash" %>
+		<% end %>
+		<div id="notificationbar" class="notificationbar ui-corner-bottom"></div>
+		<div class="navigation ui-corner-all">
+			<%= render "home/navigation" %>			
+			<!-- <br style="clear: all" /> //-->
+			
+			<div class="joblist ui-corner-all">
+				loading jobs...
+			</div>
+		</div>
+		
+		<div class="page ui-corner-all">
+			<div id="snupydialog" title="Snupy Dialog" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-front ui-draggable ui-resizable"></div>
+			<% if defined?@_render_collection_filter and !@_render_collection_filter.nil? then %>
+				<div class="collection_filter ui-corner-top ui-widget-header">
+					<%=render partial: "home/collection_filter", locals: {filter_names: @_render_collection_filter} %>
+				</div>
+			<% end %>
+			<%= yield %>
+			<% if Rails.env == "development" then %>
+				</br style="clear:both;">
+				<div style="float: left; display: inline-block; left: 0; background-color: lightyellow; width: 800px;">
+					<%= ERB::Util.html_escape(params.pretty_inspect).gsub("\n", "<br>").gsub(" ", "&nbsp;").gsub("\t", "&nbsp;&nbsp;&nbsp;&nbsp;").html_safe %>
+				</div>
+			<% end %>
+		</div>
+	</div>
+	</br style="clear:both;">
+	<div class="applicationfooter">
+			<% if alert %>
+			    <div id="alert" ><%= alert %></div> <br />
+			<% end %>
+			<% if flash[:error] then %>
+			    <div id="error" ><%= flash[:error] %></div><br />
+			<% end %>
+			<% if notice then %>
+			    <div id="notice" ><%= notice %></div><br />
+			<% end %>
+	</div>
+</body>
+</html>

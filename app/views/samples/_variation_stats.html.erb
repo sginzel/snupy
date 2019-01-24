@@ -1,0 +1,71 @@
+<%if defined? samples || defined? sample %>
+	<h3>Sample Statistics</h3>
+	<% 
+		summarydatas = {} 
+		summarycolors = {}
+	%>
+	<%
+		if defined? sample then
+			sample = [sample] unless sample.is_a?(Array)
+			samples = sample
+		end
+		samples.each do |sample|
+			# summs = sample.statistics.where(name: "SampleVariation")
+			summs = sample.statistics.where(plotstyle: "table")
+			next if summs.size == 0
+			summs.each do |summ|
+				records = YAML.load(summ.value)
+				summarydatas[summ.name] = [] if summarydatas[summ.name].nil?
+				summarycolors[summ.name] = {} if summarycolors[summ.name].nil?
+				summarydatas[summ.name] += records
+			end
+		end
+	%>
+	<% summarydatas.each do |statname, summarydata|
+			summarydata.flatten! 
+			availablekeys = summarydata.map{|row| row.keys}.flatten.uniq
+			availablekeys.each do |colname|
+				summarycolors[statname][colname] = [] if summarycolors[statname][colname].nil?
+			end
+			
+			summarydata = summarydata.map{|rec|
+				availablekeys.each do |k|
+					summarycolors[statname][k] << rec[k] unless rec[k].nil?
+					rec[k] = "" if rec[k].nil?
+				end
+				rec
+			}
+			summarycolors[statname].keys.each do |colname|
+				if summarycolors[statname][colname] == 0
+					summarycolors[statname].delete(colname)
+				else
+					if summarycolors[statname][colname].all?{|val| true if Float(val) rescue false} then
+						arr = summarycolors[statname][colname].map(&:to_f).reject(&:nan?)
+						arr = [0,1] if arr.size == 0
+						margins = [
+							arr.min.to_f,
+							(arr.inject(:+).to_f / arr.size),
+							arr.max.to_f
+						].sort
+						summarycolors[statname][colname] = Aqua.create_log_color_gradient(margins, ["palegreen", "lightyellow", "salmon"])
+						# nice blue gradient
+						# summarycolors[statname][colname] = Aqua.create_log_color_gradient(margins, ["#e9f6fb", "#bee5f4", "#92d3ed"])
+						# red blue gradient
+						# summarycolors[statname][colname] = Aqua.create_color_gradient(margins, ["#7acde9", "#FFFFFF", "#ff8c69"], 100, false)
+						# summarycolors[statname][colname] = Aqua.create_log_color_gradient(margins, ["#7acde9", "#FFFFFF", "#ff8c69"], 100, false)
+					else
+						summarycolors[statname].delete(colname)
+					end
+				end
+			end
+		%>
+		<p>
+			<%= render_table summarydata,
+											 title: statname,
+											 colors: summarycolors[statname],
+											 selectbox: false
+			%>
+		</p>
+		
+	<%end%>
+<%end%>

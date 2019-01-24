@@ -1,0 +1,409 @@
+// This is a manifest file that'll be compiled into application.js, which will include all the files
+// listed below.
+//
+// Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
+// or vendor/assets/javascripts of plugins, if any, can be referenced here using a relative path.
+//
+// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
+// the compiled file.
+//
+// WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
+// GO AFTER THE REQUIRES BELOW.
+//
+//= require jquery
+//= require jquery-ui
+//= require jquery_ujs
+// // require dataTables/jquery.dataTables // is not loaded from data tables web site
+// // require dataTables/extras/dataTables.tableTools // is not loaded from data tables web site
+// dataTables/extras/dataTables.ZeroClipboard
+// // require dataTables.columnFilter/jquery.dataTables.columnFilter
+// // require dataTables/extras/dataTables.buttons // is not loaded from data tables web site
+//= require jquery.flot
+//= require jquery.flot.resize
+//= require d3
+//= require cookies_eu
+//= require_tree .
+
+/* HELPER FUNCTIONS */
+function isDefined(x) {
+    return (typeof x != 'undefined');
+}
+
+function defaultValue(v, deflt) {
+    v = typeof v !== 'undefined' ? v : deflt;
+    return (v);
+}
+
+function getMethods(obj) {
+    var res = [];
+    for (var m in obj) {
+        if (typeof obj[m] == "function") {
+            res.push(m);
+        }
+    }
+    return res.sort();
+}
+
+function clone(obj) {
+    // Handle the 3 simple types, and null or undefined
+    if (null == obj || "object" != typeof obj) return obj;
+
+    // Handle Date
+    if (obj instanceof Date) {
+        var copy = new Date();
+        copy.setTime(obj.getTime());
+        return copy;
+    }
+
+    // Handle Array
+    if (obj instanceof Array) {
+        var copy = [];
+        for (var i = 0, len = obj.length; i < len; i++) {
+            copy[i] = clone(obj[i]);
+        }
+        return copy;
+    }
+
+    // Handle Object
+    if (obj instanceof Object) {
+        var copy = {};
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+        }
+        return copy;
+    }
+
+    throw new Error("Unable to copy obj! Its type isn't supported.");
+}
+
+function toggleHelp() {
+    if ($("#overlay").length) {
+        $("#overlay").remove();
+    } else {
+        txt = $(".helpertext").clone();
+        overlay = $('<div id="overlay"> </div>');
+        overlay.append(txt);
+        $(".applicationbody").append(overlay);
+    }
+}
+function loadResourceIntoCotainer(resource, params, container) {
+    if (params == null) {
+        var params = {};
+        // first serialize every input thingy
+        $($(":input", container)
+            .not("input:button")
+            .not(".custom-combobox-input")
+            .not(".snupy_table_selectbox")
+            .not(".dummycheckbox")
+            .serializeArray()).each(function () {
+            params[this["name"]] = this["value"];
+        });
+        // handles previsously submited values which are stored in the data attribute of a hidden input field
+        $(":input", container)
+            .not("input:button")
+            .not(".custom-combobox-input")
+            .not(".snupy_table_selectbox")
+            .not(".dummycheckbox")
+            .each($.proxy(function (index, item) {
+                if (isDefined($(item).data("value"))) {
+                    params[$(item).attr("name")] = $(item).data("value");
+                }
+            }, this));
+        tmp = container.clone();
+        // handly snupy table checkboxes
+        $(".snupytable", container).each(function () {
+            tableobj = oTables[$(this).attr("id")];
+            tableobj.$("input:checked").each(function (index, item) {
+                k = $(item).attr("name");
+                v = $(item).val();
+                if (!isDefined(params[k])) {
+                    params[k] = [];
+                }
+                params[k].push(v);
+            });
+        });
+    }
+    $.ajax({
+        url: resource,
+        dataType: "html",
+        data: params,
+        method: "POST",
+        success: jQuery.proxy(function (data, status, jqXHR) {
+            $(this).html(data).effect("highlight", {}, 1500);
+            $(".snupytable", this).each(function () {
+                makeDataTable(this);
+            });
+            $(".snupycombobox", this).combobox();
+        }, $(container)),
+        statusCode: {
+            500: jQuery.proxy(function (jqXHR, textStatus, errorThrown) {
+                $(this).html("[" + textStatus + "] " + jqXHR.responseText + "[" + errorThrown + "]").effect("highlight", {color: "salmon"}, 10000);
+            }, $(container))
+        },
+        error: jQuery.proxy(function (jqXHR, textStatus, errorThrown) {
+            $(this).html("[" + textStatus + "] " + jqXHR.responseText + "[" + errorThrown + "]").effect("highlight", {color: "salmon"}, 10000);
+        }, $(container))
+    });
+}
+
+/* Other Widget functions */
+
+function loadSelectionWidget(txtfield, resourceurl) {
+    $("#snupydialog").html('<center><%= image_tag asset_path("ajax-loader.gif"), style: "width: 48px; background: #FFF; border-radius: 100px;"  %></center>');
+    $("#snupydialog").dialog("open");
+    $.ajax({
+        url: resourceurl,
+        dataType: "html",
+        success: jQuery.proxy(function (data, status, jqXHR) {
+            // clear dialog
+            $("#snupydialog").dialog("close");
+            $("#snupydialog").html(data);
+            $("#snupydialog").append("<input id='snupydialog_content' type='hidden' value='" + $(this).val().toString() + "'/>");
+            $("#snupydialog").append("<input id='snupydialog_target' type='hidden' value='" + $(this).attr("id") + "'/>");
+            tblid = $(".snupytable", "#snupydialog").attr("id");
+
+            // select elements that are already in the list
+            // currentvals = $(this).attr("value");
+            currentvals = $(this).val();
+            if (currentvals.length > 0) {
+                currentvals = currentvals.replace(/[\s]+/g, '').split(",");
+            } else {
+                currentvals = [];
+            }
+
+            // select those checkboxes in the list that are already in the text field
+            // $("input", oTables[tblid].fnGetNodes()).each(function(){
+            $("input", $("#" + tblid)).each(function () {
+                if ($.inArray($(this).prop("value").toString(), currentvals) >= 0) {
+                    // $(this).prop("checked", true);
+                    this.checked = true;
+                }
+            });
+            makeDataTable($(".snupytable", "#snupydialog"));
+            $("#snupydialog").dialog("open");
+
+        }, $(txtfield))
+    });
+
+}
+
+function initDialog() {
+    $("#snupydialog").dialog({
+        width: "auto",
+        height: "auto",
+        //position: "center",
+        position: {my: "center", at: "center", of: window},
+        autoOpen: false,
+        closeOnEspace: true,
+        close: function (event, ui) {
+            delete oTables[$(".snupytable", "#snupydialog").attr("id")];
+        },
+        buttons: [
+            {
+                text: "OK",
+                click: jQuery.proxy(function () {
+                    console.log("OK OK OK ");
+                    console.log(this);
+                    tmp = this;
+                    // contentfield = $("#snupydialog_content", this);
+                    targetfield = $("#snupydialog_target", this);
+                    // content = contentfield.val()
+                    //content = $(".dummycheckbox", $("#snupydialog")).map(function(){
+                    tblid = $(".snupytable", "#snupydialog").attr("id");
+                    dtblobj = oTables[tblid];
+                    content = dtblobj.$("input:checked").map(function () {
+                        return ($(this).val());
+                    }).get();
+                    console.log(content);
+                    console.log(tblid);
+                    content = content.join(",");
+                    if (isDefined(content)) {
+                        if (isDefined(targetfield)) {
+                            targetfieldid = $(targetfield).prop("value");
+                            if (isDefined(targetfieldid)) {
+                                targetfield = $("#" + targetfieldid + "");
+                                $(targetfield).prop("value", content);
+                            } else {
+                                alert("No content target ID found for dialog. Please deactive any Javascript blocker.");
+                            }
+                        } else {
+                            alert("No content target found for dialog. Please deactive any Javascript blocker.");
+                        }
+                    } else {
+                        alert("No content found for dialog. Please deactive any Javascript blocker.");
+                    }
+                    $(this).dialog("close");
+                }, $("#snupydialog"))
+            },
+            {
+                text: "Close",
+                click: function () {
+                    $(this).dialog("close");
+                }
+            }
+        ]
+    });
+}
+
+// we add and remove virtual checkboxes in the snupy table
+// but it can happen that values are submitted twice
+// to prevent this we have to uncheck all visible checkboxes
+// in the snupytable before the checkboxes are submitted
+/*
+ function preventDoubleSubmit(){
+ if (1 == 0){
+ $("form").on("submit", function(){
+ $(".snupytable", $(this)).each(function(){
+ $(".snupy_table_selectbox", $(this)).prop("checked", false);
+ });
+ return(true);
+ });
+ }
+ }
+ */
+
+// Let us copy all input fields of the snupytable object to a div so they can be submitted
+function copyInputBeforeSubmit() {
+    $("form").on("submit", function (e) {
+        $(".snupytable", $(this)).each(function () {
+            //$(".snupy_table_selectbox", $(this)).prop("checked", false);
+            makeTableInputsAvailable(this);
+        });
+        return (true);
+    });
+}
+
+function makeTableInputsAvailable(snupytbl) {
+    console.log("making everything available for submit.")
+    dtblobj = oTables[$(snupytbl).attr("id")];
+    tblrows = dtblobj.$("tr");
+    myinputs = $("input", $(tblrows)).clone();
+    tmp = myinputs;
+    // clear container
+    container = $(snupytbl).closest(".snupytablecontainer");
+    container = $(".snupytable_selectbox_container", container);
+    $(container).html("").append(myinputs);
+    $("input", $(tblrows)).removeAttr("name").hide();
+}
+
+function showNotifications() {
+    if ($(".flash").size() > 0) {
+        $(".flash").each(function () {
+            name = $(this).attr("name");
+            value = $(this).attr("value");
+            if (name == "error") {
+                notifyclass = "fail";
+            } else {
+                notifyclass = 'running';
+            }
+            $("#notificationbar").append("<div class='ui-corner-all notificationitem " + notifyclass + "'><h4>" + name + "</h4><p class=notificationtext>" + value + "</p></div>");
+        });
+        $("#notificationbar").slideDown(250).delay(8000).slideUp(250);
+        $("#notificationbar").click(function () {
+            $(this).clearQueue().slideUp(250);
+        });
+    } else {
+        $("#notificationbar").hide();
+    }
+}
+
+function makeTitle() {
+    title = $("h1", $(".page")).first();
+    if ($(title).size() > 0) {
+        console.log("SET TITLE" + $(title).text());
+        setTitle($(title).text());
+        $(title).remove();
+    } else {
+        console.log("no title");
+    }
+}
+
+function setTitle(newtitle) {
+    $(".snupytitle").text("SNuPy Again - " + newtitle);
+}
+
+function makeHoverable() {
+    $('.ui-icon').hover(function () {
+            $(this).addClass('ui-state-hover');
+        }, function () {
+            $(this).removeClass('ui-state-hover');
+        }
+    );
+}
+
+function register_context_menu(element) {
+    // build a right-click context menu for every element that has a data-context field set
+    $("[data-context]", element).contextmenu(function (e) {
+        e.preventDefault();
+        menu = buildContextMenu(this, e);
+    });
+    $(document).bind("mousedown", function (e) {
+        // If the clicked element is not the menu
+        if (!$(e.target).parents(".custom-menu").length > 0) {
+            // Hide it
+            $(".custom-menu").remove();
+        }
+    });
+}
+
+function buildContextMenu(element, event) {
+    menu = $("<ul>")
+        .addClass("custom-menu")
+        .addClass("menu")
+        .addClass("ui-corner-all")
+        .addClass("ui-menu ui-widget ui-widget-content")
+        .css({
+            top: event.pageY + "px",
+            left: event.pageX + "px",
+        });
+    entries = $(element).data("context");
+    $.each(entries, function (key, value) {
+        $("<li>")
+            .attr("target", value)
+            .attr("title", value)
+            .text(key)
+            .on("mousedown", function (e) {
+                url = $(this).attr("target");
+                if (e.which == 1) { // left click
+                    $(location).attr('href', url);
+                    $(".custom-menu").remove();
+                    return false;
+                } else if (e.which == 2) { // middle click
+                    window.open(url);
+                    $(".custom-menu").remove();
+                } else {
+                    e.preventDefault();
+                }
+            })
+            .appendTo(menu);
+    });
+    menu.appendTo("body");
+    menu.show();
+    // $(menu).insertAfter(element);
+
+}
+
+
+$(document).ready(function () {
+    $(".menu").menu();
+    register_context_menu($(document));
+    initDialog();
+    $(".snupytable").each(function () {
+        makeDataTable(this, true);
+    });
+    //preventDoubleSubmit();
+    copyInputBeforeSubmit();
+    $(".form_table table").each(function () {
+        autoFillFields(this);
+    });
+
+    $(".plot").each(function () {
+        snupyplot($(this));
+    });
+    $(".snupycombobox").combobox();
+    $(".indeterminatecheckbox").prop("indeterminate", true);
+    $(".checkedcheckbox").prop("checked", true);
+    makeTitle();
+    // showNotifications();
+
+});

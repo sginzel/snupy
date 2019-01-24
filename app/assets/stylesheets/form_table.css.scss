@@ -1,0 +1,19 @@
+.form_table {
+	table {
+		color: $myblue;
+		tr {
+			border-top: 1px solid $myblue;
+			td {
+				border: 1px solid $myblue;
+				padding-bottom: 5px;
+				padding-top: 5px;
+				padding-left: 2px;
+				padding-right: 2px;
+				
+				input {
+					border: 0px;
+				}
+			}
+		}
+	}
+}

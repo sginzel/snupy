@@ -1,0 +1,179 @@
+<h1> AQuA Query <%=@experiment.title%> (<%=@experiment.name%>)</h1>
+
+<p>
+	<%= link_to 'Edit/Add/Remove Samples', edit_experiment_path(@experiment.id) %> 
+	<%= link_to 'Details', experiment_path(@experiment.id) %>
+</p>
+
+<% if @samples.size > 0 then %>
+	<%= field_set_tag "Create Query" do %>
+		<%= form_for :experiment, url: aqua_experiment_path(@experiment), namespace: :aqua, method: :post, action: :aqua do |f| %>
+			<div style="float: left; width: 100%;">
+				<%= field_set_tag "Samples" do %>
+					<%=render_table(
+													(@samples), 
+													title: "",
+													id: "samples",
+													selected: (@selected_samples || Sample.where("1 = 0")).pluck("samples.id"),
+													record_color: {
+															"Group" => :factor,
+															"Entity" => :factor,
+															"Specimen" => :factor,
+															"Sample" => :factor,
+															"Entity.tags" => :factor,
+															"Specimen.tags" => :factor,
+															"Sample.tags" => :factor,
+															"VcfFile.tags" => :factor
+													},
+													collapsecell: 180,
+													column_order: %w(SampleID Group Entity Specimen Sample VcfFile nickname patient gender sample_type Entity.tags Specimen.tags Sample.tags VcfFile.tags Show Edit ignorefilter status notes contact vcf_sample_name .*),
+													actions: {
+														"Similarity" => sample_similarity_samples_path()
+													}
+					){|rec, s|
+						rec["SampleID"] = link_to "#{s.id}", sample_path(s)
+						rec["Group"] = (!s.entity_group.nil?)?(link_to "#{s.entity_group.name}", entity_group_path(s.entity_group)):("NA")
+						rec["Entity"] = (!s.entity.nil?)?(link_to "#{s.entity.name}", entity_path(s.entity)):("NA")
+						rec["Specimen"] = (!s.specimen_probe.nil?)?(link_to "#{s.specimen_probe.name}", specimen_probe_path(s.specimen_probe)):("NA")
+						rec["Sample"] = link_to "#{s.name}", sample_path(s)
+						rec["VcfFile"] = link_to "#{s.vcf_file_nodata.name}", vcf_file_path(s.vcf_file_nodata)
+						rec["Edit"] = link_to "Edit #{s.nickname}", edit_sample_path(s)
+						rec["Entity.tags"] = (!s.entity.nil?)?(s.entity.tags.join(" | ")):("NA")
+						rec["Specimen.tags"] = (!s.specimen_probe.nil?)?(s.specimen_probe.tags.join(" | ")):("NA")
+						rec["Sample.tags"] = (!s.nil?)?(s.tags.join(" | ")):("NA")
+						rec["VcfFile.tags"] = (!s.vcf_file_nodata.nil?)?(s.vcf_file_nodata.tags.join(" | ")):("NA")
+
+						#rec["tags"] = s.sample_tags.map{|st| "#{st.tag_name}:#{st.tag_value}"}.uniq.join("<br>")
+						rec
+					}%>
+				<% end %>
+				<div>
+						<p>
+							<%= submit_tag 'Select Samples', class: 'button' %>
+							<%= text_field_tag "tag_formula", params[:tag_formula].to_s, placeholder: "(INIT & somatic & male) + (REMI & 'primary immune deficiency' & female)", size: 134 %>
+						</p>
+						<% if !@tag_formula_message.nil? %>
+								<div class="success" style="display: inline-block">
+									<%= @tag_formula_message %>
+								</div>
+						<% end %>
+						<% if !@tag_formula_error.nil? %>
+							<div class="fail" style="display: inline-block">
+								<%= @tag_formula_error %>
+							</div>
+						<% end %>
+				</div>
+			</div>
+			<div style="float: left; width: 750px;">
+				<%= field_set_tag "Filters" do %>
+					<%= render partial: "experiments/aqua/queries/queries", locals: {queries: @queries} %>
+				<% end %>
+			</div>
+			<div style="float: left; width: 550px;">
+				<%= field_set_tag "Group" do %>
+					<%= render partial: "experiments/aqua/aggregations/aggregations", locals: {aggregations: @group_aggregations} %>
+				<% end %>
+				<br>
+				<%= field_set_tag "Attributes" do %>
+					<%= render partial: "experiments/aqua/aggregations/aggregations", locals: {aggregations: @attr_aggregations} %>
+				<% end %>
+			</div>
+			<br style="clear: both;" />
+			<div style="float: left;">
+				<%= select_tag "format", 
+											options_for_select([
+												["HTML", "html"], 
+												["CSV", "csv"],
+												["VCF", "vcf"], 
+												["Excel", "xls"],
+												["JSON", "json"],
+												["Aqua JSON", "aqua"]
+											], 
+											selected: "html"),
+											onChange: "if($(this).val() != 'html'){
+												tmp = this;
+												if (!confirm('Be aware that downloading results can result in inconsistency between the underlying variation data and your downloaded copy.')){
+													$(this).val('html');
+												}
+											};"
+				%>
+			</div>
+			<br style="clear: both;" />
+			<div class="actions" id="commit_action_section" style="float: left;">
+				<%= submit_tag "OK" %>
+				<%= select_tag "commit_action", 
+											options_for_select([
+												["Query", "query"], 
+												["Submit new", "newjob"],
+												["Load", "load"], 
+												["Delete", "delete"]
+											], 
+											selected: (params[:commit_action] || "query")),
+											onchange: "changeAquaSubmitOptions(this.value)"
+				%>
+				<%= text_field_tag "jobname_text", "", style: "display:none" %>
+				<%= select_tag "jobname_select", options_from_collection_for_select(@long_jobs, "id", "title", selected: (@long_job.nil?)?"":@long_job.id), include_blank: false, style: "display:none" %>
+			</div>
+		<% end %>
+	<% end %>
+<% else %>
+You will be able to create queries when at least one sample was successfully imported.
+<% end %>
+
+<br style="clear: both;" />
+<% if (@result || []).size > 0 then %>
+		<p>
+			<%
+				aqua_actions = {}
+				Aqua.route_paths.each do |description, url|
+					aqua_actions[description] = {url: url, params: {experiment_id: @experiment.id, samples: params[:samples], queries: params["queries"], aggregations: params["aggregations"]}}
+				end
+				aqua_actions = aqua_actions.merge(
+					{
+							#"Save" => "save me",
+							"Look-up variations in other samples" => {url: details_experiments_path(experiment: @experiment.id),   params: {samples: params[:samples], tags: 'yes', queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
+							"Show interactions" => {url: interactions_experiments_path(experiment: @experiment.id),                params: {samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
+							"Attribute matrix" => {url: attribute_matrix_experiments_path(experiment: @experiment.id),             params: {samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
+							"Gene panel to subject" => {url: panel_to_subject_matrix_experiments_path(experiment: @experiment.id), params: {samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
+							"Save selected records" => {url: save_resultset_experiments_path(experiment: @experiment.id),          params: {samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
+					}
+				)
+			%>
+			<%=render_table(@result, 
+											title: "Query Results",
+											id: "query_result",
+											idcol: "variation_calls.id",
+											base_model: VariationCall,
+											details_path: aqua_query_details_path(variation_id: ":id"),
+											detail_params: {tools: "all", group: true, experiment: @experiment.id, samples: (@samples || []).map(&:id)},
+											colors: @column2color,
+											record_colors: @column2recordcolor,
+											actions: aqua_actions
+											)%>
+		</p>
+	<br />
+	<% if Rails.env == "development" %>
+		RESULT: <%=simple_format(@result.pretty_inspect.gsub("  ", "&nbsp;&nbsp;").gsub("<", "&lt;").gsub(">", "&gt;").html_safe) %>
+	<% end %>
+<% else %>
+	No results available.
+<% end %>
+
+<% if Rails.env == "development" %>
+	<%= field_set_tag "debugparams" do %>
+		<%= simple_format(params.pretty_inspect.gsub("  ", "&nbsp;&nbsp;").gsub("<", "&lt;").gsub(">", "&gt;").html_safe) %>
+		<br style="clear: both" />
+	<% end %>
+	<%= field_set_tag "aquaqueriedebug" do %>
+		<%= simple_format(@queries.pretty_inspect.gsub("  ", "&nbsp;&nbsp;").gsub("<", "&lt;").gsub(">", "&gt;").html_safe) %>
+		<br style="clear: both" />
+	<% end %>
+	<%= field_set_tag "allaquaqueriedebug" do %>
+		<%= simple_format(Query.descendants.pretty_inspect.gsub("  ", "&nbsp;&nbsp;").gsub("<", "&lt;").gsub(">", "&gt;").html_safe) %>
+		<br style="clear: both" />
+	<% end %>
+	<%= field_set_tag "QParams debug" do %>
+		<%= simple_format(@qparams.pretty_inspect.gsub("  ", "&nbsp;&nbsp;").gsub("<", "&lt;").gsub(">", "&gt;").html_safe) %>
+		<br style="clear: both" />
+	<% end %>
+<% end %>

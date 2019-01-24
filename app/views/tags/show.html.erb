@@ -1,0 +1,38 @@
+<h1><%= @tag.object_type %>[<%= @tag.category %>]</h1>
+
+<p id="notice">
+	<%= notice %>
+</p>
+
+<p>
+	<b>Object type:</b>
+	<%= @tag.object_type %>
+</p>
+
+<p>
+	<b>Category:</b>
+	<%= @tag.category %>
+</p>
+
+<p>
+	<b>Subcategory:</b>
+	<%= @tag.subcategory %>
+</p>
+
+<p>
+	<b>Value:</b>
+	<%= @tag.value %>
+</p>
+
+<p>
+
+	<%= render_table(@objects,
+		title: "Objects",
+		id: "objects",
+		selectbox: false
+	)%>
+</p>
+
+<%= link_to 'Edit', edit_tag_path(@tag) %> |
+<%= link_to 'Back', tags_path %> | 
+<%= link_to 'Destroy', @tag, method: :delete, data: { confirm: 'Are you sure?' } %>

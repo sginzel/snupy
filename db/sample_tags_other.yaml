@@ -1,0 +1,101 @@
+---
+- id: 30100
+  tag_name: TOOL
+  tag_value: gatk
+  tag_type: ATTRIBUTE
+  description: Data was derived from GATK
+- id: 30200
+  tag_name: TOOL
+  tag_value: mutect
+  tag_type: ATTRIBUTE
+  description: Data was derived from Mutect
+- id: 30300
+  tag_name: TOOL
+  tag_value: varscan2
+  tag_type: ATTRIBUTE
+  description: Data was derived from varscan2
+- id: 30400
+  tag_name: TOOL
+  tag_value: excavator2
+  tag_type: ATTRIBUTE
+  description: Data was derived from Excavator2
+- id: 30500
+  tag_name: TOOL
+  tag_value: unknown
+  tag_type: ATTRIBUTE
+  description: "Data was derived from an unknown source (default)"
+- id: 40001
+  tag_name: DATA_TYPE
+  tag_value: snv
+  tag_type: ATTRIBUTE
+  description: Data contains SNV information
+- id: 40002
+  tag_name: DATA_TYPE
+  tag_value: indel
+  tag_type: ATTRIBUTE
+  description: Data contains InDel information
+- id: 40003
+  tag_name: DATA_TYPE
+  tag_value: cnv
+  tag_type: ATTRIBUTE
+  description: Data contains CNV information
+- id: 40004
+  tag_name: DATA_TYPE
+  tag_value: somatic
+  tag_type: ATTRIBUTE
+  description: Data contains somatic mutations
+- id: 40005
+  tag_name: DATA_TYPE
+  tag_value: germline
+  tag_type: ATTRIBUTE
+  description: Data contains germline mutations
+- id: 50001
+  tag_name: SAMPLE_GROUP
+  tag_value: control
+  tag_type: ATTRIBUTE
+  description: Data contains mutations that may be used as a shared control
+- id: 50002
+  tag_name: SAMPLE_GROUP
+  tag_value: malignant
+  tag_type: ATTRIBUTE
+  description: Sample contains mutations from malignant diseases (such as cancer)
+- id: 50003
+  tag_name: SAMPLE_GROUP
+  tag_value: immunedefect
+  tag_type: ATTRIBUTE
+  description: Data contains mutations from immune deficiency
+- id: 60001
+  tag_name: SAMPLE_BACKGROUND
+  tag_value: predispose
+  tag_type: ATTRIBUTE
+  description: Sample possibly contains disease causing mutations
+- id: 60002
+  tag_name: SAMPLE_BACKGROUND
+  tag_value: transformed
+  tag_type: ATTRIBUTE
+  description: Sample was transformed
+- id: 60003
+  tag_name: SAMPLE_BACKGROUND
+  tag_value: transformed_viral
+  tag_type: ATTRIBUTE
+  description: Sample was virally transformed
+- id: 60004
+  tag_name: SAMPLE_BACKGROUND
+  tag_value: sorted
+  tag_type: ATTRIBUTE
+  description: Sample was sorted
+- id: 60005
+  tag_name: SAMPLE_BACKGROUND
+  tag_value: commercial_cellline
+  tag_type: ATTRIBUTE
+  description: Sample is a commercially available cell line
+- id: 60006
+  tag_name: SAMPLE_BACKGROUND
+  tag_value: partial
+  tag_type: ATTRIBUTE
+  description: Sample derivated from average purity for any reason
+- id: 60007
+  tag_name: SAMPLE_BACKGROUND
+  tag_value: xenograft
+  tag_type: ATTRIBUTE
+  description: Sample derivated from xenograft

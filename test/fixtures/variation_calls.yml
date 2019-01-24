@@ -1,0 +1,115 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+# heterozygous in parnets, homozygous in child
+variant_trio_child_recessive:
+  sample: sample_child1
+  variation: missense_variant
+  qual: 0
+  filter: PASS
+  gt: 1/1
+  ps: 0
+  dp: 10
+  gl: 99
+  gq: 99
+  ref_reads: 0
+  alt_reads: 100
+variant_trio_father_recessive:
+  sample: sample_father1
+  variation: missense_variant
+  qual: 0
+  filter: PASS
+  gt: 0/1
+  ps: 0
+  dp: 10
+  gl: 99
+  gq: 99
+  ref_reads: 50
+  alt_reads: 50
+variant_trio_mother_recessive:
+  sample: sample_mother1
+  variation: missense_variant
+  qual: 0
+  filter: PASS
+  gt: 0/1
+  ps: 0
+  dp: 10
+  gl: 99
+  gq: 99
+  ref_reads: 60
+  alt_reads: 40
+
+# silent mutation present in all familiy members
+variant_trio_child_inherit:
+  sample: sample_child1
+  variation: silent_variant
+  qual: 0
+  filter: PASS
+  gt: 0/1
+  ps: 0
+  dp: 10
+  gl: 99
+  gq: 99
+  ref_reads: 40
+  alt_reads: 60
+variant_trio_father_inherit:
+  sample: sample_father1
+  variation: silent_variant
+  qual: 0
+  filter: PASS
+  gt: 0/1
+  ps: 0
+  dp: 10
+  gl: 99
+  gq: 99
+  ref_reads: 50
+  alt_reads: 50
+variant_trio_mother_inherit:
+  sample: sample_mother1
+  variation: silent_variant
+  qual: 0
+  filter: PASS
+  gt: 0/1
+  ps: 0
+  dp: 10
+  gl: 99
+  gq: 99
+  ref_reads: 60
+  alt_reads: 40
+
+# somatic mutation
+variant_tumor_normal_child_somatic_mutect:
+  sample: sample_tumor_normal_child1_mutect
+  variation: missense_variant
+  qual: 0
+  filter: PASS
+  gt: 0/1
+  ps: 0
+  dp: 10
+  gl: 99
+  gq: 99
+  ref_reads: 40
+  alt_reads: 60
+variant_tumor_normal_child_somatic_varscan:
+  sample: sample_tumor_normal_child1_varscan
+  variation: missense_variant
+  qual: 0
+  filter: PASS
+  gt: 0/1
+  ps: 0
+  dp: 10
+  gl: 99
+  gq: 99
+  ref_reads: 50
+  alt_reads: 50
+variant_tumor_normal_child_gatk:
+  sample: sample_tumor_normal_child1_gatk
+  variation: missense_variant
+  qual: 0
+  filter: PASS
+  gt: 0/1
+  ps: 0
+  dp: 10
+  gl: 99
+  gq: 99
+  ref_reads: 80
+  alt_reads: 20

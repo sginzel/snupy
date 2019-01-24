@@ -1,0 +1,37 @@
+<h1>Entities</h1>
+
+<%= render_table(@entities,
+	title: "#{params[:count] || @entities.count} most recently updated",
+	id: "entities",
+	columns: %w(EntityGroup Entity Specimens nickname institution notes created_at updated_at),
+	column_order: %w(EntityGroup Entity Specimens nickname tags* institution notes created_at updated_at),
+	selectbox: true,
+	select_type: :option,
+	selected: params[:ids],
+	record_color: {
+							"EntityGroup" => :factor,
+							"Entity" => :factor,
+							"Specimens" => :factor
+						},
+	actions: {
+						"Assign Specimen" => assign_specimen_probe_entities_path(),
+						"Assign Entity Group" => assign_entity_group_entities_path(),
+						"Assign Tags" => assign_tags_entities_path()
+					}
+	){|rec, ent|
+		ent.tags_by_category.each do |category, tags|
+			rec["tags[#{category}]"] = tags.map(&:value).flatten.join(" | ")
+		end
+		rec["EntityGroup"] = (!ent.entity_group.nil?)?(link_to ent.entity_group.name, ent.entity_group, {data: {context:{"Show" => entity_group_path(ent.entity_group), "Edit" => edit_entity_group_path(ent.entity_group)}}}):("No Entitiy Group set")
+		rec["institution"] = (!ent.institution.nil?)?(link_to ent.institution.name, ent.institution):("No Institution set") 
+		rec["Entity"] = link_to ent.name, entity_path(ent), {data: {context:{"Show" => entity_path(ent), "Edit" => edit_entity_path(ent)}}}
+		rec["Specimens"] = ent.specimen_probes.map(&:name)
+		rec["Edit"] = ""
+		rec["Edit"] = link_to ent.name, edit_entity_path(ent) if @my_entities.include?(ent.id)
+		rec
+	}
+%>
+
+<br />
+
+<%= link_to 'New Entity', new_entity_path %>

@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  model: MyText
+  attribute: MyString
+  direction: 1
+  estimator: 
+  model_table: MyString
+  organism: 1
+  last_variation_id: 1
+
+two:
+  model: MyText
+  attribute: MyString
+  direction: 1
+  estimator: 
+  model_table: MyString
+  organism: 1
+  last_variation_id: 1

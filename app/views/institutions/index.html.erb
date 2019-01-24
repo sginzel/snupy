@@ -1,0 +1,22 @@
+<h1>Institutions</h1>
+
+<%= render_table(@institutions,
+								title: "",
+								id: "institutions",
+								selectbox: false,
+								css: {width: "800px"},
+								columns: %w(name contact email phone affiliations),
+								column_order: %w(name contact email phone affiliations Show)
+								){|rec, institution|
+									rec["affiliations"] = institution.roles.map{|user, roles|
+										link_to "#{user.name}(#{roles.join(', ')})", user_path(user)
+									}.join(" | ")
+									rec["Edit"] = link_to 'Edit', edit_institution_path(institution)
+									rec["Destroy"] = link_to 'Destroy', institution, method: :delete, data: { confirm: 'Are you sure?' } 
+									rec	
+								}
+%>
+
+<br />
+
+<%= link_to 'New Institution', new_institution_path %>

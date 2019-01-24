@@ -1,0 +1,65 @@
+development:
+  ensembl_version: 80
+  homo_sapiens_build: 37
+  mus_musculus_build: 38
+  homo_sapiens_core: homo_sapiens_core_<%=VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_version")%>_<%=VariantEffectPredictorAnnotation.load_configuration_variable("homo_sapiens_build")%>
+  mus_musculus_core: mus_musculus_core_<%=VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_version")%>_<%=VariantEffectPredictorAnnotation.load_configuration_variable("mus_musculus_build")%>
+  vepbase: <%= Rails.root %>/extras/snupy_again/aqua/annotations/variant_effect_predictor/bin
+  tool_version: <%=VariantEffectPredictorAnnotation.load_configuration_variable("vepbase")%>/ensembl_<%=VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_version")%>
+  ensembl_lib: <%=VariantEffectPredictorAnnotation.load_configuration_variable("tool_version")%>/lib
+  vepscript: <%=VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_lib")%>/ensembl-tools/scripts/variant_effect_predictor/variant_effect_predictor.pl
+  vep_cache: <%=VariantEffectPredictorAnnotation.load_configuration_variable("tool_version")%>/cache
+  fasta_files: <%=VariantEffectPredictorAnnotation.load_configuration_variable("vep_cache")%>/fasta_files
+  plugins: <%=VariantEffectPredictorAnnotation.load_configuration_variable("vep_cache")%>/Plugins
+  dbNSFP_version: 2.5
+  num_cores: 4
+# host: bio.inf.h-brs.de
+  host: 194.95.66.234
+  port: 13306
+  username: ensembl
+  password: ensembldbuser
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  ensembl_version: 80
+  homo_sapiens_build: 37
+  mus_musculus_build: 38
+  homo_sapiens_core: homo_sapiens_core_<%=VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_version")%>_<%=VariantEffectPredictorAnnotation.load_configuration_variable("homo_sapiens_build")%>
+  mus_musculus_core: mus_musculus_core_<%=VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_version")%>_<%=VariantEffectPredictorAnnotation.load_configuration_variable("mus_musculus_build")%>
+  vepbase: <%= Rails.root %>/extras/snupy_again/aqua/annotations/variant_effect_predictor/bin
+  tool_version: <%=VariantEffectPredictorAnnotation.load_configuration_variable("vepbase")%>/ensembl_<%=VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_version")%>
+  ensembl_lib: <%=VariantEffectPredictorAnnotation.load_configuration_variable("tool_version")%>/lib
+  vepscript: <%=VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_lib")%>/ensembl-tools/scripts/variant_effect_predictor/variant_effect_predictor.pl
+  vep_cache: <%=VariantEffectPredictorAnnotation.load_configuration_variable("tool_version")%>/cache
+  fasta_files: <%=VariantEffectPredictorAnnotation.load_configuration_variable("vep_cache")%>/fasta_files
+  plugins: <%=VariantEffectPredictorAnnotation.load_configuration_variable("vep_cache")%>/Plugins
+  dbNSFP_version: 2.5
+  num_cores: 1
+# host: bio.inf.h-brs.de
+  host: 194.95.66.234
+  port: 13306
+  username: ensembl
+  password: ensembldbuser
+
+production:
+  ensembl_version: 80
+  homo_sapiens_build: 37
+  mus_musculus_build: 38
+  homo_sapiens_core: homo_sapiens_core_<%=VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_version")%>_<%=VariantEffectPredictorAnnotation.load_configuration_variable("homo_sapiens_build")%>
+  mus_musculus_core: mus_musculus_core_<%=VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_version")%>_<%=VariantEffectPredictorAnnotation.load_configuration_variable("mus_musculus_build")%>
+  vepbase: <%= Rails.root %>/extras/snupy_again/aqua/annotations/variant_effect_predictor/bin
+  tool_version: <%=VariantEffectPredictorAnnotation.load_configuration_variable("vepbase")%>/ensembl_<%=VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_version")%>
+  ensembl_lib: <%=VariantEffectPredictorAnnotation.load_configuration_variable("tool_version")%>/lib
+  vepscript: <%=VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_lib")%>/ensembl-tools/scripts/variant_effect_predictor/variant_effect_predictor.pl
+  vep_cache: <%=VariantEffectPredictorAnnotation.load_configuration_variable("tool_version")%>/cache
+  fasta_files: <%=VariantEffectPredictorAnnotation.load_configuration_variable("vep_cache")%>/fasta_files
+  plugins: <%=VariantEffectPredictorAnnotation.load_configuration_variable("vep_cache")%>/Plugins
+  dbNSFP_version: 2.5
+  num_cores: 4
+# host: bio.inf.h-brs.de
+  host: 194.95.66.234
+  port: 13306
+  username: ensembl
+  password: ensembldbuser

@@ -1,0 +1,62 @@
+development:
+  annovar_version: "2015Mar22"
+  homo_sapiens_build: hg19
+  mus_musculus_build: mm9
+  homo_sapiens_core: homo_sapiens_core_<%=AnnovarAnnotation.load_configuration_variable("ensembl_version")%>_<%=AnnovarAnnotation.load_configuration_variable("homo_sapiens_build")%>
+  mus_musculus_core: mus_musculus_core_<%=AnnovarAnnotation.load_configuration_variable("ensembl_version")%>_<%=AnnovarAnnotation.load_configuration_variable("mus_musculus_build")%>
+  annovar_base: <%= Rails.root %>/extras/snupy_again/aqua/annotations/annovar/bin
+  annovar_lib: <%=AnnovarAnnotation.load_configuration_variable("annovar_base")%>/lib/annovar_<%=AnnovarAnnotation.load_configuration_variable("annovar_version")%> # include
+  annovar_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/annotate_variation.pl
+  annovar_convert_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/convert2annovar.pl
+  annovar_coding_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/coding_change.pl
+  annovar_retrieve_seq_from_fasta_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/retrieve_seq_from_fasta.pl
+  annovar_table_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/table_annovar.pl
+  annovar_cache_homo_sapiens: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/humandb
+  annovar_cache_mus_musculus: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/mousedb
+  homo_sapiens_ensGene: <%= AnnovarAnnotation.load_configuration_variable("annovar_cache_homo_sapiens") %>/<%=AnnovarAnnotation.load_configuration_variable("homo_sapiens_build")%>_ensGene.txt
+  homo_sapiens_ensGeneMrna: <%= AnnovarAnnotation.load_configuration_variable("annovar_cache_homo_sapiens") %>/<%=AnnovarAnnotation.load_configuration_variable("homo_sapiens_build")%>_ensGeneMrna.fa
+  mus_musculus_ensGene: <%= AnnovarAnnotation.load_configuration_variable("annovar_cache_mus_musculus")%>/<%=AnnovarAnnotation.load_configuration_variable("mus_musculus_build")%>_ensGene.txt
+  mus_musculus_ensGeneMrna: <%= AnnovarAnnotation.load_configuration_variable("annovar_cache_mus_musculus")%>/<%=AnnovarAnnotation.load_configuration_variable("mus_musculus_build")%>_ensGeneMrna.fa
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  annovar_version: "2015Mar22"
+  homo_sapiens_build: hg19
+  mus_musculus_build: mm9
+  homo_sapiens_core: homo_sapiens_core_<%=AnnovarAnnotation.load_configuration_variable("ensembl_version")%>_<%=AnnovarAnnotation.load_configuration_variable("homo_sapiens_build")%>
+  mus_musculus_core: mus_musculus_core_<%=AnnovarAnnotation.load_configuration_variable("ensembl_version")%>_<%=AnnovarAnnotation.load_configuration_variable("mus_musculus_build")%>
+  annovar_base: <%= Rails.root %>/extras/snupy_again/aqua/annotations/annovar/bin
+  annovar_lib: <%=AnnovarAnnotation.load_configuration_variable("annovar_base")%>/lib/annovar_<%=AnnovarAnnotation.load_configuration_variable("annovar_version")%> # include
+  annovar_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/annotate_variation.pl
+  annovar_convert_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/convert2annovar.pl
+  annovar_coding_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/coding_change.pl
+  annovar_retrieve_seq_from_fasta_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/retrieve_seq_from_fasta.pl
+  annovar_table_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/table_annovar.pl
+  annovar_cache_homo_sapiens: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/humandb
+  annovar_cache_mus_musculus: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/mousedb
+  homo_sapiens_ensGene: <%= AnnovarAnnotation.load_configuration_variable("annovar_cache_homo_sapiens") %>/<%=AnnovarAnnotation.load_configuration_variable("homo_sapiens_build")%>_ensGene.txt
+  homo_sapiens_ensGeneMrna: <%= AnnovarAnnotation.load_configuration_variable("annovar_cache_homo_sapiens") %>/<%=AnnovarAnnotation.load_configuration_variable("homo_sapiens_build")%>_ensGeneMrna.fa
+  mus_musculus_ensGene: <%= AnnovarAnnotation.load_configuration_variable("annovar_cache_mus_musculus")%>/<%=AnnovarAnnotation.load_configuration_variable("mus_musculus_build")%>_ensGene.txt
+  mus_musculus_ensGeneMrna: <%= AnnovarAnnotation.load_configuration_variable("annovar_cache_mus_musculus")%>/<%=AnnovarAnnotation.load_configuration_variable("mus_musculus_build")%>_ensGeneMrna.fa
+
+production:
+  annovar_version: "2015Mar22"
+  homo_sapiens_build: hg19
+  mus_musculus_build: mm9
+  homo_sapiens_core: homo_sapiens_core_<%=AnnovarAnnotation.load_configuration_variable("ensembl_version")%>_<%=AnnovarAnnotation.load_configuration_variable("homo_sapiens_build")%>
+  mus_musculus_core: mus_musculus_core_<%=AnnovarAnnotation.load_configuration_variable("ensembl_version")%>_<%=AnnovarAnnotation.load_configuration_variable("mus_musculus_build")%>
+  annovar_base: <%= Rails.root %>/extras/snupy_again/aqua/annotations/annovar/bin
+  annovar_lib: <%=AnnovarAnnotation.load_configuration_variable("annovar_base")%>/lib/annovar_<%=AnnovarAnnotation.load_configuration_variable("annovar_version")%> # include
+  annovar_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/annotate_variation.pl
+  annovar_convert_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/convert2annovar.pl
+  annovar_coding_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/coding_change.pl
+  annovar_retrieve_seq_from_fasta_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/retrieve_seq_from_fasta.pl
+  annovar_table_script: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/table_annovar.pl
+  annovar_cache_homo_sapiens: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/humandb
+  annovar_cache_mus_musculus: <%=AnnovarAnnotation.load_configuration_variable("annovar_lib")%>/annovar/mousedb
+  homo_sapiens_ensGene: <%= AnnovarAnnotation.load_configuration_variable("annovar_cache_homo_sapiens") %>/<%=AnnovarAnnotation.load_configuration_variable("homo_sapiens_build")%>_ensGene.txt
+  homo_sapiens_ensGeneMrna: <%= AnnovarAnnotation.load_configuration_variable("annovar_cache_homo_sapiens") %>/<%=AnnovarAnnotation.load_configuration_variable("homo_sapiens_build")%>_ensGeneMrna.fa
+  mus_musculus_ensGene: <%= AnnovarAnnotation.load_configuration_variable("annovar_cache_mus_musculus")%>/<%=AnnovarAnnotation.load_configuration_variable("mus_musculus_build")%>_ensGene.txt
+  mus_musculus_ensGeneMrna: <%= AnnovarAnnotation.load_configuration_variable("annovar_cache_mus_musculus")%>/<%=AnnovarAnnotation.load_configuration_variable("mus_musculus_build")%>_ensGeneMrna.fa

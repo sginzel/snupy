@@ -1,0 +1,33 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+normal_user:
+  name: normal_user
+  full_name: normal user
+  is_admin: false
+  email: none@example.com
+  samples: sample_father1, sample_mother1, sample_child1
+  entity_groups: trio, tumor_normal
+
+data_manager:
+  name: data_manager
+  full_name: data_manager
+  is_admin: false
+  email: none@example.com
+
+research_manager:
+  name: research_manager
+  full_name: research manager
+  is_admin: false
+  email: none@example.com
+
+admin:
+  name: admin
+  full_name: admin
+  is_admin: true
+  email: none@example.com
+
+foreign_user:
+  name: foreign_user
+  full_name: Foreign user who shouldnt have any access
+  is_admin: false
+  email: none@example.com

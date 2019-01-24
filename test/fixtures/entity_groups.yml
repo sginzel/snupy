@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+trio:
+  name: Trio Entity Group
+  institution: ukd
+  organism: homo_sapiens
+  complete: true
+  contact: "no contact"
+
+tumor_normal:
+  name: Tumor/Normal Entity Group
+  institution: ukd
+  organism: homo_sapiens
+  complete: true
+  contact: "no contact"

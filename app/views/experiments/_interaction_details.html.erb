@@ -1,0 +1,32 @@
+<div id="node_details">
+	<p>
+		more information:
+		<%if(!params[:url].to_s.empty?)%>
+			<%= link_to  "#{gene_symbol}", "genecards.org/cgi-bin/carddisp.pl?gene=#{gene_symbol}",  :target => '_blank' %>
+		<%else%>
+			Gene could not be found at GeneCards
+		<%end%>
+	</p>
+
+	<p>
+		Protein: <%=gene_details[:gene]%><br>
+		Gene: <%=gene_details[:alias]%><br>
+		Group: <%=gene_details[:group]%><br>
+	</p>
+	
+	<%=render_table(
+			details,
+				  title: "Details for " + gene_symbol + " (max 200 records)",
+				  id: "gene_details_#{Time.now.to_i}",
+			selectbox: false,
+			groupby: ["variations.id", "sample_name"]
+	)%>
+</div>
+
+
+
+
+
+
+
+

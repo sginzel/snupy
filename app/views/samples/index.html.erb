@@ -1,0 +1,66 @@
+<h1>Samples</h1>
+<% 
+	actions = {}
+	actions["Assign to specimen"] = assign_specimen_samples_path()
+	actions["Similarity"] = sample_similarity_samples_path()
+	actions["Gender Coefficient"] = gender_coefficient_samples_path()
+
+	actions["Refresh Statistics"] = refresh_stats_samples_path() if current_user.is_data_manager?
+
+	actions["Refresh Samples"] = force_reload_samples_path() if current_user.is_admin
+	actions["Destroy Samples"] = mass_destroy_samples_path() if current_user.is_admin
+%>
+<%=render_table(@samples, 
+								title: "#{params[:count] || @samples.size} most recently updated",
+								selectbox: true,
+								collapsecell: -1,
+								record_color: {
+									"Group/Entity/Specimen/Sample" => :factor
+								},
+								column_order: %w(SampleID Group/Entity/Specimen/Sample patient ^name nickname specimen_probe_id vcf_file_name vcf_sample_name tags sample_type gender experiments institution ignorefilter min_read_depth info_matches contact notes status .*),
+								actions: actions
+								){|rec, smpl|
+	rec["SampleID"] = link_to "#{smpl.id}", sample_path(smpl)
+	# rec[:edit] = link_to 'Edit', edit_sample_path(rec[:id])
+	rec["Edit"] = ""
+	rec["Edit"] = link_to smpl.name, edit_sample_path(smpl) if @my_samples.include?(smpl.id)
+	rec[:destroy] = link_to 'Destroy', smpl, method: :delete, data: { confirm: 'Are you sure?' }
+# 	rec[:vcf_file_id] = link_to "#{rec[:vcf_file_id]}", vcf_file_path(rec[:vcf_file_id])
+	if rec[:vcf_file_id].to_s != "" then
+		vcf_file = smpl.vcf_file_nodata #VcfFile.find(rec[:vcf_file_id].to_i, select: [:name]) 
+		rec[:vcf_file_name] = link_to "#{vcf_file.name}", vcf_file_path(rec[:vcf_file_id])
+	else
+		rec[:vcf_file_name] = ""
+	end
+	rec[:experiments] = smpl.experiments.map{|exp| link_to exp.name, aqua_experiment_path(exp)}.join(", \n").html_safe
+	if !smpl.institution.nil?
+		rec[:institution] = link_to smpl.institution.name, sample_path(smpl.institution.id)
+	else
+		rec[:institution] = "No institution assigned"
+	end
+	rec[:tags] = smpl.tags_by_category.map{|category, tags| "#{category}: #{tags.map(&:value).join(";")}"}.join(", ")
+	# rec["Group/Entity/Specimen/Sample"] = ([ smpl.entity_group, smpl.entity, smpl.specimen_probe].map{|x| (!x.nil?)?(x.name):("")} + [smpl.nickname]).join(" | ")
+	rec["Group/Entity/Specimen/Sample"] = ([ smpl.entity_group, smpl.entity, smpl.specimen_probe].map{|x| (!x.nil?)?(x.name):("NA")} + [smpl.nickname])
+	rec
+}%>
+<br />
+<%= link_to 'Claim Sample', new_sample_path %>
+
+<% if current_user.is_admin then %>
+	<p>
+		<h2>Statistics</h2>
+		<%=render_table(@stat_collectors, 
+										title: "",
+										selectbox: false
+										){|rec, smpl|
+				rec["Calculate for all samples"] = "<div id='refreshall_stats_#{rec[:resource].hash}'>" + 
+										(link_to rec[:resource], 
+											refreshstats_samples_url(resource: rec[:resource], 
+											container: "refreshall_stats_#{rec[:resource].hash}", 
+											format: "js"
+										), remote: true, data: { confirm: 'This will refresh the statistics for ALL samples. Are you sure?' } , method: "PUT") +
+									"</div>"
+			rec
+		}%>
+	</p>
+<% end %>

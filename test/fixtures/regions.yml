@@ -1,0 +1,30 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+# 1:145075809-145075809G>T (stop gain=)
+missense_region:
+  name: 1
+  start: 145075809
+  stop: 145075809
+  coord_system: chromsome
+
+# missense region 2 1:186321242-186321242C>T
+missense_region2:
+  name: 1
+  start: 186321242
+  stop: 186321242
+  coord_system: chromsome
+
+
+# 1:144930869-144930869C>A
+silent_region:
+  name: 1
+  start: 144930869
+  stop: 144930869
+  coord_system: chromosome
+
+# 1:156845492-156845496A>AGTGT
+indel_region:
+  name: 1
+  start: 156845492
+  stop: 156845496
+  coord_system: chromosome

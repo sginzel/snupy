@@ -1,0 +1,90 @@
+<%= form_for(@generic_list, :html => {:multipart => true}) do |f| %>
+  <% if @generic_list.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@generic_list.errors.count, "error") %> prohibited this generic_list from being saved:</h2>
+
+      <ul>
+      <% @generic_list.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+	<div class="field">
+		<%= f.label :title %>
+		<br />
+		<%= f.text_field :title %>
+	</div>
+	
+	<div class="field">
+		<%= f.label :name %>
+		<br />
+		<%= f.text_field :name %>
+	</div>
+	
+	<div class="field">
+		<%= f.label :description %>
+		<br />
+		<%= f.text_area :description %>
+	</div>
+	
+	<div class="field" >
+		<%= f.label :type %>
+		<br />
+		<%= f.select(:type, 
+								options_for_select(
+									(GenericList::AVAILABLE_TYPES.map{|x| [x,x]}),
+									selected: @generic_list.type
+									)
+								)
+		%>
+	
+	</div>
+	
+	<% if @generic_list.items.size > 0 then %>
+		<%=render_table(@generic_list.items, 
+									title: "List Items"
+				)%>
+	<% end %>
+	<%=field_set_tag "Add/Replace Items" do %>
+		<div class="field">
+			<%= label_tag :Data%> <br />
+			<%= text_area_tag 'file[data]', (params[:file] || {})[:data], rows: 16, cols: 48 %>
+		</div>
+	 or <br />
+		<div class="field">
+			<%= label_tag :file %> (CSV, UTF-8 or ASCII encoded, double-quotes as quote characters)
+			<br />
+			<%= file_field_tag 'file[content]' %>
+		</div>
+	<% end %>
+	<%=field_set_tag "Data format description" do %>
+		<div class="field">
+			<%= label_tag "Columns index (0-based)" %>
+			<%= text_field_tag 'file[idx]', "", value: "0", size: 2 %>
+			<br />
+			<%= label_tag "Seperator (default: tab)" %>
+			<%= text_field_tag 'file[sep]', "", value: "\t", size: 2 %>
+			<br />
+			<%= label_tag "Contains a header" %>
+			<%= hidden_field_tag 'file[header]', "0" %>
+			<%= check_box_tag 'file[header]', "1", (params[:file] || {})[:header] == "1" %>
+		</div>
+	<% end %>
+
+	<br />
+	
+	<div class="field">
+    <%= f.label :user %><br />
+    <%= render partial: "users/list", locals:{
+    		users: @users, 
+    		compact: true,
+    		selected: @generic_list.user_ids
+    }%>
+	</div>
+	
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

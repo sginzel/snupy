@@ -1,0 +1,41 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+father1:
+  name: father1
+  nickname: fthr1
+  notes: Father of some sort
+  internal_identifier: int_id
+  date_first_diagnosis: "1.1.2000"
+  family_members_available: true
+  entity_group: trio
+  contact: "no test contact"
+
+mother1:
+  name: Mother1
+  nickname: mthr
+  notes: some mother
+  internal_identifier: int_id
+  date_first_diagnosis:
+  family_members_available: true
+  entity_group: trio
+  contact: "no test contact"
+
+child1:
+  name: TrioTestChild
+  nickname: TrioChild
+  notes: ""
+  internal_identifier: int_id
+  date_first_diagnosis: "1.1.2000"
+  family_members_available: true
+  entity_group: trio
+  contact: "no test contact"
+
+child_tumor_normal:
+  name: TumorNormalChild
+  nickname: TumorNormal
+  notes: Tumor normal test
+  internal_identifier: int_id2
+  date_first_diagnosis: "1.1.2000"
+  family_members_available: false
+  entity_group: tumor_normal
+  contact: "no test contact"

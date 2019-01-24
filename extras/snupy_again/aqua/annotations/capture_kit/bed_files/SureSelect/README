@@ -1,0 +1,8 @@
+SOURCE: https://earray.chem.agilent.com/suredesign/search.htm
+Register an account - use UKD-KOHI as your work group. 
+
+Click "Find Desgins" 
+Agilent Catalog -> Download the files you want.
+Take care that you at least include the Regions-File in the zip
+
+execute extract.sh to unpack the regions from the zip files.

@@ -1,0 +1,180 @@
+<%= form_for(@sample) do |f| %>
+	<% if @sample.errors.any? %>
+		<div id="error_explanation">
+			<h2><%= pluralize(@sample.errors.count, "error") %> prohibited this sample from being saved:</h2>
+
+			<ul>
+			<% @sample.errors.full_messages.each do |msg| %>
+				<li><%= msg %></li>
+			<% end %>
+			</ul>
+		</div>
+	<% end %>
+	<%= field_set_tag "Sample data source", style: "width: 30%" do %>
+		<div class="field">
+			<%= f.label :vcf_file_id %>: <br />
+			<% if @vcf_file.nil? or @user.is_admin? or !@sample.persisted? then %>
+				<%= f.select :vcf_file_id, 
+										options_for_select(
+											@vcf_files.map{|vcf_file|
+												next if @added_vcf_files[vcf_file.id].nil?
+												background = case @added_vcf_files[vcf_file.id].size
+												when 0 
+													"white"
+												else 
+													"lightblue"
+												end
+												[vcf_file.name, vcf_file.id, {style: "background-color: #{background}"}]
+											}.reject(&:nil?), (@vcf_file.nil?)?-1:@vcf_file.id
+										),
+										{include_blank: true},
+										{
+											#onclick: "refreshVcfSampleNames($(this).val());",
+											onclick: "refreshVcfSampleNames($(this).val());",
+											"data-source" => claimable_samples_url(format: :json)
+										}
+				 %>
+			<% else %>
+				<span class='ui-widget ui-widget-content'>
+					<%= @vcf_file.name %>
+				</span>
+				<span class="ui-icon ui-icon-info" style="display:inline-block" title="It is unusual to change the VCF file for a sample. Please contact an administrator to do so."></span>
+			<% end %>
+		</div>
+		<div class="field">
+			<%= f.label :vcf_sample_name %>: <br />
+			<% if @vcf_file.nil? or @user.is_admin? or !@sample.persisted? then %>
+				<%= f.select :vcf_sample_name, 
+											options_for_select(
+												(@vcf_file.nil?)?[]:(@vcf_file.sample_names.map{|s| [s,s]}), 
+												(@sample.vcf_sample_name.nil?)?((params["vcf_sample_name"].nil?)?-1:params["vcf_sample_name"]):@sample.vcf_sample_name), 
+											{}, onclick: "refreshSampleNameField(this, true)" %>
+			<% else %>
+				<span class='ui-widget ui-widget-content'>
+					<%= @sample.vcf_sample_name %>
+				</span>
+			<% end %>
+		</div>
+	<% end %>
+	<%= field_set_tag "Sample description", style: "width: 30%" do %>
+		<div class="field">
+			<%= f.label :name %>: <br />
+			<%= f.text_field :name, size: 64 %>
+		</div>
+		<div class="field">
+			<%= f.label :nickname %>: <br />
+			<%= f.text_field :nickname, size: 64 %>
+		</div>
+		<div class="field">
+			<%= f.label :patient %>: <br />
+			<%= f.text_field :patient, size: 64 %>
+		</div>
+		
+		<div class="field">
+			<%= f.label :gender %>: <br />
+			<%= f.select :gender, options_for_select([["Unknown", "unknown"], ["Male", "male"], ["Female", "female"]], @sample.gender) %>
+		</div>
+		
+		<div class="field">
+			<%= f.label :sample_type %>: <br />
+			<%= f.select :sample_type, options_for_select(Sample::AVAILABLE_TYPE.map{|t| [t,t]}, @sample.sample_type) %>
+		</div>
+		
+		<div class="field">
+			<%= f.label :notes %>: <br>
+			<%= f.text_area :notes, cols: 49, rows: 8%>
+		</div>
+		
+		<div class="field">
+			<%= f.label :contact %>:<br />
+			<%= f.text_field :contact, value: current_user.full_name, size: 64 %>
+		</div>
+	<% end %>	
+	
+	<div class="field" style="width: 40%;">
+		<%= render partial: "tags/tags", locals: {
+			tags: @tags,
+			selected_tags: @selected_tags,
+			category_color: {
+				"DATA_TYPE" => "palegreen"
+			},
+			category_text: {
+				"DATA_TYPE" => "required"
+			}
+		}%>
+	</div>
+	
+	<%= field_set_tag "Import restrictions", style: "width: 30%" do %>
+		<div class="field">
+			<%= f.label :ignorefilter %>:	<br />
+			<%= hidden_field_tag 'ignorefilter', "0" %>
+			<%= f.check_box :ignorefilter %>
+		</div>
+		<div class="field">
+			<%= f.label "Filters" %><br />
+			<div id="available_filters">
+				<% if @vcf_file.nil? then%>
+					Please select a VCF file.
+				<% else %>
+					<% YAML.load(@vcf_file.filters).each do |filterval, numfilter|%>
+						<input value='<%=filterval%>' type=checkbox name='sample[filters][]' <%=@sample.filters.split(",").include?(filterval)?"checked":""%>><%=filterval%> (<%=numfilter%>)<br>
+					<% end %>
+				<% end %>
+			</div>
+		</div>
+		<div class="field">
+			<%= f.label :min_read_depth %>:	<br />
+			<%= f.text_field :min_read_depth, size: 64 %>
+		</div>
+		
+		<div class="field">
+			<%= f.label :info_matches %>:	<br />
+			<%= f.text_area :info_matches, cols: 49, rows: 2 %>
+		</div>
+		<div>
+			<%= label_tag "Force reload" %>
+			<%= hidden_field_tag 'force_reload', "0" %>
+			<%= check_box_tag 'force_reload', "1" %>
+		</div>
+		<br />
+	<% end %>
+	<%= field_set_tag "Access control", style: "width: 30%" do %>
+		<div class="field">
+			<%= f.label :user %><br />
+			<%= render partial: "users/list", locals:{
+					users: @users, 
+					compact: true,
+					selected: @sample.user_ids
+			}%>
+			
+		</div>
+	<% end %>
+	<div class="field">
+		<%= f.label :status %><br />
+		<%= f.select :status,
+						options_for_select(
+							Sample::AVAILABLE_STATUS,
+							selected: ((@sample.nil?)?(Sample::AVAILABLE_STATUS.first):(@sample.status)).to_s
+						) %>
+	</div>
+	
+	<div class="field">
+		<%= render_table(@specimen_probes,
+						 id: "specimen_probe_id",
+						 title: "Specimen Probeid",
+						 selectbox: :radio
+			) %>
+	</div>
+	
+	
+	<% if not @sample.persisted? then %>
+		<div class="field">
+			<%= f.label :sample_sheet %><br />
+			<%= f.file_field :sample_sheet %>
+		</div>
+	<% end %>
+	
+	<div class="actions">
+		<%= f.submit %>
+	</div>
+<% end %>

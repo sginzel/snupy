@@ -1,0 +1,81 @@
+#!/bin/bash
+
+function on_exit()
+{
+	echo "SnpEff script terminated"
+	echo "SnpEff script terminated" >&2
+	if [ ! "$OUTPUT" == "" ]; then
+		mv -f "$OUTPUT" "$OUTPUT.error"
+	fi
+	exit 1
+}
+
+trap on_exit SIGHUP SIGINT SIGTERM SIGQUIT
+
+SNPEFFVERSION="<%=SnpEffAnnotation.load_configuration_variable("snpeff_version")%>"
+SNPEFFBASE="<%=SnpEffAnnotation.load_configuration_variable("snpeffbase")%>"
+SNPEFFLIB="<%=SnpEffAnnotation.load_configuration_variable("snpeff_lib")%>"
+SNPEFFJAR="<%=SnpEffAnnotation.load_configuration_variable("snpeff_jar")%>"
+SNPEFFCONFIG="<%=SnpEffAnnotation.load_configuration_variable("snpeffconfig")%>"
+SNPEFFCACHE="<%=SnpEffAnnotation.load_configuration_variable("snpeffcache")%>"
+SNPEFFSTATISTICS="<%=SnpEffAnnotation.load_configuration_variable("snpeff_statistics")%>"
+HOMOSAPIENS="<%=SnpEffAnnotation.load_configuration_variable("homo_sapiens_build")%>"
+MUSMUSCULUS="<%=SnpEffAnnotation.load_configuration_variable("mus_musculus_build")%>"
+
+INPUT=
+OUTPUT=
+
+DEBUG="-debug"
+
+CHR=""
+SPECIES="homo_sapiens"
+
+while getopts "dFi:o:f:t:c:C:" OPTION
+do
+	case $OPTION in
+		d)
+			DEBUG="-verbose"
+			;;
+		i)
+			INPUT=$OPTARG
+			;;
+		o)
+			OUTPUT=$OPTARG
+			;;
+		t)
+			SPECIES=$OPTARG
+			;;
+		c)
+			CACHEDIR="--cache --dir $OPTARG --prefetch --no_adaptor_cache --write_cache --strip"
+			;;
+		C)
+			CHR=$(echo $OPTARG | tr -d "\n")
+			;;
+	esac
+done
+
+if [ "$INPUT" == "" ]; then
+	echo "NO INPUT GIVEN. Use -i to give input" 1>&2
+	exit 1
+fi
+
+if [ "$OUTPUT" == "" ]; then
+	OUTPUT="$INPUT.snp_eff.vcf"
+fi
+
+if [ "$SPECIES" == "homo_sapiens" ]; then
+	DBOPTS=$HOMOSAPIENS
+fi
+
+if [ "$SPECIES" == "mus_musculus" ]; then
+	DBOPTS=$MUSMUSCULUS
+fi
+
+unamestr=`uname`
+
+if [ "$DEBUG" != "--quiet" ]; then
+	echo "+++++++++++++++++++++++"
+	echo "java -Xmx4g -jar $SNPEFFJAR -c $SNPEFFCONFIG $DEBUG -noStats $DBOPTS $INPUT > $OUTPUT"
+	echo "-------------------------"
+fi
+java -Xmx4g -jar $SNPEFFJAR $DBOPTS -c $SNPEFFCONFIG $DEBUG -noStats  $INPUT > $OUTPUT

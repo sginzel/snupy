@@ -1,0 +1,3 @@
+class GenericGeneListsController < GenericListsController
+
+end

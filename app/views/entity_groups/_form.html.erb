@@ -1,0 +1,106 @@
+<%= form_for(@entity_group) do |f| %>
+	<% if @entity_group.errors.any? %>
+	<div id="error_explanation">
+		<h2><%= pluralize(@entity_group.errors.count, "error") %> prohibited this entity_group from being saved:</h2>
+	
+		<ul>
+			<% @entity_group.errors.full_messages.each do |msg| %>
+			<li>
+				<%= msg %>
+			</li>
+			<% end %>
+		</ul>
+	</div>
+	<% end %>
+
+	<div class="field required">
+		<%=render_combobox @institutions, 
+							label: "Institution", 
+							id: "entity_group[institution_id]", 
+							labelattr: :name, 
+							valueattr: :id,
+							selected: @selected_institution.id, 
+							validonly: true, allowempty: false,
+							include_blank: true,
+							onchange: "location.href = '#{request.path}?institution_id=' + $('#entity_group\\\\[institution_id\\\\]').val()"
+		%>
+	</div>
+	<% if !@selected_institution.id.nil? %>
+		<div class="field required">
+			<%= f.label :name %>
+			<br />
+			<%= f.text_field :name, value: (@entity_group.name || @proposed_name), "autofocus" => "", "onfocus" => "$(this).select()" %>
+		</div>
+		
+		<div class="field">
+			<%= f.label :contact %>
+			<br />
+			<%= f.text_field :contact, value: (@entity_group.contact || current_user.full_name), "onfocus" => "$(this).select()" %>
+		</div>
+		
+		<div class="field required">
+			<%=render_combobox(@organisms,
+												id: "organism_name",
+												label: "Organism",
+												labelattr: :name, 
+												valueattr: :name,
+												selected: @selected_organism.name,
+												valid_only: true, allow_empty: false,
+												include_blank: true
+			)%>
+		</div>
+		
+		<div class="field">
+			<br />
+			<%=render_table @experiments, 
+								title: "Projects", 
+								id: "experiment_ids", 
+								selected: @selected_experiments, 
+								selectbox: true
+								%>
+		</div>
+		
+		<%= field_set_tag "Access control", style: "width: 30%" do %>
+			<div class="field">
+				<%= render partial: "users/list", locals:{
+						users: @users, 
+						compact: true,
+						selected: @selected_users,
+						title: "Users"
+				}%>
+			</div>
+		<% end %>
+		<%= field_set_tag "Entities" do %>
+			<% if @selected_entities.size > 0 %>
+				<div class="field">
+						<%= render_table(@selected_entities, 
+															title: "Entities", 
+															id: "entities_listed_#{Time.now.to_i}",
+															selectbox: false
+						
+						)%>
+				</div>
+			<% end %>
+			<% if @entity_group.persisted? then %>
+				<%= link_to "Assign Entity to this group", {controller: params[:controller], action: "index", ids: [@entity_group.id]} %>
+			<% end %>
+			<% if defined?@entity_template then %>
+				<div class="field">
+					<%= render_form_table(Entity, 
+														title: "Create new Entities", 
+														id: "entity_templates",
+														count: (params[:count] || 10),
+														attributes: @entity_template
+					
+					)%>
+				</div>
+			<% end %>
+		<% end %>
+		<br />
+		<div class="actions">
+			<%= f.submit %>
+		</div>
+	<% else %>
+		Please select an institution for which the entity group should be created. 
+	<% end %>
+<% end %>

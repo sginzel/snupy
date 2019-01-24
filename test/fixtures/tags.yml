@@ -1,0 +1,72 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+tag_disease:
+  object_type: Entity
+  category: DISEASE
+  subcategory:
+  value: MY DISEASE
+tag_class_shared_control:
+  object_type: Entity
+  category: CLASS
+  subcategory:
+  value: shared control
+tag_class_malignant:
+  object_type: Entity
+  category: CLASS
+  subcategory:
+  value: malignant
+tag_class_pid:
+  object_type: Entity
+  category: CLASS
+  subcategory:
+  value: primary immune deficiancy
+
+tag_init:
+  object_type: SpecimenProbe
+  category: STATUS
+  subcategory:
+  value: INIT
+tag_remi:
+  object_type: SpecimenProbe
+  category: STATUS
+  subcategory:
+  value: REMI
+
+tag_father:
+  object_type: SpecimenProbe
+  category: STATUS
+  subcategory:
+  value: CFFTHR
+tag_mother:
+  object_type: SpecimenProbe
+  category: STATUS
+  subcategory:
+  value: CFMTHR
+
+tag_tissue:
+  object_type: SpecimenProbe
+  category: TISSUE
+  subcategory:
+  value: Blood
+
+tag_somatic:
+  object_type: Sample
+  category: TYPE
+  subcategory:
+  value: somatic
+tag_snp:
+  object_type: Sample
+  category: TYPE
+  subcategory:
+  value: snp and indel
+
+tag_tool_gatk:
+  object_type: VcfFile
+  category: TOOL
+  subcategory:
+  value: GATK
+tag_tool_mutect:
+  object_type: VcfFile
+  category: TOOL
+  subcategory:
+  value: MUTECT

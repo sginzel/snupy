@@ -1,0 +1,259 @@
+<%
+	# the colors Hash allows many different formats
+	# {
+	# 	"Colname" => "black",														# color every cell of column colname black
+	# 	"Colname" => ["black", "red"],									# color cells black and red alternating - recycled as neccessary - even rows are labeled black, odd rows are labeld red
+	# 	"Colname" => {1 => "black", 2 => "red"},				# color cells black that are equal to 1, color cells red that are equal to 2 - dont color anything else. You can use the default value of the hash to give a default color
+	# 	"Colname" => {/[a-z]+/ => "black", /[A-Z]+/ => "red"}, # colors cells for Colname black or red depending on upper and lower case.
+	# 	"Colname" => Aqua.create_color_gradient([0,1]),	# map the values of the cells to the colors on a gradient
+	# 	/Colname.*/ => "black",													# color every cell of all columns that match the /Colname.*/ expression black
+	# 	/Colname.*/ => ["black", "red"],								# color every cell of all columns that match the /Colname.*/ expression alternating black and red
+	# 	/Colname.*/ => {1 => "black", 2 => "red"},			# color every cell of all columns that match the /Colname.*/ expression black or red depending on celltext
+	# 	/Colname.*/ => Aqua.create_color_gradient([0,1]), # same as above just use a color gradien
+	# 	/Colname.*/ => {/[a-z]+/ => "black", /[A-Z]+/ => "red"}, # colors cells for Colname.* black or red depending on upper and lower case.
+	# }
+	# The same rules apply for the record colors. These are only applied to single elements of the cell. Elements of one cell (such as multiple gene names) are seperated by " | " and the rules are applied to each element. 
+	## This is a generic partial that can be used to render arbitrary collections of
+	tblwidth = "100%"
+	if (defined? css) then
+		tblwidth = (css[:width] || tblwidth)
+	end
+	
+	tableid = "snupytable_#{Time.now.to_i}" unless defined? tableid
+	title = "" unless defined? title
+	model = "" unless defined? model
+	path_template = "" unless defined? path_template
+	ajax_params = {} unless defined? ajax_params
+	collapsecell = 50 unless defined? collapsecell
+	colors = {} unless defined? colors
+	record_colors = {} unless defined? record_colors
+	idcol = :id unless defined? idcol
+	select_type = :checkbox unless defined? select_type
+	table_class = "snupytable" unless defined? table_class
+	
+	if not defined? header then
+		if content.first.is_a?(ActiveRecord::Base) then
+			header = content.first.attribute_names
+		elsif content.first.is_a?(Hash) then
+			header = content.first.keys
+		else
+			header = [idcol]
+		end
+	end
+%>
+
+<!-- <div class="snupytablecontainer" style="width: <%= tblwidth %>"> -->
+<div class="snupytablecontainer">
+	<div class="ui-widget">
+		<% if title.to_s != "" then %>
+			<div class="ui-widget-header ui-corner-top snupytabletitle">
+				<h3><%= title.to_s %></h3>
+			</div>
+		<% end %>
+		<% if (not content.nil?) and content.size > 0 %>
+			<div class="ui-widget-content ui-corner-bottom snupytablescrollcontainer">
+				<% if table_class.to_s == "snupytable" then %>
+			<span class="snupytablecontainerloader">
+				<div style="float: left; vertical-align: middle;">Loading table ...</div>
+				<%= image_tag asset_path("ajax-loader.gif"), style: "width: 14px; background: #C9C9C9; border-radius: 100px; float: left;" %>
+			</span>
+				<% end %>
+				<table class="<%= "#{table_class} " %>display" id="<%= tableid %>" model=<%= model %> path="<%= path_template %>">
+					<%= hidden_field_tag(:model, model) %>
+					<% (ajax_params || {}).each do |k, v| %>
+						<%= hidden_field_tag("ajax_params[#{k}]", v.to_json, class: "ajax_param") %>
+					<% end %>
+					<% if header.size > 0 %>
+						<thead>
+						<tr>
+							<% header.each_with_index do |colname, colindex| %>
+								<th>
+									<%= content_tag :div do %>
+										<%= colname %>
+									<% end %>
+									<% if colname == "Select" then %>
+										<% if select_type == :checkbox %>
+											<%= check_box_tag "snupytable_selectall_#{tableid}", "1", false, class: "snupy_table_selectall" %>
+										<% end %>
+									<% end %>
+								</th>
+							<% end %>
+						</tr>
+						</thead>
+					<% end %>
+					<tbody>
+					<% content.each_with_index.map do |rec, rowno| %>
+						<% next if rec.nil? %>
+						<% resourceid = (rec[idcol] || rec[idcol.to_s]) %>
+						<tr id="<%= tableid %>_row_<%= rowno %>" resource-id="<%= resourceid %>">
+							<% header.each do |colname| %>
+								<% content = (rec[(colname||'').to_sym] || rec[(colname||'').to_s]) %>
+								<% content = content.join(" | ") if content.is_a?(Array) %>
+								<% content = content.to_s.html_safe %>
+								<%
+									if !(col = Aqua.match_regexp_key(colors, colname)).nil? then
+										cellcol  = nil # "#EEE" # default background color. Needs to be changed when using different CSS style
+										celltext = strip_tags(content.force_encoding('UTF-8'))
+										# col = (colors[colname.to_s] || colors[colname.to_sym])
+										# hashes can contain regular expressions as keys - although they have to be linearly matched...
+										if col.is_a?(Hash) then
+											cellcol = Aqua.match_regexp_key(col, celltext) # col[celltext]
+										elsif col.is_a?(Proc)
+											if !col.lambda? then
+												if col.arity.to_i.abs == 1 then
+													cellcol = lambda {|x| col.call(x)}.call(celltext)
+												else
+													cellcol = lambda {|x, y| col.call(x, y)}.call(celltext, rec)
+												end
+											else
+												if col.arity.to_i.abs == 1 then
+													cellcol = col.call(celltext)
+												else
+													cellcol = col.call(celltext, rec)
+												end
+											end
+										elsif col.is_a?(Symbol)
+											if col == :bool || col == :boolean then
+												if celltext.to_s == "false" then
+													cellcol = "salmon"
+												elsif celltext.to_s == "true" then
+													cellcol = "palegreen"
+												end
+											elsif col == :factor || col == :category then
+												cellcol = Aqua.factor_color(celltext)
+											elsif col == :factor_norm || col == :factor_insensitive || col == :category_insensitive then
+												cellcol = Aqua.factor_color(celltext.to_s.strip.downcase)
+											end
+										elsif col.is_a?(String) then
+											cellcol = col
+										elsif col.is_a?(Array) then
+											cellcol = col[rowno % col.length]
+										elsif col.is_a?(Interpolate::Points)
+											cellcol = col.at(celltext.to_f).html unless celltext.to_s == ""
+										end
+									else
+										cellcol = nil
+									end
+								%>
+								<% if (!(collapsecell.to_i < 0)) && (strip_tags(content).length > collapsecell.to_i || strip_tags(content).split(/[;,|]/).size > 5) then %>
+									<td class="ui-state-default bigcell" title="<%= strip_tags(content.force_encoding('UTF-8')) %>" <%= (cellcol.nil?) ? "" : "style='background-color:#{cellcol} !important; background:none'".html_safe %>
+									">
+								<% else %>
+									<td class="ui-state-default" <%= (cellcol.nil?) ? "" : "style='background-color:#{cellcol} !important; background:none'".html_safe %>>
+								<% end %>
+								<% if colname == "Select" then %>
+									<div class="draggable">
+										<%= content.force_encoding('UTF-8') %>
+										<% if path_template.to_s != "" then %>
+											<span class="ui-icon ui-icon-circle-triangle-s snupytableexpander" style="display:inline-block"></span>
+										<% end %>
+									</div>
+								<% else %>
+									<%= content.split(" | ").reject {|x| x.to_s == ""}.each_with_index.map {|record, recno|
+										record_text     = strip_tags(record).force_encoding('UTF-8')
+										record_text_col = nil
+										if !(colrecord = Aqua.match_regexp_key(record_colors, colname)).nil? then
+											if colrecord.is_a?(Hash) then
+												record_text_col = Aqua.match_regexp_key(colrecord, record_text) # col[celltext]
+											elsif colrecord.is_a?(Proc)
+												if !colrecord.lambda? then
+													if colrecord.arity.to_i.abs == 1 then
+														record_text_col = lambda {|x| colrecord.call(x)}.call(record_text)
+													else
+														record_text_col = lambda {|x, y| colrecord.call(x, y)}.call(record_text, rec)
+													end
+												else
+													if colrecord.arity.to_i.abs == 1 then
+														record_text_col = colrecord.call(record_text)
+													else
+														record_text_col = colrecord.call(record_text, rec)
+													end
+												end
+											elsif colrecord.is_a?(Symbol)
+												if colrecord == :bool || colrecord == :boolean then
+													if record_text.to_s == "false" then
+														record_text_col = "salmon"
+													elsif record_text.to_s == "true" then
+														record_text_col = "palegreen"
+													end
+												elsif colrecord == :factor || colrecord == :category then
+													record_text_col = Aqua.factor_color(record_text)
+												elsif colrecord == :factor_norm || colrecord == :factor_insensitive || colrecord == :category_insensitive then
+													record_text_col = Aqua.factor_color(record_text.to_s.strip.downcase)
+												end
+											elsif colrecord.is_a?(String) then
+												record_text_col = colrecord
+											elsif colrecord.is_a?(Array) then
+												record_text_col = colrecord[recno % colrecord.length]
+											elsif colrecord.is_a?(Interpolate::Points)
+												record_text_col = colrecord.at(record_text.to_f).html
+											end
+										end
+										"<span class='ui-corner-all' #{(record_text_col.nil?) ? "" : "style='background-color:#{record_text_col} !important;'".html_safe}>#{record}</span>"
+									}.join(", ").html_safe %>
+								<% end %>
+								</td>
+							<% end %>
+						</tr>
+					<% end %>
+					</tbody>
+					<tfoot>
+					<tr>
+						<% header.each_with_index do |colname, colindex| %>
+							<th>
+								<% if !(col = Aqua.match_regexp_key(colors, colname)).nil? then %>
+									<% if col.is_a?(Interpolate::Points) then %>
+										<%= content_tag :div, id: "color_gradient_#{colindex}", class: "evendiv", style: "width: 100%; min-width: 150px; height: 15px; font-size: 6pt; background: grey; background: linear-gradient(to right, #{col.points.values.map {|x| x.html}.join(",")});" do %>
+											<% col.points.keys.each do |x| %>
+												<%= content_tag :div, style: "color:#{col.points[x].html}; -webkit-filter: invert(100%); filter: invert(100%);" do %>
+													<% if col.respond_to?(:is_log?) then %>
+														<%= Math.exp(x).to_f.round(2) %>
+													<% else %>
+														<%= x.to_f.round(2) %>
+													<% end %>
+												<% end %>
+											<% end %>
+										<% end %>
+									<% end %>
+								<% end %>
+								<%= content_tag :div, class: "snupytable_footer" do %>
+									<%= colname %>
+								<% end %>
+							</th>
+						<% end %>
+					</tr>
+					</tfoot>
+				</table>
+				<div class="snupytable_selectbox_container" style="display:none;">
+				</div>
+			</div>
+			<% if (defined? actions) and actions.size > 0 then %>
+				<% action_urls = actions.map{|actionname, action_config|
+					if action_config.is_a?(String) then
+						ret = [actionname, action_config]
+					elsif action_config.is_a?(Array) then
+						ret = [actionname, action_config]
+					elsif action_config.is_a?(Hash) then
+						# ret = [actionname, action_config[:url], {data: action_config[:params]}]
+						ret = [actionname, action_config[:url],
+							   Hash[(action_config[:params] || {}).map{|k,v|["data-#{k}", v]}]
+						]
+					end
+					ret
+					}
+				%>
+				<div id="<%= tableid %>_action" class="tableaction ui-widget ui-widget-content ui-corner-bottom snupytabletitle">
+					<%= select_tag "action", options_for_select(action_urls), style: "margin-left: 5px; margin-bottom: 3px;" %>
+					<%=
+						# link_to_function "Submit", "performAction(this);", class: "nav_link"
+						link_to "Submit", "#", onclick: "performAction(this);; return false;", class: "nav_link"
+					%>
+					<div id="<%= tableid %>_action_result">
+					</div>
+				</div>
+			<% end %>
+		<% else %>
+			No content for this table.
+		<% end %>
+	</div>
+</div>

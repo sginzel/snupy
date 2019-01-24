@@ -1,0 +1,11 @@
+<% if !@vcf_file.nil? and !@long_job.nil? then %>
+refreshJobList(1000);
+$('#long_job_annotation_status<%=@vcf_file.id%>').text('Annotation process started');
+$('#long_job_annotation_status<%=@vcf_file.id%>').attr('href','long_jobs/<%=@long_job.id%>/status');
+$('#long_job_annotation_status<%=@vcf_file.id%>').removeAttr('data-remote');
+<% else %>
+$('#long_job_annotation_status<%=params[:id]%>').text('VCF does not exist or job could not be started.');
+$('#long_job_annotation_status<%=params[:id]%>').removeClass().addClass('fail');
+$('#long_job_annotation_status<%=params[:id]%>').attr('href','');
+$('#long_job_annotation_status<%=params[:id]%>').removeAttr('data-remote');
+<% end %>

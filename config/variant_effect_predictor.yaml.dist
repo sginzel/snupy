@@ -1,0 +1,50 @@
+development:
+  ensembl_version: 70
+  homo_sapiens_build: 37
+  mus_musculus_build: 38
+  homo_sapiens_core: homo_sapiens_core_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("ensembl_version")%>_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("homo_sapiens_build")%> 
+  mus_musculus_core: mus_musculus_core_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("ensembl_version")%>_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("mus_musculus_build")%>
+  vepbase: <%= Rails.root %>/lib/vep/bin
+  ensembl_lib: <%=VariationAnnotationProcess::VariantEffectPredictor.conf("vepbase")%>/lib/ensembl_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("ensembl_version")%> # include
+  vepscript: <%=VariationAnnotationProcess::VariantEffectPredictor.conf("vepbase")%>/variant_effect_predictor/variant_effect_predictor.pl
+  vepcache: <%=VariationAnnotationProcess::VariantEffectPredictor.conf("vepbase")%>/cache
+  num_cores: 1
+  host: HOST
+  port: 3306
+  username: USER
+  password: PASSWORD
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  ensembl_version: 70
+  homo_sapiens_build: 37
+  mus_musculus_build: 38
+  homo_sapiens_core: homo_sapiens_core_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("ensembl_version")%>_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("homo_sapiens_build")%> 
+  mus_musculus_core: mus_musculus_core_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("ensembl_version")%>_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("mus_musculus_build")%>
+  vepbase: <%= Rails.root %>/lib/vep/bin 
+  ensembl_lib: <%=VariationAnnotationProcess::VariantEffectPredictor.conf("vepbase")%>/lib/ensembl_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("ensembl_version")%> # include
+  vepscript: <%=VariationAnnotationProcess::VariantEffectPredictor.conf("vepbase")%>/variant_effect_predictor/variant_effect_predictor.pl
+  vepcache: <%=VariationAnnotationProcess::VariantEffectPredictor.conf("vepbase")%>/cache
+  num_cores: 1
+  host: HOST
+  port: 3306
+  username: USER
+  password: PASSWORD
+
+production:
+  ensembl_version: 70
+  homo_sapiens_build: 37
+  mus_musculus_build: 38
+  homo_sapiens_core: homo_sapiens_core_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("ensembl_version")%>_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("homo_sapiens_build")%> 
+  mus_musculus_core: mus_musculus_core_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("ensembl_version")%>_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("mus_musculus_build")%>
+  vepbase: <%= Rails.root %>/lib/vep/bin 
+  ensembl_lib: <%=VariationAnnotationProcess::VariantEffectPredictor.conf("vepbase")%>/lib/ensembl_<%=VariationAnnotationProcess::VariantEffectPredictor.conf("ensembl_version")%> # include
+  vepscript: <%=VariationAnnotationProcess::VariantEffectPredictor.conf("vepbase")%>/variant_effect_predictor/variant_effect_predictor.pl
+  vepcache: <%=VariationAnnotationProcess::VariantEffectPredictor.conf("vepbase")%>/cache
+  num_cores: 4
+  host: HOST
+  port: 3306
+  username: USER
+  password: PASSWORD

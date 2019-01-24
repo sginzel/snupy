@@ -1,0 +1,109 @@
+# Entity Tags
+ent_tags_father1:
+  object_id: <%= ActiveRecord::Fixtures.identify(:father1) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_class_shared_control) %>
+  object_type: "Entity"
+
+ent_tags_mother1:
+  object_id: <%= ActiveRecord::Fixtures.identify(:mother1) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_class_shared_control) %>
+  object_type: "Entity"
+
+ent_tags_child11:
+  object_id: <%= ActiveRecord::Fixtures.identify(:child1) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_class_malignant) %>
+  object_type: "Entity"
+ent_tags_child12:
+  object_id: <%= ActiveRecord::Fixtures.identify(:child1) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_disease) %>
+  object_type: "Entity"
+
+
+ent_tags_child21:
+  object_id: <%= ActiveRecord::Fixtures.identify(:child_tumor_normal) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_class_malignant) %>
+  object_type: "Entity"
+ent_tags_child22:
+  object_id: <%= ActiveRecord::Fixtures.identify(:child_tumor_normal) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_disease) %>
+  object_type: "Entity"
+
+
+# SpecimenProbe Tags
+sptag_father1:
+  object_id: <%= ActiveRecord::Fixtures.identify(:trio_father) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_father) %>
+  object_type: "SpecimenProbe"
+sptag_mother1:
+  object_id: <%= ActiveRecord::Fixtures.identify(:trio_mother) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_mother) %>
+  object_type: "SpecimenProbe"
+sptag_child1:
+  object_id: <%= ActiveRecord::Fixtures.identify(:trio_child) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_init) %>
+  object_type: "SpecimenProbe"
+
+sptag_tumor_normal_child_init:
+  object_id: <%= ActiveRecord::Fixtures.identify(:tumor_normal_child_init) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_init) %>
+  object_type: "SpecimenProbe"
+sptag_tumor_normal_child_remi:
+  object_id: <%= ActiveRecord::Fixtures.identify(:tumor_normal_child_remi) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_remi) %>
+  object_type: "SpecimenProbe"
+
+## tissue is the same for all specimen
+sptag_father12:
+  object_id: <%= ActiveRecord::Fixtures.identify(:trio_father) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_tissue) %>
+  object_type: "SpecimenProbe"
+sptag_mother12:
+  object_id: <%= ActiveRecord::Fixtures.identify(:trio_mother) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_tissue) %>
+  object_type: "SpecimenProbe"
+sptag_child12:
+  object_id: <%= ActiveRecord::Fixtures.identify(:trio_child) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_tissue) %>
+  object_type: "SpecimenProbe"
+sptag_tumor_normal_child_init2:
+  object_id: <%= ActiveRecord::Fixtures.identify(:tumor_normal_child_init) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_tissue) %>
+  object_type: "SpecimenProbe"
+sptag_tumor_normal_child_remi2:
+  object_id: <%= ActiveRecord::Fixtures.identify(:tumor_normal_child_remi) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_tissue) %>
+  object_type: "SpecimenProbe"
+
+
+# Sample Tags
+stag_faterh1:
+  object_id: <%= ActiveRecord::Fixtures.identify(:sample_father1) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_snp) %>
+  object_type: "SpecimenProbe"
+stag_mother1:
+  object_id: <%= ActiveRecord::Fixtures.identify(:sample_mother1) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_snp) %>
+  object_type: "SpecimenProbe"
+stag_child1:
+  object_id: <%= ActiveRecord::Fixtures.identify(:sample_child1) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_snp) %>
+  object_type: "SpecimenProbe"
+
+stag_tumor_normal1:
+  object_id: <%= ActiveRecord::Fixtures.identify(:sample_tumor_normal_child1_gatk) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_snp) %>
+  object_type: "SpecimenProbe"
+stag_tumor_normal2:
+  object_id: <%= ActiveRecord::Fixtures.identify(:sample_tumor_normal_child1_varscan) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_somatic) %>
+  object_type: "SpecimenProbe"
+stag_tumor_normal3:
+  object_id: <%= ActiveRecord::Fixtures.identify(:sample_tumor_normal_child1_mutect) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_somatic) %>
+  object_type: "SpecimenProbe"
+
+# VcfFile Tags
+vcf_file_tag:
+  object_id: <%= ActiveRecord::Fixtures.identify(:vcf_file_gatk) %>
+  tag_id: <%= ActiveRecord::Fixtures.identify(:tag_tool_gatk) %>
+  object_type: "VcfFile"

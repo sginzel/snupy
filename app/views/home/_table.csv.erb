@@ -1,0 +1,24 @@
+<%= header.join("\t").gsub("#", "").html_safe %>
+<% content.each_with_index.map do |rec, rowno|%>
+<%= header.map{|colname|
+	#colname = (rec[colname.to_s].nil?)?(colname.to_sym):(colname.to_s)
+	#retarray = rec[colname]
+	retarray = (rec[colname.to_s] || rec[colname.to_sym])
+	retarray = [retarray] unless retarray.is_a?(Array)
+	ret = retarray.map{|ret|
+		if ret.is_a?(String) or ret.is_a?(Symbol) then
+			ret = ret.to_s.gsub("\n", "\\n")
+			ret = ret.gsub("'", "\"")
+			# these symbols are troublesome if not handled correctly
+#			ret = ret.gsub(">", "&gt;")
+#			ret = ret.gsub("<", "&lt;")
+			ret = strip_tags(ret)
+			ret = "'#{ret}'"
+		end
+		ret
+	}.join(",")
+	ret.gsub!(/^#/, "\#")
+	ret = ret.force_encoding('UTF-8')
+	ret
+}.join("\t").html_safe %>
+<%end%>

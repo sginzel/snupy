@@ -1,0 +1,23 @@
+development:
+  version: 1.0
+  workdir: <%%=Rails.root%>/tmp/<%=tool_name%>
+  basedir: <%%= <%=tool_model%>Annotation.annotationdir%>/<%=tool_name%>/<%%= <%=tool_model%>Annotation.config("version")%>
+  datadir: <%%= <%=tool_model%>Annotation.config("basedir")%>/data
+  bindir: <%%= <%=tool_model%>Annotation.config("basedir")%>/bin
+  species:
+    homo sapiens:
+      file1: <%%= <%=tool_model%>Annotation.config('datadir')%>/some_file.txt
+    mus musculus:
+      file1: <%%= <%=tool_model%>Annotation.config('datadir')%>/some_other_file.txt
+test: None.
+production:
+  version: 1.0
+  workdir: <%%=Rails.root%>/tmp/<%=tool_name%>
+  basedir: <%%= <%=tool_model%>Annotation.annotationdir%>/<%=tool_name%>/<%%= <%=tool_model%>Annotation.config("version")%>
+  datadir: <%%= <%=tool_model%>Annotation.config("basedir")%>/data
+  bindir: <%%= <%=tool_model%>Annotation.config("basedir")%>/bin
+  species:
+    homo sapiens:
+      file1: <%%= <%=tool_model%>Annotation.config('datadir')%>/some_file.txt
+    mus musculus:
+      file1: <%%= <%=tool_model%>Annotation.config('datadir')%>/some_other_file.txt

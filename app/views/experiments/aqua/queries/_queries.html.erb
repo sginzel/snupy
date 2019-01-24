@@ -1,0 +1,81 @@
+<% ### Group all queries by their type
+	grouped_queries = {
+			"Basic" => [],
+			"Advanced" => []
+	}
+	queries.each do |qklass, qconfs|
+		qconfs.each do |qname, qconf|
+			next if (qklass.filters(qname) || []).size == 0
+			group = (qconf[:group] || "Other")
+			grouped_queries[group] ||= []
+			grouped_queries[group] << {qklass: qklass, qname: qname, qconf: qconf, experiment: @experiment, userid: current_user.id}
+		end
+	end
+
+	 grouped_queries.each do |type, partial_hashes|
+		partial_hashes.sort!{|x,y|
+			x[:qconf][:priority] <=> y[:qconf][:priority]
+		}
+	end
+
+	grouped_queries.reject!{|group, queries| queries.size == 0}
+
+%>
+
+<% ## QUERY SORT HAPPENS HERE
+	sorted_queries = []
+	queries.each do |qklass, qconfs|
+		qconfs.each do |qname, qconf|
+			next if (qklass.filters(qname) || []).size == 0
+			sorted_queries << {qklass: qklass, qname: qname, qconf: qconf, experiment: @experiment, userid: current_user.id}
+		end
+	end
+	sorted_queries.sort!{|x,y|
+		x[:qconf][:priority] <=> y[:qconf][:priority]
+	}
+%>
+
+<%=content_tag :div, class: "aqua_queries" do %>
+		<% grouped_queries.each do |type, partial_hashes| %>
+				<%= content_tag :div, class: 'aqua_query_group' do %>
+					<span class='aqua_query_group_collapse ui-state-default aqua_col'>
+						<span class='ui-icon ui-icon-plus' style="display: inline-block"></span><%= type %>
+					</span>
+					<%
+						show_or_hide = 'aqua_query_group_container_hidden'
+						show_or_hide = 'aqua_query_group_container_show' if (type == "Basic")
+						# lets find out if any of the query has a value set and an active filter - if yes, show that as well
+						partial_hashes.each do |partial_hash|
+							# pp partial_hash
+							qklass = partial_hash[:qklass]
+							qname = partial_hash[:qname]
+							is_checkbox = partial_hash[:qconf][:type] == :checkbox
+							filters = qklass.filters(qname)
+							value = get_from_param("queries", partial_hash[:qklass].name.underscore, partial_hash[:qname], "value")
+							value = "" if value.to_s == "0" and is_checkbox
+							filter_checked = filters.any?{|finst|
+								get_from_param("queries", qklass.name.underscore, qname.to_s, "filters", finst.class.name, finst.name.to_s).to_s == "1"
+							}
+							show_or_hide = 'aqua_query_group_container_show' if value != "" and filter_checked
+						end
+					%>
+					<div class='aqua_query_group_container <%= show_or_hide %>'>
+						<% partial_hashes.each do |partial_hash| %>
+							<div class="ui-state-default aqua_col">
+								<%=render partial: "experiments/aqua/queries/query", locals: partial_hash%>
+							</div>
+						<% end %>
+					<% end %>
+				</div>
+		<% end %>
+<% end %>
+
+<!--
+<%=content_tag :div, class: "aqua_queries" do %>
+		<% sorted_queries.each do |partial_hash| %>
+			<div class="ui-state-default aqua_col">
+				<%=render partial: "experiments/aqua/queries/query", locals: partial_hash%>
+			</div>
+		<% end %>
+<% end %>
+//-->

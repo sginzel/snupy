@@ -1,0 +1,236 @@
+.aqua_queries {
+	width: 100%;
+	padding: 0px;
+	margin: 0px;
+}
+
+.aqua_query_checkbox {
+	width: 20px;
+	height: 15px;
+	left: 20px;
+	margin-top: 2px;
+}
+
+.aggregation_category{
+	//border: 1px solid #aaa;
+	border: 0;
+	border-top: 1px solid #aaa;
+	legend {
+		//border: 1px solid #aaa;
+		//border-bottom: 0;
+		border: 0;
+		padding: 1px 2px 3px 2px;
+		font-size: 10pt;
+	}
+	div {
+		border: 0;
+		background-image: none;
+	}
+	input {
+		transform: translate(0, 20%);
+	}
+}
+.aqua_col:nth-child(odd){
+	clear: both;
+	margin-top: 5px;
+	display: block;
+	width: 49.5%;
+	float: left;
+}
+.aqua_col:nth-child(even){
+	margin-top: 5px;
+	display: block;
+	width: 49.5%;
+	float: right;
+}
+.aqua_col:first-child{
+}
+.aqua_col:last-child{
+}
+
+.aqua_query_group {
+	width: 99%;
+	position: relative;
+	//display: inline-block;
+	margin-top: 4px;
+	padding: 2px 2px 2px 2px;
+	//border: solid #ccc 1px;
+	border: none;
+}
+.aqua_query_group_collapse {
+	width: 100% !important;
+}
+
+.aqua_query_group_container_hidden {
+	display: none;
+}
+.aqua_query_group_container_show {
+	display: block;
+}
+
+.aqua_query {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	left: 0;
+	top: 0;
+	min-height: 4em;
+	input {
+		border-color: #ccc !important;
+	}
+}
+
+.aqua_label {
+	margin-left: 2px;
+	float: left;
+	width: 100%;
+	height: 21px;
+	overflow: visible;
+	border: 0;
+	//transform: translate(0, -50%)
+	.aqua_label_icons {
+		position: absolute;
+		top: 0;
+		right: 0;
+		//float: right;
+		width: 42px;
+		height: 21px;
+		margin: -0px -5px 0px 0px;
+		.settingsicon {
+			display: inline-block;
+			vertical-align:top;
+			-ms-transform: scale(1.0); /* IE 9 */
+			-webkit-transform: scale(1.0); /* Chrome, Safari, Opera */
+			transform: scale(1.0);
+		}
+		.tooltipicon {
+			margin: -0px -7px 0px 7px;
+			display: inline-block;
+			vertical-align:top;
+			-ms-transform: scale(0.8); /* IE 9 */
+			-webkit-transform: scale(0.8); /* Chrome, Safari, Opera */
+			transform: scale(0.8);
+		}
+	}
+}
+
+.aqua_query_filter {
+	border: solid #eee 1px;
+	display: none;
+}
+
+.aqua_query_filter input{
+	transform: translate(0, 20%);
+}
+
+.aqua_query_filter_tool {
+	font-weight: bold;
+	margin-top: 2pt;
+	float: left;
+}
+
+.aqua_query_filter_filter {
+	font-weight: normal;
+	margin-top: 2pt;
+	margin-left: 2pt;
+	float: left;
+	width: 100%;
+}
+
+.aqua_query_filter_combine {
+	clear: both;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 2pt;
+	//width: 6em;
+}
+
+.aqua_field {
+	vertical-align: bottom;
+	margin-left: 3pt;
+	// padding-right: 3pt;
+	float: left;
+	width: 100%;
+	border: 0;
+	min-height: 3em;
+}
+.aqua_field input{
+	width: 85%;
+	margin-top: 3px;
+	height: 12px;
+	font-size: 1em;
+}
+
+.range_slider {
+	transform: translate(0, -25%);
+	width: 92%;
+	margin-left: 0px;
+	margin-top: 3px;
+		// make it unselectable
+	text-decoration: none;
+	-webkit-user-select: none; /* Chrome/Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+ */
+	
+	/* Rules below not implemented in browsers yet */
+	-o-user-select: none;
+	user-select: none;
+}
+
+.range_slider input {
+	margin-left: 91%;
+	float: left;
+	width: 60px;
+	height: 10px;
+	background: transparent; //rgba(125,125,125, 0);
+	font-size: .9em;
+	border: 0px;
+	overflow: auto;
+	transform: translate(0, -25%);
+}
+
+.slider {
+	margin-left: 0pt;
+	width: 90%;
+	float: left;
+	height: 10px;
+	transform: translate(0, 100%);
+}
+
+.slider_text {
+	// margin-left: 91%;
+	float: right;
+	// width: 9%;
+	width: 200px;
+	height: 10px;
+	background: transparent; //rgba(125,125,125, 0);
+	font-size: .9em;
+	border: 0px;
+	overflow: auto;
+}
+
+
+.ui-slider{
+	height: 0.8em;
+	border-radius: 0 0 0 0;
+}
+
+.ui-slider .ui-slider-handle{
+	padding: 0 0 0 0;
+	border-radius: 0 0 0 0;
+	background: transparent;
+	margin-left: -6px;
+	margin-top: -5px;
+	width: 0px;
+	height: 0px;
+	border-style: solid;
+	border-width: 6px 6px 0 6px;
+	cursor: pointer;
+	//border-color: #076591 transparent transparent transparent;
+	border-color: #0055b0 transparent transparent transparent;
+}
+.ui-slider .ui-slider-range{
+	background: #3383bb;
+	border-radius: 0 0 0 0;
+}

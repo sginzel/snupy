@@ -1,0 +1,27 @@
+<%
+	aqua_actions = {}
+	Aqua.route_paths.each do |description, url|
+		aqua_actions[description] = {url: url, params: {experiment_id: @experiment.id, samples: params[:samples], queries: params["queries"], aggregations: params["aggregations"]}}
+	end
+	aqua_actions = aqua_actions.merge(
+			{
+					#"Save" => "save me",
+					"Look-up variations in other samples" => {url: details_experiments_path(experiment: @experiment.id),   params: {samples: params[:samples], tags: 'yes', queries: params["queries"], aggregations: params["aggregations"]}},
+					"Show interactions" => {url: interactions_experiments_path(experiment: @experiment.id),                params: {samples: params[:samples], queries: params["queries"], aggregations: params["aggregations"]}},
+					"Attribute matrix" => {url: attribute_matrix_experiments_path(experiment: @experiment.id),             params: {samples: params[:samples], queries: params["queries"], aggregations: params["aggregations"]}},
+					"Gene panel to subject" => {url: panel_to_subject_matrix_experiments_path(experiment: @experiment.id), params: {samples: params[:samples], queries: params["queries"], aggregations: params["aggregations"]}},
+					"Save selected records" => {url: save_resultset_experiments_path(experiment: @experiment.id),          params: {samples: params[:samples], queries: params["queries"], aggregations: params["aggregations"]}}
+			}
+	)
+%>
+<%=render_table(@details,
+								title: "Details from #{@samples.size} of your samples",
+								details_path: more_details_experiments_path(variation_id: ":id"),
+								detail_params: {experiment_id: @experiment.id},
+								actions: aqua_actions
+){ |rec, obj|
+	#rec["tags"] = Sample.includes(:sample_tags).find(rec["variation_calls.sample_id"]).sample_tags.map(&:value)
+	# rec["tags"] = Sample.find(rec["variation_calls.sample_id"]).tags.pluck(:value)
+	rec["alt"] = ERB::Util.html_escape(rec["alt"])
+	rec
+}%>

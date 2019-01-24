@@ -1,0 +1,96 @@
+<h1> AQuA Query <%=@experiment.title%> (<%=@experiment.name%>)</h1>
+
+<p>
+	<%= link_to 'Edit/Add/Remove Samples', edit_experiment_path(@experiment.id) %>
+	<%= link_to 'Details', experiment_path(@experiment.id) %>
+	<%= link_to "Generate another query", query_generator_experiment_path(@experiment) %>
+
+</p>
+<%= form_for :experiment, url: query_generator_experiment_path(@experiment), namespace: :query, method: :post, action: :query_generator do |f| %>
+	<%= hidden_field_tag "samples", @samples %>
+	<%= render_table((@entities),
+						title: "Entities",
+						id: "entities",
+						selected: params[:entities],
+						columns: %w(name nickname parents sigblings tags vcf.tags notes)
+					 ) %>
+	</br>
+	<% if params[:commit].to_s != "LOAD" %>
+		<%= field_set_tag "Query Generators" do %>
+			<%= render partial: "experiments/aqua/queries/generators", locals: {generators: @generators, experiment: @experiment} %>
+			<%= label_tag "Job title" %> <%= text_field_tag :jobtitle %>
+		<% end %>
+	<% end %>
+	<% if params[:commit].to_s != "LOAD" %>
+		<div class="actions" id="commit_action_section" style="float: left;">
+			<%= submit_tag "OK" %>
+		</div>
+	<% end %>
+	<% if defined?@long_jobs and @long_jobs.size > 0 %>
+		<%=render_combobox @long_jobs,
+						   label: "Load Job",
+						   id: "long_job_id",
+						   labelattr: :title,
+						   valueattr: :id,
+						   selected: params[:long_job_id],
+						   validonly: true, allowempty: true,
+						   include_blank: true,
+						   onchange: "location.href='#{query_generator_experiment_path(@experiment)}?commit=LOAD&long_job_id=' + $('#long_job_id').val() +''".html_safe
+		%>
+	<% end %>
+	<% if !params[:long_job_id].nil? then %>
+		<div class="actions" id="commit_action_section" style="float: left;">
+			<%= submit_tag "DELETE", data: { confirm: 'Are you sure?' } %>
+		</div>
+	<% end %>
+
+	<br style="clear:both" />
+	<% if defined?(@result_summary) %>
+			<div>
+				<%= render_table(@result_summary,
+												 title: "Generator Summary",
+												 id: "generator_summary",
+								   				 selected: params[:generator_summary],
+								 				 columns: @result_summary.map{|x| x.keys}.flatten.uniq - ["selected"]
+						)%>
+			</div>
+			<% if !params[:long_job_id].nil? then %>
+				<div class="actions" id="commit_action_section" style="float: left;">
+					<%= submit_tag "LOAD" %>
+				</div>
+				<br style="clear:both" />
+			<% end %>
+	<%end%>
+<% end %>
+<% if defined?(@results) and @results.size > 0 %>
+		<div>
+	<% @results.each do |generator, tblconfig| %>
+		<%
+			aqua_actions = {}
+			Aqua.route_paths.each do |description, url|
+				aqua_actions[description] = {url: url, params: {experiment_id: @experiment.id, samples: @samples, queries: params["queries"], aggregations: params["aggregations"]}}
+			end
+			aqua_actions = aqua_actions.merge(
+					{
+							#"Save" => "save me",
+							"Look-up variations in other samples" => {url: details_experiments_path(experiment: @experiment.id), params: {samples: @samples, tags: 'yes'}},
+							"Show interactions" => {url: interactions_experiments_path(experiment: @experiment.id), params: {samples: @samples}},
+							"Attribute matrix" => {url: attribute_matrix_experiments_path(experiment: @experiment.id), params: {samples: @samples}},
+							"Gene panel to subject" => {url: panel_to_subject_matrix_experiments_path(experiment: @experiment.id), params: {samples: @samples}}
+					}
+			)
+		%>
+		<%= render_table(tblconfig[:result],
+										 title: "Generator #{generator}",
+										 id: "generator_#{generator.underscore}",
+										 idcol: "variation_calls.id",
+										 base_model: VariationCall,
+										 column_order: %w(SUBJECT QUERY .*),
+										 colors: tblconfig[:colors][:colors],
+										 record_color: tblconfig[:colors][:record_color],
+										 actions: aqua_actions
+				) %>
+	</br>
+	<% end %>
+	</div>
+<% end %>

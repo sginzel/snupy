@@ -1,0 +1,7 @@
+<%
+	# This is the onyl way to comment in a json file
+	# html_safe option has to be applied to the json string, 
+	# because rails will by default replace _?
+	# characters like " to &quot;
+%>
+<%= @long_job.result_json.to_json.html_safe %>

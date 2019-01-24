@@ -1,0 +1,103 @@
+#!/bin/bash
+
+function on_exit()
+{
+	echo "Annovar script terminated"
+	echo "Annovar script terminated" >&2
+	if [ ! "$OUTPUT" == "" ]; then
+		mv -f "$OUTPUT" "$OUTPUT.error"
+	fi
+	exit 1
+}
+
+trap on_exit SIGHUP SIGINT SIGTERM SIGQUIT
+
+ANNOVARBASE="<%= AnnovarAnnotation.load_configuration_variable("annovar_base") %>"
+ANNOVARVERSION="<%= AnnovarAnnotation.load_configuration_variable("annovar_version") %>"
+
+SCRIPT="<%=  AnnovarAnnotation.load_configuration_variable("annovar_script") %>"
+CONVERTSCRIPT="<%= AnnovarAnnotation.load_configuration_variable("annovar_convert_script") %>"
+CODINGSCRIPT="<%= AnnovarAnnotation.load_configuration_variable("annovar_coding_script") %>"
+TABLESCRIPT="<%= AnnovarAnnotation.load_configuration_variable("annovar_table_script") %>"
+
+HOMOSAPIENS="<%= AnnovarAnnotation.load_configuration_variable("homo_sapiens_build") %>"
+HOMOSAPIENSDB="<%= AnnovarAnnotation.load_configuration_variable("annovar_cache_homo_sapiens") %>"
+
+MUSMUSCULUS="<%= AnnovarAnnotation.load_configuration_variable("mus_musculus_build") %>"
+MUSMUSCULUSDB="<%= AnnovarAnnotation.load_configuration_variable("annovar_cache_mus_musculus") %>"
+
+HOMOSAPIENSENSGENE="<%= AnnovarAnnotation.load_configuration_variable("homo_sapiens_ensGene") %>"
+HOMOSAPIENSENSGENEMRNA="<%= AnnovarAnnotation.load_configuration_variable("homo_sapiens_ensGeneMrna") %>"
+
+MUSMUSCULUSENSGENE="<%= AnnovarAnnotation.load_configuration_variable("mus_musculus_ensGene") %>"
+MUSMUSCULUSENSGENEMRNA="<%= AnnovarAnnotation.load_configuration_variable("mus_musculus_ensGeneMrna") %>"
+
+DEBUG="-verbose"
+INPUT=
+OUTPUT=
+SPECIES=""
+
+while getopts "dFi:o:f:s:t:" OPTION
+do
+	case $OPTION in
+		d)
+			DEBUG="--verbose --no_progress"
+			;;
+		i)
+			INPUT=$OPTARG
+			;;
+		o)
+			OUTPUT=$OPTARG
+			;;
+		s)
+			SCRIPT=$OPTARG
+			;;
+		t)
+			SPECIES=$OPTARG
+			;;
+	esac
+done
+
+if [ ! -f "$SCRIPT" ]; then
+	echo "$SCRIPT does not exist or is not a regular file"
+	exit 2
+fi
+
+if [ "$INPUT" == "" ]; then
+	echo "NO INPUT GIVEN. Use -i to give input" 1>&2
+	exit 1
+fi
+
+if [ "$SPECIES" == "" ]; then
+	echo "NO INPUT GIVEN. Use -t to set a species" 1>&2
+	exit 1
+fi
+
+if [ "$OUTPUT" == "" ]; then
+	OUTPUT="$INPUT.annovar.vcf"
+fi
+
+if [ "$DEBUG" != "--quiet" ]; then
+	if [ '$SPECIES' == 'homo_sapiens' ]; then
+		echo "+++++++++++++++++++++++"
+		# echo "perl $TABLESCRIPT --verbose $INPUT $HOMOSAPIENSDB -buildver $HOMOSAPIENS -outfile $OUTPUT --protocol 'refGene,ensGene,wgRna,targetScanS,tfbsConsSites,genomicSuperDups,gwasCatalog,ljb26_all,snp138,1000g2014oct_all,esp6500siv2_all,gerp++gt2,cg69,clinvar_20140929,cosmic68,exac03' --operation 'g,g,r,r,r,r,r,f,f,f,f,f,f,f,f,f' -csvout -arg '--verbose -hgvs -neargene 5 --exonsort -separate,--verbose -hgvs -neargene 5 --exonsort,,,,,,,,,,,,,,' -otherinfo"
+		echo "perl $TABLESCRIPT $INPUT $HOMOSAPIENSDB -buildver $HOMOSAPIENS -outfile $OUTPUT --protocol 'refGene,ensGene,wgRna,targetScanS,tfbsConsSites,genomicSuperDups,gwasCatalog,ljb26_all,snp138,1000g2014oct_all,esp6500siv2_all,gerp++gt2,cg69,clinvar_20140929,cosmic68,exac03' --operation 'g,g,r,r,r,r,r,f,f,f,f,f,f,f,f,f' -csvout -arg '-hgvs -neargene 5 --exonsort -separate,-hgvs -neargene 5 --exonsort,,,,,,,,,,,,,,' -otherinfo"
+		echo "-------------------------"
+	fi
+	if [ '$SPECIES' == 'mus_musculus' ]; then
+		echo "+++++++++++++++++++++++"
+		# echo "perl $TABLESCRIPT --verbose $INPUT $MUSMUSCULUSDB -buildver $MUSMUSCULUS -outfile $OUTPUT --protocol 'refGene,ensGene' --operation 'g,g' -csvout -arg '-neargene 5 --exonsort, -neargene 5 --exonsort' -otherinfo"
+		echo "perl $TABLESCRIPT $INPUT $MUSMUSCULUSDB -buildver $MUSMUSCULUS -outfile $OUTPUT --protocol 'refGene,ensGene' --operation 'g,g' -csvout -arg '-neargene 5 --exonsort, -neargene 5 --exonsort' -otherinfo"
+		echo "-------------------------"
+	fi
+fi
+
+if [ "$SPECIES" == "homo_sapiens" ]; then
+	# perl $TABLESCRIPT --verbose $INPUT $HOMOSAPIENSDB -buildver $HOMOSAPIENS -outfile $OUTPUT --protocol 'refGene,ensGene,wgRna,targetScanS,tfbsConsSites,genomicSuperDups,gwasCatalog,ljb26_all,snp138,1000g2014oct_all,esp6500siv2_all,gerp++gt2,cg69,clinvar_20140929,cosmic68,exac03' --operation 'g,g,r,r,r,r,r,f,f,f,f,f,f,f,f,f' -csvout -arg '--verbose -hgvs -neargene 5 --exonsort ,--verbose -hgvs -neargene 5 --exonsort,,,,,,,,,,,,,,' -otherinfo
+	perl $TABLESCRIPT $INPUT $HOMOSAPIENSDB -buildver $HOMOSAPIENS -outfile $OUTPUT --protocol 'refGene,ensGene,wgRna,targetScanS,tfbsConsSites,genomicSuperDups,gwasCatalog,ljb26_all,snp138,1000g2014oct_all,esp6500siv2_all,gerp++gt2,cg69,clinvar_20140929,cosmic68,exac03' --operation 'g,g,r,r,r,r,r,f,f,f,f,f,f,f,f,f' -csvout -arg '-hgvs -neargene 5 --exonsort ,-hgvs -neargene 5 --exonsort,,,,,,,,,,,,,,' -otherinfo 2>&1 | grep -e "Processing" -e "Finished"
+fi
+
+if [ "$SPECIES" == "mus_musculus" ]; then
+	# perl $TABLESCRIPT --verbose $INPUT $MUSMUSCULUSDB -buildver $MUSMUSCULUS -outfile $OUTPUT --protocol 'refGene,ensGene' --operation 'g,g' -csvout -arg '-neargene 5 --exonsort -separate, -neargene 5 --exonsort ' -otherinfo
+	perl $TABLESCRIPT $INPUT $MUSMUSCULUSDB -buildver $MUSMUSCULUS -outfile $OUTPUT --protocol 'refGene,ensGene' --operation 'g,g' -csvout -arg '-neargene 5 --exonsort -separate, -neargene 5 --exonsort ' -otherinfo 2>&1 | grep -e "Processing" -e "Finished" 
+fi

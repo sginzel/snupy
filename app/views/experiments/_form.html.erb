@@ -1,0 +1,87 @@
+<%= form_for(@experiment) do |f| %>
+	<% if @experiment.errors.any? %>
+		<div id="error_explanation">
+			<h2><%= pluralize(@experiment.errors.count, "error") %> prohibited this experiment from being saved:</h2>
+			
+			<ul>
+				<% @experiment.errors.full_messages.each do |msg| %>
+					<li><%= msg %></li>
+				<% end %>
+			</ul>
+		</div>
+	<% end %>
+	
+	<div class="field required">
+		<%= render_combobox @institutions,
+							label:         "Institution",
+							id:            "experiment[institution_id]",
+							labelattr:     :name,
+							valueattr:     :id,
+							selected:      (@experiment.institution_id || params[:institution_id]),
+							validonly:     true, allowempty: false,
+							include_blank: true,
+							onchange:      "location.href = '#{request.path}?institution_id=' + $('#experiment\\\\[institution_id\\\\]').val()"
+		%>
+	</div>
+	<% if (params[:institution_id].to_s.to_i > 0) || @experiment.institution_id then %>
+		<div class="field">
+			<%= f.label :name %><br/>
+			<%= f.text_field :name %>
+		</div>
+		<div class="field">
+			<%= f.label :title %><br/>
+			<%= f.text_field :title %>
+		</div>
+		<div class="field">
+			<%= f.label :contact %><br/>
+			<%= f.text_field :contact %>
+		</div>
+		<div class="field">
+			<%= f.label :description %><br/>
+			<%= f.text_field :description %>
+		</div>
+		<div class="field">
+			<%= f.label :user %><br/>
+			<%= render partial: "users/list", locals: {
+				users:    @users,
+				compact:  true,
+				selected: @experiment.user_ids
+			} %>
+		</div>
+		
+		<div class="field">
+			
+			<%= render_table(
+					(@samples),
+					title:        "",
+					id:           "samples",
+					selected:     @experiment.sample_ids,
+					columns:      %w(name patient gender sample_type vcf_sample_name ignorefilter status notes contact),
+					column_order: %w(name patient gender sample_type vcf_sample_name ignorefilter status notes contact .*)
+				) %>
+		</div>
+		
+		<div class="field">
+			
+			<%= render_table(
+					(@entity_groups),
+					title:        "Entity Groups",
+					id:           "entity_groups",
+					selected:     @experiment.entity_group_ids,
+					columns:      %w(name complete institution),
+					column_order: %w(name complete institution),
+					record_color: {
+						"complete" => Aqua.color_bool,
+					}
+				) {|rec, eg|
+				rec[:complete]     = (eg.complete) ? "YES" : "NO"
+				rec["institution"] = eg.institution.name
+				rec
+			} %>
+		</div>
+		
+		<div class="actions">
+			<%= f.submit %>
+		</div>
+	<% end %>
+<% end %>

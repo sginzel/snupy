@@ -1,0 +1,33 @@
+development:
+  snpeff_version: "4_1g"
+  homo_sapiens_build: "GRCh37.75"
+  mus_musculus_build: "GRCm38.75"
+  snpeffbase: <%= Rails.root %>/extras/snupy_again/aqua/annotations/snp_eff/bin
+  snpeff_lib: <%=SnpEffAnnotation.load_configuration_variable("snpeffbase")%>/lib/snpeff_<%=SnpEffAnnotation.load_configuration_variable("snpeff_version")%> # include
+  snpeff_jar: <%=SnpEffAnnotation.load_configuration_variable("snpeff_lib")%>/snpEff/snpEff.jar
+  snpeffconfig: <%=SnpEffAnnotation.load_configuration_variable("snpeff_lib")%>/snpEff/snpEff.config
+  snpeffcache: <%=SnpEffAnnotation.load_configuration_variable("snpeffbase")%>/cache
+  snpeff_statistics: <%=SnpEffAnnotation.load_configuration_variable("snpeff_lib")%>/stastistics
+
+test:
+  snpeff_version: "4_1g"
+  homo_sapiens_build: "GRCh37.75"
+  mus_musculus_build: "GRCm38.75"
+  snpeffbase: <%= Rails.root %>/extras/snupy_again/aqua/annotations/snp_eff/bin
+  snpeff_lib: <%=SnpEffAnnotation.load_configuration_variable("snpeffbase")%>/lib/snpeff_<%=SnpEffAnnotation.load_configuration_variable("snpeff_version")%> # include
+  snpeff_jar: <%=SnpEffAnnotation.load_configuration_variable("snpeff_lib")%>/snpEff/snpEff.jar
+  snpeffconfig: <%=SnpEffAnnotation.load_configuration_variable("snpeff_lib")%>/snpEff/snpEff.config
+  snpeffcache: <%=SnpEffAnnotation.load_configuration_variable("snpeffbase")%>/cache
+  snpeff_statistics: <%=SnpEffAnnotation.load_configuration_variable("snpeff_lib")%>/stastistics
+
+production:
+  snpeff_version: "4_1g"
+  homo_sapiens_build: "GRCh37.75"
+  mus_musculus_build: "GRCm38.75"
+  snpeffbase: <%= Rails.root %>/extras/snupy_again/aqua/annotations/snp_eff/bin
+  snpeff_lib: <%=SnpEffAnnotation.load_configuration_variable("snpeffbase")%>/lib/snpeff_<%=SnpEffAnnotation.load_configuration_variable("snpeff_version")%> # include
+  snpeff_jar: <%=SnpEffAnnotation.load_configuration_variable("snpeff_lib")%>/snpEff/snpEff.jar
+  snpeffconfig: <%=SnpEffAnnotation.load_configuration_variable("snpeff_lib")%>/snpEff/snpEff.config
+  snpeffcache: <%=SnpEffAnnotation.load_configuration_variable("snpeffbase")%>/cache
+  snpeff_statistics: <%=SnpEffAnnotation.load_configuration_variable("snpeff_lib")%>/stastistics
+

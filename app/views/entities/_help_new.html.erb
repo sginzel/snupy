@@ -1,0 +1,56 @@
+<h1>Entity</h1>
+<div> 
+	Entities are part of an <%=link_to "Entity Group", entity_groups_path %> and represent
+	individual persons, animals or cell lines which were used to extract many <%=link_to "Specimen", specimen_probes_path %>.
+</div>
+
+<div>
+	<h2>Institution &amp; Entity Group</h2>
+	Each Entity belongs to one Entity group, which in turn belongs to one institution. Select an institution to identify 
+	the correct Entity Group you want to create an Entity for. 
+</div>
+
+<h2>General Information</h2>
+<div>
+	A name for a entity is required. It has to be unique, which can be easily acomplished when using the Entity Group as a reference name. 
+	Nickname as well as Patient Identifier do not have to be unique and can be chosen arbitrarily. 
+	Date of first diagnosis can be entered for patients, where available. 
+	Use the 'family member' available if there is additional information and possibly material from family members avaiable. 
+</div>
+
+<div>
+	<h2>Tags</h2>
+	Class and Disease tags are mandatory if you want to be able to query samples from an Entity. 
+	The 'shared control' Class Tag should be used for all healthy entities which have no relevant phenotype. 
+	Possible predisposition can be documented as a Specimen Tag, if users wish to exclude possibly predisposed data.
+	Disease tags are usually MESH terms and should be chosen as specific as possible. If the requried MESH term is not 
+	available or does not exist a institution wide agreement should be made to create a new tag that can be used as a placeholder. 
+	The gender tag is optional. 
+</div>
+
+<div>
+	<h2>Specimen</h2>
+	In most cases when and entity is created the specimens will also be registered in the database. User who want to link a new Entity to an 
+	existing specimen can use the <%= link_to "Load existing specimen", {controller: params[:controller], action: params[:action], id: @entity, institution_id: @institution.id, entity_group_id: @entity.entity_group_id, show_specimens: 1} %>
+	link which to display all specimen available to the user in the mask. This might take a while to load. <span class="alert"> All form information is lost when reloading the form with specimen.</span>
+	<br />
+	The specimen template only allows one tag per tag class. Some tags, such as the Anitgen presentation can have multiple tags assigned to them, if many anitgen measures are available. 
+	These information has to be added after creating the Entity and the corresponding specimen.
+	<br /> 
+	<span class="hint"> Up and down arrows can be used to copy the field value of the current field to all input field above or below the currently 
+	focused text field.</span>
+
+</div>
+
+<div>
+	<h2>Data hierarchy</h2>
+	In order to be able to query any variation data from a project the full data hierarchy needs to be established for each sample. 
+	The access to the data is controlled through the role of a user in each institution. 
+	This implies that the data uploaded in VCF file format needs to be assigned to an institution. User of that institution can then 
+	establish the link between the extracted sample data and the specimen.
+	<br />
+	Click on the image to open it in a new window. 
+	<a href="<%= asset_path("SampleAnnotationSchema.png") %>", target="_blank">
+		<%= image_tag asset_path("SampleAnnotationSchema.png"), style: "width: 100%;"%>
+	</a>
+</div>

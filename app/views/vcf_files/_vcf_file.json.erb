@@ -1,0 +1,8 @@
+<% 
+	to_render = vcf_file.attributes
+	if !to_render["content"].nil? then
+		to_render["content"] = vcf_file.unzipped_content()
+	end
+%>
+
+<%= to_render.to_json.html_safe %>

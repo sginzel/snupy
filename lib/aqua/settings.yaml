@@ -1,0 +1,27 @@
+development:
+  tmpdir: "<%= Rails.root %>/tmp"
+  cachedir: "<%= Rails.root %>/extras/snupy_again/aqua/annotations/cache"
+  max_result: 5000
+  batch_size: 30
+  batch_size2: 20
+  log_annotation: false
+  log_query: true
+  log_aggregation: false
+test:
+  tmpdir: "<%= Rails.root %>/tmp"
+  cachedir: "<%= Rails.root %>/extras/snupy_again/aqua/annotations/cache"
+  max_result: 10
+  batch_size: 10
+  batch_size2: 2
+  log_annotation: false
+  log_query: false
+  log_aggregation: false
+production:
+  tmpdir: "<%= Rails.root %>/tmp"
+  cachedir: "<%= Rails.root %>/extras/snupy_again/aqua/annotations/cache"
+  max_result: 15000
+  batch_size: 30
+  batch_size2: 20
+  log_annotation: false
+  log_query: false
+  log_aggregation: false

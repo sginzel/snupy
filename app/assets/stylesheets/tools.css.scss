@@ -1,0 +1,46 @@
+// Place all the styles related to the graph controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+.GraphEditor:before,
+.GraphEditor:after {
+	content: " ";
+	display: table;
+}
+.GraphEditor:after {
+	clear: both;
+}
+.GraphEditor {
+	*zoom: 1;
+}
+
+.box_target_genes {
+	float: left;
+	width: 30%;
+}
+.box_interaction_sources {
+	float: left;
+	width: 30%;
+}
+.box_interaction_partners {
+	float: left;
+	width: 30%;
+}
+
+.box_interactions{
+  float: left;
+  width: 33%;
+}
+.box_groups {
+  float: left;
+  width: 33%;
+}
+.box_missing_genes{
+  float: left;
+  width: 33%;
+}
+
+.button{
+	width: 200px;
+}

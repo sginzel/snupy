@@ -1,0 +1,27 @@
+<h1><%=@sample_tag.tag_name%>:<%=@sample_tag.tag_type%>:<%=@sample_tag.tag_value%></h1>
+
+<%=render_table([@sample_tag], 
+								title: "",
+								column_order: %w(tag_name tag_type tag_value description)
+								){|rec, qf|
+									rec["#Samples"] = qf.samples.count
+									rec[" "]   = link_to 'Show', qf 
+									rec["  "]  = link_to 'Edit', edit_sample_tag_path(qf)
+									rec["   "] = link_to 'Destroy', qf, method: :delete, data: { confirm: 'Are you sure?' }
+									rec
+								}
+%>
+<p>
+	<%=render_table(
+						@samples, 
+						title: "Samples",
+						id: "samples",
+						selected: @sample_tag.samples.pluck("samples.id"),
+						columns: %w(nickname patient gender name sample_type contact notes),
+						column_order: %w(nickname patient gender name sample_type contact notes),
+						selectbox: false
+	)%>
+</p>
+
+<%= link_to 'Edit', edit_sample_tag_path(@sample_tag) %> 
+<%= link_to 'Back', sample_tags_path %>

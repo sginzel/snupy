@@ -1,0 +1,160 @@
+<%= form_for(@entity) do |f| %>
+	<% if @entity.errors.any? %>
+	<div id="error_explanation">
+		<h2><%= pluralize(@entity.errors.count, "error") %> prohibited this entity from being saved:</h2>
+	
+		<ul>
+			<% @entity.errors.full_messages.each do |msg| %>
+			<li>
+				<%= msg %>
+			</li>
+			<% end %>
+		</ul>
+	</div>
+	<% end %>
+	
+	<div class="field required">
+		<%=render_combobox @institutions, 
+							label: "Institution", 
+							id: "institution_id", 
+							labelattr: :name, 
+							valueattr: :id,
+							selected: @institution.id, 
+							validonly: true, allowempty: false,
+							include_blank: true,
+							onchange: "location.href = '#{request.path}?institution_id=' + $('#institution_id').val() + '&entity_group_id=' + $('#entity\\\\[entity_group_id\\\\]').val()"
+		%>
+	</div>
+	
+	<% if @entity_groups.size > 0 %>
+		<div class="field required">
+			<%=render_combobox @entity_groups, 
+								label: "Entity Group", 
+								id: "entity[entity_group_id]", 
+								labelattr: :name, 
+								valueattr: :id,
+								selected: @entity_group.id,
+								validonly: true, allowempty: false,
+								include_blank: true,
+								onchange: "location.href = '#{request.path}?institution_id=' + $('#institution_id').val() + '&entity_group_id=' + $('#entity\\\\[entity_group_id\\\\]').val()"
+			%>
+		</div>
+	<% else %>
+		<div class="field">
+			<span>
+				This institution doesn't seem to have any entity groups registered yet. Please create a new one.
+			</span>
+			<br />
+			<%= link_to "New Entity Group", new_entity_group_url(institution_id: (@entity_group.institution_id || params[:institution_id]))%>
+		</div>
+	<% end %>
+	<% if !@entity_group.id.nil? %>
+		<div class="field required">
+			<%= f.label :name %>
+			<br />
+			<%= f.text_field :name, value: @entity.name || @proposed_name.to_s, "autofocus" => "", "onfocus" => "$(this).select()" %>
+		</div>
+		<div class="field">
+			<%= f.label :nickname %>
+			<br />
+			<%= f.text_field :nickname, value: @entity.nickname || @proposed_nickname.to_s, "onfocus" => "$(this).select()" %>
+		</div>
+		<div class="field">
+			<%= f.label :internal_identifier %>
+			<br />
+			<%= f.text_field :internal_identifier %>
+		</div>
+		<div class="field">
+			<%= f.label :date_first_diagnosis %>
+			<br />
+			<%= f.date_select :date_first_diagnosis, {start_year: Time.now.year - 100, include_blank: true, selected: @entity.date_first_diagnosis} %>
+		</div>
+		<div class="field">
+			<%= f.label :family_members_available %>:	<br />
+			<%= hidden_field_tag 'family_members_available', "0" %>
+			<%= f.check_box :family_members_available %>
+		</div>
+		<div class="field">
+			<%= f.label :contact %>
+			<br />
+			<%= f.text_field :contact %>
+		</div>
+		
+		<div class="field">
+			<%= f.label :notes %>
+			<br />
+			<%= f.text_area :notes %>
+		</div>
+		
+		<div class="field" style="width: 40%;">
+		<%= render partial: "tags/tags", locals: {
+			tags: @tags,
+			selected_tags: @selected_tags,
+			category_colora: {
+				"DISEASE" => "palegreen",
+				"CLASS" => "palegreen"
+			},
+			category_class: {
+				"DISEASE" => "required",
+				"CLASS" => "required"
+			},
+			category_text: {
+				"DISEASE" => "required",
+				"CLASS" => "required"
+			},
+			category_select: {
+				"CLASS" => :option,
+				"GENDER" => :option,
+				"AGE_GOUP" => :option
+			}
+		}%>
+		</div>
+		
+		<%= field_set_tag "Specimens" do %>
+			<p>
+				<% if @entity.persisted? then %>
+					<%= link_to "Reassign specimen to this entity", {controller: params[:controller], action: "index", ids: [@entity.id]} %>
+				<% end %>
+			</p>
+			<% if @specimens.size > 0 %>
+				<div class="field">
+					<%=render_table(@selected_specimens,
+										id: "specimens_never_use", 
+										title: "linked specimen",
+										selected: @selected_specimens,
+										selectbox: false,
+										columns: %w(name tags[STATUS] tags[TISSUE] lab internal_identifier tumor_content days_after_treatment),
+										collapsecell: 30
+										){|rec, specimen|
+											tags = specimen.tags_by_category
+											rec["tags[STATUS]"] = (tags["STATUS"] || []).map(&:value).sort.join(" | ")
+											rec["tags[TISSUE]"] = (tags["TISSUE"] || []).map(&:value).sort.join(" | ")
+											rec
+											}%>
+				</div>
+			<% end %>
+			<% if defined?@specimen_template then %>
+				<div class="field">
+					<%= render_form_table(SpecimenProbe, 
+														title: "Create new specimen", 
+														id: "specimen_templates",
+														count: (params[:count] || 10),
+														attributes: @specimen_template
+					
+					)%>
+				</div>
+			<% end %>
+		<% end %>
+		</br >
+		<div class="actions">
+			<%= f.submit %>
+		</div>
+	<% else %>
+		<div class="field">
+			<span>
+				Please select an entity group.
+			</span>
+			<br />
+		</div>
+	<% end%>
+<% end %>

@@ -1,0 +1,68 @@
+<h1>Project <%= @experiment.title %></h1>
+<p>
+	<%= link_to 'Query', aqua_experiment_path(@experiment) %> 
+	<%= link_to 'Edit', edit_experiment_path(@experiment) %> 
+	<%= link_to 'Back', experiments_path %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%= @experiment.name %>
+</p>
+
+<p>
+  <b>Title:</b>
+  <%= @experiment.title %>
+</p>
+
+<p>
+  <b>Contact:</b>
+  <%= @experiment.contact %>
+</p>
+
+<p>
+  <b>Institution:</b>
+  <%= @experiment.institution.name %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%= @experiment.description %>
+</p>
+
+<p>
+  <b>Users:</b>
+  <%= render partial: "users/list", locals: {users: @experiment.users,  compact: true, selectbox: false}%>
+</p>
+
+<p>
+	<%=render_table(@experiment.samples, title: "Samples", selectbox: false){|rec, smpl|
+			rec["ready to query?"] = smpl.ready_to_query?
+			rec
+	}%>
+</p>
+
+<%= render_table(@experiment.entity_groups,
+								title: "Entity Groups", 
+								id: "entity_groups_of_experiment",
+								column_order: %w(name complete institutions created_at updated_at Show),
+								selectbox: true,
+								actions: {
+									"Show dataset summary" => show_dataset_summary_entity_groups_path
+								}
+){|rec, eg|
+	rec["institution"] = eg.institution.name
+		rec
+}%>
+
+<p>
+	<%= render(partial: "samples/baf_stats", locals: {samples: @experiment.samples}) %>
+</p>
+
+<p>
+	<%= render(partial: "samples/variation_stats", locals: {samples: @experiment.samples}) %>
+</p>
+
+<%= link_to 'Query', aqua_experiment_path(@experiment) %> 
+<%= link_to 'Edit', edit_experiment_path(@experiment) %> 
+<%= link_to 'Back', experiments_path %>

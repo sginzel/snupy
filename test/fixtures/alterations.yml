@@ -1,0 +1,22 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+# Both SNPs are located in PDE4DIP
+silent_alteration:
+  ref: C
+  alt: A
+  alttype: snp
+
+missense_alteration:
+  ref: G
+  alt: T
+  alttype: snp
+
+missense_alteration2:
+  ref: C
+  alt: T
+  alttype: snp
+
+# indel in NTRK1 intronic
+indel_alteration:
+  ref: A
+  alt: AGTGT
+  alttype: indel

@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  aqua_quantile: 1
+  quantile: 1.5
+  value: 1.5
+
+two:
+  aqua_quantile: 1
+  quantile: 1.5
+  value: 1.5

@@ -1,0 +1,95 @@
+<%
+	if !defined?attribute_to_column then
+		attribute_to_column = {}
+		attributes.keys.each do |k|
+			attribute_to_column[k] = k
+		end
+	end
+%>
+
+<%= field_set_tag title, {class: "form_table"} do %>
+	<table>
+		<thead>
+			<tr>
+				<% attributes.keys.each do |k| %>
+					<th><%=attribute_to_column[k].to_s.humanize%></th>
+				<% end %>
+			</tr>
+		</thead>
+		<tbody>
+			<% (1..count).each do |rowno| %>
+				<tr class="form_table_row">
+				<% attributes.each do |k, conf| %>
+					<%
+						fieldname = "#{id}[#{rowno}][#{k}]"
+						options = [["", ""]]
+						fieldconf = conf.dup
+						fieldconf.delete(:type)
+						fieldconf.delete("type")
+						(conf[:options] || []).each do |option|
+							if !option.is_a?(Array) then
+								options << [option, option]
+							else
+								options << option
+							end
+						end
+						input_field = case conf[:type]
+						when :string
+							text_field_tag fieldname, conf[:value], fieldconf
+						when :number
+							number_field_tag fieldname, conf[:value], fieldconf
+						when :select
+							select_tag fieldname, 
+								options_for_select(options, selected: conf[:selected]),
+								{
+									id: fieldname, 
+									name: fieldname,
+									onchange: conf[:onchange],
+									"class" => (conf[:comboboxclass] || "selectbox")
+								}
+						when :combobox
+							select_tag fieldname, 
+								options_for_select(options, selected: conf[:selected]),
+								{
+									#id: fieldname, 
+									name: fieldname,
+									onchange: conf[:onchange],
+									"class" => (conf[:comboboxclass] || "snupycombobox"),
+									allowempty: (conf[:allowempty] || conf[:include_blank])?"1":"0",
+									validonly: (conf[:validonly])?"1":"0"
+								}
+						when :autocomplete
+							select_tag fieldname, 
+								options_for_select(options, selected: conf[:selected]),
+								{
+									id: fieldname, 
+									name: fieldname,
+									onchange: conf[:onchange],
+									"class" => (conf[:comboboxclass] || "snupycombobox"),
+									allowempty: (conf[:allowempty] || conf[:include_blank])?"1":"0",
+									validonly: (conf[:validonly])?"1":"0"
+								}
+						when :file
+							file_field_tag fieldname, fieldconf
+						when :boolean
+							(hidden_field_tag(fieldname, "0") + " " + check_box_tag(fieldname, "1"))
+						when :bool
+							(hidden_field_tag(fieldname, "0") + " " + check_box_tag(fieldname, "1"))
+						when :hidden
+							hidden_field_tag fieldname, conf[:value]
+						else 
+							text_field_tag fieldname, conf[:value], fieldconf
+						end
+					%>
+					<td>
+						<%= input_field %>
+					</td>
+				<% end %>
+				</tr>
+			<% end %>
+		</tbody>
+		<tfoot>
+			
+		</tfoot>
+	</table>
+<% end %>

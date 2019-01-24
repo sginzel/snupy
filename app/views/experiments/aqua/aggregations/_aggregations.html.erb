@@ -1,0 +1,77 @@
+<%
+	def is_checked(aklass, aname, aconf)
+		aggregation_type = aklass.configuration()[aname][:type]
+		value = get_from_param("aggregations", aggregation_type, aklass.name.underscore, aname).to_s
+		if value != ""
+			param_checked = value == "1"
+		else
+			param_checked = (aklass.configuration()[aname][:checked] || false)
+		end
+	end
+	# sort the aggregations by category
+	aggregation_categories = {}
+	aggregations.each do |aklass, aconfs|
+		aklass_categories = {}
+		aconfs.each do |aname, aconf|
+			cat = (aconf[:category] || aconf["category"] || "Miscellaneous").to_s
+			aklass_categories[cat] = {} if aklass_categories[cat].nil?
+			aklass_categories[cat][aname] = aconf
+		end
+		aklass_categories.each do |cat, aconfs|
+			aggregation_categories[cat] = {} if aggregation_categories[cat].nil?
+			aggregation_categories[cat][aklass] = aconfs
+		end
+	end
+	aggregation_categories = Hash[aggregation_categories.sort]
+	aggregation_categories_all_checked = {}
+	aggregation_categories.each do |cat, cat_aggregations|
+		result = cat_aggregations.map do |aklass, aconfs|
+			aconfs.map do |aname, aconf|
+				is_checked(aklass, aname, aconf)
+			end
+		end
+		if result.flatten.any?{|x|x} then
+			aggregation_categories_all_checked[cat] = "indeterminatecheckbox"
+		end
+		if result.flatten.all?{|x|x} then
+			aggregation_categories_all_checked[cat] = "checkedcheckbox"
+		end
+	end
+	
+%>
+<% aggregation_categories.each do |cat, cat_aggregations| %>
+	<%=field_set_tag "<input type=checkbox class='aggregationselectall #{aggregation_categories_all_checked[cat]}'>#{cat}".html_safe, class: "aggregation_category" do %>
+		<%=content_tag :div, class: "aqua_queries" do%>
+			<%=content_tag :div, class: "aqua_query_group" do %>
+				<span class='aqua_query_group_collapse ui-state-default aqua_col' style='margin-top: -10px'>
+					<span class='ui-icon ui-icon-plus' style="display: inline-block"></span><%= "Customize #{cat_aggregations.values.first.values.flatten.size} annotations" %>
+				</span>
+				<div class='aqua_query_group_container aqua_query_group_container_hidden'>
+					<% cat_aggregations.each do |aklass, aconfs| %>
+						<% aconfs.each do |aname, aconf| %>
+							<%
+								aggregation_type = aklass.configuration()[aname][:type]
+								value = get_from_param("aggregations", aggregation_type, aklass.name.underscore, aname).to_s
+								if value != ""
+										param_checked = value == "1"
+									else
+										param_checked = (aklass.configuration()[aname][:checked] || false)
+									end
+							%>
+							<%=content_tag :div, class: "ui-state-default aqua_col" do%>
+								<% if aklass.applicable?(aname) then %>
+									<%=hidden_field_tag "aggregations[#{aggregation_type}][#{aklass.name.underscore}][#{aname}]", 0%>
+									<%=check_box_tag "aggregations[#{aggregation_type}][#{aklass.name.underscore}][#{aname}]", 1, param_checked%>
+									<%=label_tag "aggregations[#{aggregation_type}][#{aklass.name.underscore}][#{aname}]", aconf[:label]%>
+								<% else %>
+									<%=check_box_tag "aggregations[#{aggregation_type}][#{aklass.name.underscore}][#{aname}]", 0, param_checked, disabled: "disabled" %>
+									<%=label_tag "aggregations[#{aggregation_type}][#{aklass.name.underscore}][#{aname}]", aconf[:label], style: "color: darkgrey !important;" %>
+								<% end %>
+							<% end %>
+						<% end %>
+					<% end %>
+				</div>
+			<% end %>
+		<% end %>
+	<% end %>
+<% end %>

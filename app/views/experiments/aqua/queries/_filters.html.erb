@@ -1,0 +1,61 @@
+<%
+	combine = (qconf[:combine] || "AND")
+	if !(get_from_param("queries", qklass.name.underscore, qname, "combine").nil?) then
+		combine = params["queries"][qklass.name.underscore][qname]["combine"]
+	end
+%>
+<%=content_tag :div do%>
+	<%
+		filters = {}
+		qklass.filters(qname).each do |finst|
+			filters[finst.tool] = [] if filters[finst.tool].nil?
+			filters[finst.tool] << finst
+		end 
+	%>
+	<%=content_tag :div, style: "text-align: center;" do%>
+		Filters
+	<% end %>
+	<% if !qconf[:tooltip].nil? %>
+		<div style="font-size: 8pt; border-bottom: 1pt solid darkgrey;border-top: 1pt solid darkgrey; margin: 1pt 3pt 1pt 3pt; text-align: justify;">
+			Tooltip: <%= qconf[:tooltip].html_safe %>
+		</div>
+		<br>
+	<% end %>
+	<% filters.each do |tool, finstances| %>
+		<%=content_tag :div, class: "aqua_query_filter_tool" do%>
+			<%=(Aqua.annotations[tool] || {label: "SNuPy"})[:label].strip%>
+			<% finstances.each do |finst| %>
+				<% 
+					# TODO: Not implemented yet...only show filters and queries that support an organism
+					#next unless fklass.supports_organism?(@experiment.organism_id)
+				%>
+				<% if finst.applicable? then%>
+					<%=content_tag :div, class: "aqua_query_filter_filter" do%>
+						<% 
+							param_checked = get_from_param("queries", qklass.name.underscore, qname.to_s, "filters", finst.class.name, finst.name.to_s).to_s
+							if param_checked != ""
+								param_checked = param_checked == "1"
+							else
+								param_checked = finst.checked
+							end
+						%>
+						
+						<%=hidden_field_tag "queries[#{qklass.name.underscore}][#{qname}][filters][#{finst.class}][#{finst.name}]", 0%>
+						<%=check_box_tag "queries[#{qklass.name.underscore}][#{qname}][filters][#{finst.class}][#{finst.name}]", 1, param_checked%>
+						<%=label_tag "queries[#{qklass.name.underscore}][#{qname}][filters][#{finst.class}][#{finst.name}]", finst.label %>
+					<% end %>
+				<% else %>
+					<%=content_tag :div, class: "aqua_query_filter_filter" do%>
+						<%=check_box_tag "queries[#{qklass.name.underscore}][#{qname}][filters][#{finst.class}][#{finst.name}]", 0, false, disabled: "disabled"%>
+						<%=label_tag "queries[#{qklass.name.underscore}][#{qname}][filters][#{finst.class}][#{finst.name}]", finst.label, style: "color: darkgrey !important;" %>
+					<% end %>
+				<% end %>
+			<% end %>
+		<% end %>
+	<% end %>
+	<br />
+	<%=content_tag :div, class: "aqua_query_filter_combine" do %>
+		Combine: AND <%= radio_button_tag "queries[#{qklass.name.underscore}][#{qname}][combine]", "AND", combine == "AND" %>
+		<%= radio_button_tag "queries[#{qklass.name.underscore}][#{qname}][combine]", "OR", combine == "OR" %> OR
+	<% end %>
+<% end %>

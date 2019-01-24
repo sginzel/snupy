@@ -1,0 +1,39 @@
+<td style="border: 1px solid steelblue; padding-right: 10px;">
+	<%=
+		hidden_field_tag("query_generators[#{gklass.name}][selected]", "0") +
+		check_box_tag("query_generators[#{gklass.name}][selected]",  "1", get_params(:query_generators, gklass.name, :selected) == "1")
+	%>
+	<%=label_tag gklass.config[:label]%>
+</td>
+<td style="border: 1px solid steelblue; padding-right: 10px; padding-left: 5px;">
+	<table>
+	<% gklass.config[:options].each do |name, default_value| %>
+			<%= content_tag :tr do %>
+				<td style="border-bottom: 1px solid lightsteelblue">
+					<%=label_tag name%>:
+				</td>
+				<td style="border-bottom: 1px solid lightsteelblue">
+					<%=
+						if default_value.is_a?(TrueClass) or default_value.is_a?(FalseClass) then
+							hidden_field_tag("query_generators[#{gklass.name}][#{name}]", "0") +
+									check_box_tag("query_generators[#{gklass.name}][#{name}]",  "1", get_params(:query_generators, gklass.name, name) == "1")
+						elsif default_value.is_a?(String)
+							text_field_tag("query_generators[#{gklass.name}][#{name}]", (get_params(:query_generators, gklass.name, name) || default_value))
+						elsif default_value.is_a?(Numeric)
+							text_field_tag("query_generators[#{gklass.name}][#{name}]", (get_params(:query_generators, gklass.name, name) || default_value))
+						elsif default_value.is_a?(Array)
+							select_tag("query_generators[#{gklass.name}][#{name}]",
+												 options_for_select(
+														 default_value.map{|x| [x.to_s.html_safe,x.to_s.html_safe]},
+														 selected: (get_params(:query_generators, gklass.name, name) || default_value.first)
+												 )
+							)
+						else
+							"unknown type"
+						end
+					%>
+				</td>
+			<% end %>
+	<%end%>
+	</table>
+</td>

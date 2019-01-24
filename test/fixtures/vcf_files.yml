@@ -1,0 +1,18 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+vcf_file_gatk:
+  name: vcf_file_gatk
+  filename: GATK_vcf1.vcf
+  content: >
+    #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	child	father	mother
+    1	145075809	.	G	T	775.16	PASS	AC=2;AF=0.333;AN=6;BaseQRankSum=2.30;ClippingRankSum=-2.840e-01;DP=1164;FS=1.842;MLEAC=2;MLEAF=0.333;MQ=60.00;MQRankSum=1.44;QD=0.92;ReadPosRankSum=-7.090e-01;SOR=0.489;VQSLOD=14.54;culprit=QD	GT:AD:DP:GQ:PL	0/1:428,49:477:99:254,0,11735	0/1:318,47:365:99:553,0,8785	0/0:321,0:321:99:0,120,1800
+    1	186321242	.	C	T	3217.88	PASS	AC=3;AF=0.500;AN=6;BaseQRankSum=-1.950e-01;ClippingRankSum=0.523;DP=188;FS=0.000;MLEAC=3;MLEAF=0.500;MQ=60.00;MQRankSum=-1.279e+00;POSITIVE_TRAIN_SITE;QD=22.04;ReadPosRankSum=-1.833e+00;SOR=0.699;VQSLOD=17.75;culprit=MQ	GT:AD:DP:GQ:PL	0/1:45,24:69:99:623,0,1400	1/1:0,77:77:99:2631,230,0	0/0:40,0:40:99:0,111,1438
+    1	144930869	.	C	A	3957.16	PASS	AC=2;AF=0.333;AN=6;BaseQRankSum=-9.000e-03;ClippingRankSum=-2.810e-01;DP=1475;FS=0.000;MLEAC=2;MLEAF=0.333;MQ=60.00;MQRankSum=0.036;QD=3.03;ReadPosRankSum=2.44;SOR=0.672;VQSLOD=17.15;culprit=MQ	GT:AD:DP:GQ:PL	0/1:547,129:676:99:1957,0,15114	0/0:168,0:168:99:0,120,1800	0/1:502,127:629:99:2032,0,13734
+    1	156845492	.	A	AGT,AGTGT,AGTGTGTGT	2945.13	PASS	AC=1,3,1;AF=0.167,0.500,0.167;AN=6;BaseQRankSum=-1.483e+00;ClippingRankSum=0.125;DP=364;FS=9.821;MLEAC=1,3,1;MLEAF=0.167,0.500,0.167;MQ=60.00;MQRankSum=-1.395e+00;QD=29.45;ReadPosRankSum=-8.630e-01;SOR=2.445	GT:AD:DP:GQ:PL	1/2:3,8,30,0:41:99:1383,734,702,114,0,162,937,726,203,929	0/2:17,3,9,0:29:99:427,195,604,0,436,742,255,612,494,670	2/3:2,4,14,10:30:99:1166,791,791,392,345,412,490,243,0,583
+  md5checksum:
+  sample_names: "---\n- child\n- father\n- mother"
+  contact: No contanct
+  status: DONE
+  filters: "---\nPASS: 3\n"
+  institution: ukd
+  organism: homo_sapiens

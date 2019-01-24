@@ -1,0 +1,63 @@
+<div style="width: 750px">
+	<div class="ui-widget" style="float: left; width: 100%;">
+		<div class="ui-widget-header">
+			<p style="margin-left: auto; margin-right: auto;text-align: center">
+				<%=link_to "Projects", experiments_path %> |
+				<%=link_to "Samples", samples_path %> |
+				<%=link_to "Gene Panels", generic_lists_path %> |
+				<%=link_to "Help", home_help_path %> |
+				<%=link_to "About", home_about_path %>
+				<% if File.exists?("public/snupy.tar.gz") %>
+				| <%=link_to "Download", "snupy.tar.gz"%>
+				<% end %>
+			</p>
+		</div>
+	</div>
+
+	<div style="margin-left: 10px; float: left; width: 100%;">
+		<h4>
+			Welcome <%= current_user.full_name %>
+		</h4>
+	</div>
+	<br />
+	
+	<div style="margin-top: 10px; float: left; width: 750px">
+		<% if @experiments.size > 0 %>
+				<%= render_table(@experiments,
+												 title: "Projects",
+												 columns: %w(name contact),
+												 column_order: %w(name contact),
+												 selectbox: false
+				){|rec, exp|
+					smpls = exp.samples
+					smpl_links = smpls.map{|smpl|
+						if smpl.ready_to_query? then
+							link_to "#{smpl.nickname}", sample_path(smpl), class: "success"
+						else
+							link_to "#{smpl.nickname}", sample_path(smpl), class: "running"						
+						end
+					}
+					rec["samples"] = smpl_links.join(", ")
+					rec[:name] = link_to exp.name, aqua_experiment_path(exp)
+					rec
+				}%>
+			<br />
+		<% end %>
+		<% if @data_overview.size > 0 then%>
+			<p>
+				<%=render partial: "data_overview", locals: {
+					data_overview: @data_overview
+				}%>
+			</p>
+		<% end %>
+		<% if @orphan_samples.size > 0 then %>
+			<br />
+			<%= render_table(@orphan_samples,
+												 title: "Unlinked Samples (#{@orphan_samples.size}/#{@orphan_samples_total.to_i})",
+												 columns: %w(name nickname contact),
+												 column_order: %w(name nickname contact),
+												 selectbox: false
+				)%>
+		<% end %>
+	</div>
+</div>

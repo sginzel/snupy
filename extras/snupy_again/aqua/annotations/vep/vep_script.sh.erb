@@ -1,0 +1,80 @@
+#!/bin/bash
+
+function on_exit()
+{
+	echo "VEP script terminated"
+	echo "VEP script terminated" >&2
+	if [ ! "$OUTPUT" == "" ]; then
+		mv -f "$OUTPUT" "$OUTPUT.error"
+	fi
+	exit 1
+}
+
+trap on_exit SIGHUP SIGINT SIGTERM SIGQUIT
+
+export PERL5LIB="$PERL5LIB:<%=VepAnnotation.config("basedir")%>/:<%=VepAnnotation.config("basedir")%>/htslib"
+
+SCRIPT="<%=VepAnnotation.config("basedir")%>/variant_effect_predictor.pl"
+ASSEMBLY=""
+SPECIES=""
+DEBUG="--quiet"
+
+<% myopts = VepAnnotation.config("opts") %>
+<% if !myopts.is_a?(Array) then %>
+OPTS="<%=myopts%>"
+<%else%>
+OPTS="<%=myopts[0]%>"
+<%myopts[1..-1].each do |o|%>
+OPTS="$OPTS <%=o%>"
+<%end%>
+<%end%>
+CACHE="--cache --dir <%=VepAnnotation.config("cachedir")%>"
+FORMAT="json"
+
+while getopts "i:o:S:s:a:dc:f:" OPTION
+do
+	case $OPTION in
+		d)
+			DEBUG="--verbose"
+			;;
+		f)
+			FORMAT="$OPTARG"
+			;;
+		i)
+			INPUT=$OPTARG
+			;;
+		o)
+			OUTPUT=$OPTARG
+			;;
+		S)
+			SCRIPT=$OPTARG
+			;;
+		s)
+			SPECIES=$OPTARG
+			;;
+		a)
+			ASSEMBLY=$OPTARG
+			;;
+		c)
+			CACHE="--cache --dir_cache $OPTARG --no_adaptor_cache --strip"
+			;;
+	esac
+done
+
+LOFOPTS=""
+if [ "$SPECIES" == "homo_sapiens" -o "$SPECIES" == "homo_sapiens_merged" ];
+then
+	LOFOPTS="--sift b --polyphen b"
+fi 
+
+if [ "$SPECIES" == "mus_musculus" -o "$SPECIES" == "mus_musculus_merged" ];
+then
+	LOFOPTS="--sift b"
+fi
+
+if [ ! "$ASSEMBLY" == "" ];
+then
+	perl $SCRIPT -i $INPUT -o $OUTPUT --offline $CACHE --$FORMAT --force_overwrite $DEBUG --no_progress --assembly=$ASSEMBLY --species=$SPECIES $OPTS $LOFOPTS
+else
+	perl $SCRIPT -i $INPUT -o $OUTPUT --offline $CACHE --$FORMAT --force_overwrite $DEBUG --no_progress --species=$SPECIES $OPTS $LOFOPTS
+fi

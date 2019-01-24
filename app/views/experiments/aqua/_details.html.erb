@@ -1,0 +1,22 @@
+<% if defined?sample2var and sample2var.size > 0 then %>
+	<%=render_table(sample2var,
+									title: "Variant in other Samples"
+		)%>
+<% else %>
+	No sample data found.
+<% end %>
+<br />
+
+<% if defined?aqua_data and aqua_data.size > 0 then %>
+	<% aqua_data.each do |tool, result| %>
+		<%=render_table(result,
+									title: tool,
+									#groupby: ((group_by_variation_id)?["variation_calls.variation_id"]:[]),
+									idcol: ((group_by_variation_id)?("variation_calls.variation_id".to_sym):(:noid)),
+									details_path: aqua_query_details_path(variation_id: ":id"),
+									detail_params: {tools: tool, group: false, experiment: experiment.id, samples: (samples || []).map(&:id)}
+		)%>
+	<% end %>
+<% else %>
+	No data found.
+<% end %>

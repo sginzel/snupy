@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+fin = STDIN
+fot = STDOUT
+last_chr = -1
+last_pos = -1
+last_line = ""
+chr_order = ((0..22).to_a + ["X", "Y", "M", "MT"])
+chr_order = Hash[chr_order.map{|x| [x.to_s, chr_order.index(x)]}]
+
+cnt = 1
+fot.write(<<EOS
+##fileformat=VCFv4.1
+##INFO=<ID=raw,Number=1,Type=Float,Description="raw cadd score">
+##INFO=<ID=phred,Number=1,Type=Float,Description="phred-scaled cadd score">
+##CADDCOMMENT=<ID=comment,comment="COMMENT">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+EOS
+)
+fin.each_line do |line|
+	cnt += 1
+	next if line[0] == "#"
+	line.strip!
+	cols = line.split("\t")
+	current_chr = chr_order[cols[0]]
+	current_pos = cols[1].to_i
+	if last_chr > current_chr
+		STDERR.puts "[#{cnt}] previous chromsome is larger than current"
+		STDERR.puts "[#{cnt}] LINE: #{line}"
+		STDERR.puts "[#{cnt}] PREVIOUS LINE #{last_line}"
+		#raise "[#{cnt}] previous chromsome is larger than current"
+		exit 1
+	elsif last_chr < current_chr
+		last_pos = -1
+	end
+	
+	if (last_pos > current_pos)
+		STDERR.puts "[#{cnt}] previous position (#{last_pos} is larger than current (#{current_pos}) (LINE: #{line})"
+		STDERR.puts "[#{cnt}] PREVIOUS LINE #{last_line}"
+		# raise "[#{cnt}] previous position (#{last_pos} is larger than current (LINE: #{line})"
+		exit 2
+	end
+	
+	fot.printf("%s\t%s\t.\t%s\t%s\t1\tPASS\traw=%s;phred=%s\n",
+	           cols[0],cols[1],cols[2],cols[3],cols[4],cols[5])
+	last_chr = chr_order[cols[0]]
+	last_pos = cols[1].to_i
+	last_line = line
+end
+exit 0

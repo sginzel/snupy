@@ -1,0 +1,53 @@
+class QueryGeneFeature < SimpleQuery
+	register_query :domain_id, 
+								 label: "Domain Identifier",
+								 default: "",
+								 type: :text,
+								 tooltip: "Only one identifier is possible",
+								 example: 'PF00013',
+								 organism: [@@ORGANISMS[:human], @@ORGANISMS[:mouse]], 
+								 priority: 32,
+								 combine: "OR",
+								 group: "Protein"
+	register_query :domain_panel, 
+								 label: "Domain Identifier Panel",
+								 default: "",
+								 type: :collection,
+								 tooltip: "Only one identifier domain is possible",
+								 example: 'PF00013',
+								 organism: [@@ORGANISMS[:human], @@ORGANISMS[:mouse]], 
+								 priority: 32.01,
+								 combine: "OR",
+								 group: "Protein"
+	register_query :domain, 
+								 label: "Affects Domain",
+								 default: "0",
+								 type: :checkbox,
+								 organism: [@@ORGANISMS[:human], @@ORGANISMS[:mouse]], 
+								 priority: 32.02,
+								 combine: "AND",
+								 group: "Protein"
+	register_query :motif, 
+								 label: "Affects Motif",
+								 default: "0",
+								 type: :checkbox,
+								 organism: [@@ORGANISMS[:human]], 
+								 priority: 32.1,
+								 combine: "OR"
+	register_query :mirna_target, 
+								 label: "microRNA",
+								 default: "0",
+								 type: :checkbox,
+								 organism: [@@ORGANISMS[:human]], 
+								 priority: 33,
+								 combine: "OR"
+	register_query :is_canonical,
+								 label: "Affects cannonical transcript",
+								 default: "0",
+								 type: :checkbox,
+								 organism: [@@ORGANISMS[:human], @@ORGANISMS[:mouse]],
+								 priority: 33,
+								 combine: "OR",
+								 group: "Basic"
+	
+end

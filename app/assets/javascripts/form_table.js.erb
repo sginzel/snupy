@@ -1,0 +1,39 @@
+function autoFillFields(tableobj){
+		// register keydown event for every input in the table body
+		// which makes all inputs under the current cell the same (for mass editing)
+		$("td", $("tbody", tableobj)).keydown(function(e){
+			val = $("input[type=\"text\"]", this).val();
+			if (val !== undefined){
+				tbl = $(this).closest("table");
+				colidx = $(this).index();
+				rowidx = $(this).parent().index();
+				col_cells = $("tbody td:nth-child(" + (colidx + 1) + ")", tbl);
+				if ( e.which == 13 ) {
+					e.preventDefault();
+				}
+				if (e.which == 40){ // down arrow key
+					$("input:text:not(.custom-combobox-input)", col_cells).each(function(){
+						myrowidx = $(this).closest("tr").index();
+						if (myrowidx >= rowidx){
+							$(this).removeAttr("value");
+							$(this).attr("value", val);
+							$(this).val(val);
+							$(this).effect("highlight", {}, 500);;
+						}
+					});
+				}
+				if (e.which == 38){ // up arrow key
+					$("input:text:not(.custom-combobox-input)", col_cells).each(function(){
+						myrowidx = $(this).closest("tr").index();
+						if (myrowidx <= rowidx){
+							$(this).removeAttr("value");
+							$(this).attr("value", val);
+							$(this).val(val);
+							$(this).effect("highlight", {}, 500);;
+						}
+					});
+				}
+			}
+			true;
+		});
+}

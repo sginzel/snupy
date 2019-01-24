@@ -1,0 +1,338 @@
+---
+-
+  id: 100
+  tag_name:  STATUS
+  tag_value: NORMAL
+  tag_type:  SAMPLE_STATUS
+  description: A normal sample, will only be used as control inside the current project. Might carry pre-disposition.
+-
+  id: 101
+  tag_name:  STATUS
+  tag_value: DISEASED
+  tag_type:  SAMPLE_STATUS
+  description: Somhow affected samples, will never be used as control.
+-
+  id: 102
+  tag_name:  STATUS
+  tag_value: CONTROL
+  tag_type:  SAMPLE_STATUS
+  description: Healthy sample, will be used as global control.
+-
+  id: 400
+  tag_name:  STATUS
+  tag_value: FAMILY
+  tag_type:  SAMPLE_STATUS
+  description: Sample taken from family. Patient ID should be unique for one family
+-
+  id: 401
+  tag_name:  STATUS
+  tag_value: FMTHR
+  tag_type:  SAMPLE_STATUS
+  description: Mother to patient
+-
+  id: 402
+  tag_name:  STATUS
+  tag_value: FFTHR
+  tag_type:  SAMPLE_STATUS
+  description: Father to patient
+-
+  id: 403
+  tag_name:  STATUS
+  tag_value: FBRTHR
+  tag_type:  SAMPLE_STATUS
+  description: Brother to patient
+-
+  id: 404
+  tag_name:  STATUS
+  tag_value: FSSTR
+  tag_type:  SAMPLE_STATUS
+  description: Sister to patient
+-
+  id: 405
+  tag_name:  STATUS
+  tag_value: FGRNDMTHR
+  tag_type:  SAMPLE_STATUS
+  description: Grandmother to patient
+-
+  id: 406
+  tag_name:  STATUS
+  tag_value: FGRNDFTHR
+  tag_type:  SAMPLE_STATUS
+  description: Grandfather to patient
+-
+  id: 410
+  tag_name:  STATUS
+  tag_value: FOTHR
+  tag_type:  SAMPLE_STATUS
+  description: Other family member
+-
+  id: 1000
+  tag_name:  STATUS
+  tag_value: CELLS
+  tag_type:  SAMPLE_STATUS
+  description: "[Cells (for control)] Very general status. Should only be used if no other information is available about the status."
+-
+  id: 1001
+  tag_name:  STATUS
+  tag_value: CLINE
+  tag_type:  SAMPLE_STATUS
+  description: "[Cell Line] Stanard cell line material from cultivated source"
+-
+  id: 1002
+  tag_name:  STATUS
+  tag_value: COTHR
+  tag_type:  SAMPLE_STATUS
+  description: "[Cell other] Other cell material, such as control material not related to cell lineage of affected tissue."
+-
+  id: 2000
+  tag_name:  STATUS
+  tag_value: CPRNTS
+  tag_type:  SAMPLE_STATUS
+  description: "[Cells parents] Sample belongs to parents"
+-
+  id: 2001
+  tag_name:  STATUS
+  tag_value: CSBLNG
+  tag_type:  SAMPLE_STATUS
+  description: "[Cells siblings] Sample belongs to siblings. May carry unknown pre-disposition. If pre-disposition is known or suspected used INIT."
+-
+  id: 3000
+  tag_name:  STATUS
+  tag_value: GRML
+  tag_type:  SAMPLE_STATUS
+  description: "[Germline] Germline sample from a patient. Always asssumed to be healthy and independant from INIT."
+-
+  id: 3001
+  tag_name:  STATUS
+  tag_value: INIT
+  tag_type:  SAMPLE_STATUS
+  description: "[Initial status] First affected sample."
+-
+  id: 3002
+  tag_name:  STATUS
+  tag_value: REMI
+  tag_type:  SAMPLE_STATUS
+  description: "[Remission (healthy)] Remission after treatmeant of INIT."
+-
+  id: 3004
+  tag_name:  STATUS
+  tag_value: RLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[1st Relapse] Relapse after INIT."
+-
+  id: 3005
+  tag_name:  STATUS
+  tag_value: RRLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[2nd Relapse] Relapse after R1REMI."
+-
+  id: 3006
+  tag_name:  STATUS
+  tag_value: RRRLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[3rd Relapse] Relapse R2REMI."
+-
+  id: 3007
+  tag_name:  STATUS
+  tag_value: FNDR
+  tag_type:  SAMPLE_STATUS
+  description: "[Founder] Tissue possibly containing the founding mutation of a tumor, not necessarily germline."
+-
+  id: 3100
+  tag_name:  STATUS
+  tag_value: R1REMI
+  tag_type:  SAMPLE_STATUS
+  description: "[Remission after 1st relapse] Remission after treatment of RLPS"
+-
+  id: 3101
+  tag_name:  STATUS
+  tag_value: R1RLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[Relapse after 1st relapse] Relapse after RLPS."
+-
+  id: 3102
+  tag_name:  STATUS
+  tag_value: R2REMI 
+  tag_type:  SAMPLE_STATUS
+  description: "[Remission after 2nd relapse] Remission after treatment of RRLPS"
+-
+  id: 3103
+  tag_name:  STATUS
+  tag_value: R2RLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[Relapse after 2nd relapse] Relapse after RRLPS"
+-
+  id: 3104
+  tag_name:  STATUS
+  tag_value: R3REMI
+  tag_type:  SAMPLE_STATUS
+  description: "[Remission after 3rd relapse] Remission after treatment of RRRLPS"
+-
+  id: 3105
+  tag_name:  STATUS
+  tag_value: R3RLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[Relapse after 3rd relapse] Relapse after RRRLPS"
+-
+  id: 3106
+  tag_name:  STATUS
+  tag_value: R4REMI
+  tag_type:  SAMPLE_STATUS
+  description: "[Remission after 4th relapse] Remission after treatment of RRRRRLPS"
+-
+  id: 3107
+  tag_name:  STATUS
+  tag_value: R4RLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[Relapse after 4th relapse] Relpase after RRRRRRLPS"
+-
+  id: 3108
+  tag_name:  STATUS
+  tag_value: R5REMI
+  tag_type:  SAMPLE_STATUS
+  description: "[Remission after 5th relapse] Remission after treatment of RRRRRRLPS"
+-
+  id: 3109
+  tag_name:  STATUS
+  tag_value: R5RLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[Relapse after 5th relapse] Relapse after RRRRRRLPS"
+-
+  id: 4100
+  tag_name:  STATUS
+  tag_value: TRANS
+  tag_type:  SAMPLE_STATUS
+  description: "[Transplant (healthy)] Extracted from donor. Should always be heahlty. Use TREMI for healthy patient material after transplant."
+-
+  id: 4101
+  tag_name:  STATUS
+  tag_value: T1REMI
+  tag_type:  SAMPLE_STATUS
+  description: "[1st Resmission after 1st Transplant] Remission sample after transplant treatment."
+-
+  id: 4102
+  tag_name:  STATUS
+  tag_value: T1RLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[1st Relapse after 1st Transplant] Relapse after TREMI"
+-
+  id: 4103
+  tag_name:  STATUS
+  tag_value: T1R1REMI
+  tag_type:  SAMPLE_STATUS
+  description: "[2nd Resmission after 1st Relapse after Transplant] Remission after treatment of TRLPS"
+-
+  id: 4104
+  tag_name:  STATUS
+  tag_value: T1R1RLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[2nd Relapse after 1st Transplant] Relapse after TRLPS"
+-
+  id: 4105
+  tag_name:  STATUS
+  tag_value: T1R2REMI
+  tag_type:  SAMPLE_STATUS
+  description: "[3rd Resmission after 1st Transplant] Remission after treatment of TRRLPS"
+-
+  id: 4106
+  tag_name:  STATUS
+  tag_value: TRRRLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[3rd Relapse after 1st Transplant] Relapse after TRRLPS"
+-
+  id: 4107
+  tag_name:  STATUS
+  tag_value: TRRREMI
+  tag_type:  SAMPLE_STATUS
+  description: "[4th Resmission after 1st Transplant] Remission after treatment of TRRRLPS"
+-
+  id: 4108
+  tag_name:  STATUS
+  tag_value: TRRRRLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[4th Relapse after 1st Transplant] Relapse after TRRREMI"
+-
+  id: 4200
+  tag_name:  STATUS
+  tag_value: TTRANS
+  tag_type:  SAMPLE_STATUS
+  description: "[Transplant 2nd donor] Extracted from second donor after first transplant."
+-
+  id: 4201
+  tag_name:  STATUS
+  tag_value: TTREMI
+  tag_type:  SAMPLE_STATUS
+  description: "[1st Resmission after 2nd Transplant] Remission after second Transplant"
+-
+  id: 4202
+  tag_name:  STATUS
+  tag_value: TTRLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[1st Relapse after 2nd Transplant] Relapse after TTREMI"
+-
+  id: 4203
+  tag_name:  STATUS
+  tag_value: TTRREMI
+  tag_type:  SAMPLE_STATUS
+  description: "[2nd Resmission after 2nd Transplant] Remission after treatment of TTRLPS"
+-
+  id: 4204
+  tag_name:  STATUS
+  tag_value: TTRRLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[2nd Relapse after 2nd Transplant] Relapse after TTRLPS"
+-
+  id: 4205
+  tag_name:  STATUS
+  tag_value: TTRRREMI
+  tag_type:  SAMPLE_STATUS
+  description: "[3rd Resmission after 2nd Transplant] Remission after treatment of TTRRLPS"
+-
+  id: 4206
+  tag_name:  STATUS
+  tag_value: TTRRRLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[3rd Relapse after 2nd Transplant] Relapse after TTRRLPS"
+-
+  id: 4300
+  tag_name:  STATUS
+  tag_value: TTTRANS
+  tag_type:  SAMPLE_STATUS
+  description: "[Transplant 3rd donor] Extracted from third donor after first transplant."
+-
+  id: 4301
+  tag_name:  STATUS
+  tag_value: TTTREMI
+  tag_type:  SAMPLE_STATUS
+  description: "[1st Resmission after 3rd Transplant] Remission after third transplant."
+-
+  id: 4302
+  tag_name:  STATUS
+  tag_value: TTTRLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[1st Relapse after 3rd Transplant] Relapse after TTTREMI"
+-
+  id: 4303
+  tag_name:  STATUS
+  tag_value: TTTRREMI
+  tag_type:  SAMPLE_STATUS
+  description: "[2nd Resmission after 3rd Transplant] Remission after treatment of TTTRLPS"
+-
+  id: 4304
+  tag_name:  STATUS
+  tag_value: TTTRRLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[2nd Relapse after 3rd Transplant] Relapse after TTTRLPS"
+-
+  id: 4305
+  tag_name:  STATUS
+  tag_value: TTTRRRREMI
+  tag_type:  SAMPLE_STATUS
+  description: "[3rd Resmission after 3rd Transplant] Remission after treatmeht of TTTRRLPS"
+-
+  id: 4306
+  tag_name:  STATUS
+  tag_value: TTTRRRLPS
+  tag_type:  SAMPLE_STATUS
+  description: "[3rd Relapse after 3rd Transplant] Relapse after TTTRRLPS"
+---

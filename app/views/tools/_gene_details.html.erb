@@ -1,0 +1,18 @@
+<div id="node_details">
+	<p>
+		more information:
+		<%if(!params[:url].to_s.empty?)%>
+			<%= link_to  "Gene Cards", @gene_cards,  :target => '_blank' %>
+		<%else%>
+			Gene could not be found at GeneCards
+		<%end%>
+	</p>
+
+
+	<%=render_table(
+		gene_details,
+		title: "Details for " + gene_symbol,
+		id: node_table_id
+	)%>
+
+</div>

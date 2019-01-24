@@ -1,0 +1,18 @@
+<div style="padding-left: 10px;padding-bottom: 20px; width: 80%; background-color: #EEE">
+	<h2>DETAILS</h3>
+	<%
+		cols  = %w(regions.name regions.start regions.stop alterations.ref alterations.alt)
+		cols += %w(consequences.consequence)
+		cols += %w(variation_calls.gt variation_calls.dp variation_calls.filter variation_calls.qual variation_calls.sample_id)
+		cols += %w(samples.name samples.nickname samples.patient samples.contact samples.sample_type)
+		cols += %w(genetic_elements.ensembl_gene_id genetic_elements.hgnc genetic_elements.ensembl_feature_id genetic_elements.ensembl_feature_type genetic_elements.ensp)
+		cols += VariationAnnotation.attribute_names.map{|a| "variation_annotations.#{a}"}
+	%>
+	<%=render_table(@details, 
+									title: "",
+									columns: cols,
+									column_order: ["samples.nickname", "regions.*", "alterations.*", 
+																 "consequences.*", "genetic_elements.*", "variation_calls.*", "samples.*", "variation_annotations.*"]
+				)%>
+
+</div>

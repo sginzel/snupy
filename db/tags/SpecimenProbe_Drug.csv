@@ -1,0 +1,84 @@
+subcategory	value	description
+INFORM_PANEL	cytarabine	ARA-C
+INFORM_PANEL	L-asparaginase	ASP
+INFORM_PANEL	cyclophosphamide	CTX
+INFORM_PANEL	dexamethasone	DEX
+INFORM_PANEL	doxorubicin	DXR
+INFORM_PANEL	6-mercaptopurine	6-MP
+INFORM_PANEL	methotrexate	MTX
+INFORM_PANEL	prednisone	PDN
+INFORM_PANEL	6-thioguanine	6-TP
+INFORM_PANEL	vincristine	VCR
+INFORM_PANEL	adotrastuzumab emtansine	based on INFORM study
+INFORM_PANEL	afatinib	based on INFORM study
+INFORM_PANEL	alemtuzumab	based on INFORM study
+INFORM_PANEL	antiandrogens	based on INFORM study
+INFORM_PANEL	aromatase inhibitors	based on INFORM study
+INFORM_PANEL	axitinib	based on INFORM study
+INFORM_PANEL	azacitidine	based on INFORM study
+INFORM_PANEL	belimumab	based on INFORM study
+INFORM_PANEL	belinostat	based on INFORM study
+INFORM_PANEL	bevacizumab	based on INFORM study
+INFORM_PANEL	blinatumomab	based on INFORM study
+INFORM_PANEL	bosutinib	based on INFORM study
+INFORM_PANEL	brentuximab vedotin	based on INFORM study
+INFORM_PANEL	cabozantinib	based on INFORM study
+INFORM_PANEL	canakinumab	based on INFORM study
+INFORM_PANEL	ceritinib	based on INFORM study
+INFORM_PANEL	cetuximab	based on INFORM study
+INFORM_PANEL	crizotinib	based on INFORM study
+INFORM_PANEL	dabrafenib	based on INFORM study
+INFORM_PANEL	dasatinib	based on INFORM study
+INFORM_PANEL	decitabine	based on INFORM study
+INFORM_PANEL	denosumab	based on INFORM study
+INFORM_PANEL	erlotinib	based on INFORM study
+INFORM_PANEL	gefitinib	based on INFORM study
+INFORM_PANEL	gemtuzumab ozogamicin	based on INFORM study
+INFORM_PANEL	ibritumomab tiuxetan	based on INFORM study
+INFORM_PANEL	ibrutinib	based on INFORM study
+INFORM_PANEL	idelalisib	based on INFORM study
+INFORM_PANEL	imatinib	based on INFORM study
+INFORM_PANEL	ipilimumab	based on INFORM study
+INFORM_PANEL	isotretinoin	based on INFORM study
+INFORM_PANEL	lapatinib	based on INFORM study
+INFORM_PANEL	LHRH agonists	based on INFORM study
+INFORM_PANEL	everolimus	based on INFORM study
+INFORM_PANEL	nilotinib	based on INFORM study
+INFORM_PANEL	nintedanib	based on INFORM study
+INFORM_PANEL	nivolumab	based on INFORM study
+INFORM_PANEL	obinutuzumab	based on INFORM study
+INFORM_PANEL	ofatumumab	based on INFORM study
+INFORM_PANEL	olaparib	based on INFORM study
+INFORM_PANEL	palbociclib	based on INFORM study
+INFORM_PANEL	panitumumab	based on INFORM study
+INFORM_PANEL	panobinostat	based on INFORM study
+INFORM_PANEL	pazopanib	based on INFORM study
+INFORM_PANEL	pegaptanib	based on INFORM study
+INFORM_PANEL	pembrolizumab	based on INFORM study
+INFORM_PANEL	pertuzumab	based on INFORM study
+INFORM_PANEL	ponatinib	based on INFORM study
+INFORM_PANEL	ramucirumab	based on INFORM study
+INFORM_PANEL	ranibizumab	based on INFORM study
+INFORM_PANEL	regorafenib	based on INFORM study
+INFORM_PANEL	rituximab	based on INFORM study
+INFORM_PANEL	romidepsin	based on INFORM study
+INFORM_PANEL	ruxolitinib	based on INFORM study
+INFORM_PANEL	selective estrogen receptor modulators	based on INFORM study
+INFORM_PANEL	siltuximab	based on INFORM study
+INFORM_PANEL	sipuleucelT	based on INFORM study
+INFORM_PANEL	sirolimus	based on INFORM study
+INFORM_PANEL	sorafenib	based on INFORM study
+INFORM_PANEL	sunitinib	based on INFORM study
+INFORM_PANEL	temsirolimus	based on INFORM study
+INFORM_PANEL	tocilizumab	based on INFORM study
+INFORM_PANEL	tofacitinib	based on INFORM study
+INFORM_PANEL	tositumomab	based on INFORM study
+INFORM_PANEL	trametinib	based on INFORM study
+INFORM_PANEL	trastuzumab	based on INFORM study
+INFORM_PANEL	tretinoin	based on INFORM study
+INFORM_PANEL	valproic acid	based on INFORM study
+INFORM_PANEL	vandetanib	based on INFORM study
+INFORM_PANEL	vemurafenib	based on INFORM study
+INFORM_PANEL	vismodegib	based on INFORM study
+INFORM_PANEL	vorinostat	based on INFORM study
+INFORM_PANEL	zivaflibercept	based on INFORM study

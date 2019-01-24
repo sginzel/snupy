@@ -1,0 +1,38 @@
+---
+- category: TISSUE
+  value: Blood Cells [A15.145.229]
+  subcategory: MESH
+  description: general; prefer specifics; "blood picture" probably goes here or under
+    BLOOD CELL COUNT
+- category: TISSUE
+  value: Bone Marrow Cells [A15.378.316]
+  subcategory: MESH
+  description: Cells contained in the bone marrow including fat cells (see ADIPOCYTES);
+    STROMAL CELLS; MEGAKARYOCYTES; and the immediate precursors of most blood cells.
+- category: TISSUE
+  value: Brain [A08.186.211]
+  subcategory: MESH
+  description: ''
+- category: TISSUE
+  value: Fibroblasts [A11.329.228]
+  subcategory: MESH
+  description: Connective tissue cells which secrete an extracellular matrix rich
+    in collagen and other macromolecules.
+- category: TISSUE
+  value: Lymphoid Tissue [A15.382.520.604]
+  subcategory: MESH
+  description: Specialized tissues that are components of the lymphatic system. They
+    provide fixed locations within the body where a variety of LYMPHOCYTES can form,
+    mature and multiply. The lymphoid tissues are connected by a network of LYMPHATIC
+    VESSELS.
+- category: TISSUE
+  value: Mesenchymal Stromal Cells [A11.872.590.500]
+  subcategory: MESH
+  description: ! 'Bone-marrow-derived, non-hematopoietic cells that support HEMATOPOETIC
+    STEM CELLS. They have also been isolated from other organs and tissues such as
+    UMBILICAL CORD BLOOD, umbilical vein subendothelium, and WHARTON JELLY. These
+    cells are considered to be '
+- category: TISSUE
+  value: Tail [A13.895]
+  subcategory: MESH
+  description: ''

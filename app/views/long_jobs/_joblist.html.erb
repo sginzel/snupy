@@ -1,0 +1,60 @@
+<div class="joblistcontent">
+
+	<% if (!@long_jobs.nil?) and @long_jobs.size > 0 then%>
+			<div class="ui-widget-header" style="float: left; margin-top: -10px; width: 100%">
+				<h2> <%= link_to "Your Jobs", long_jobs_path %> </h2>
+				<div style="font-size: 6pt;margin-top: -15px;margin-left: 5px;">
+					<%= link_to " Refresh ", "", onclick: "refreshJobList(5, true)", remote: true %>
+					(<%= Time.now.strftime("%H:%M:%S") %>)
+				</div>
+				<div style="float: left; margin-top: -10px;">
+					<br style="clear: both"/>
+					<div style="font-size: 6pt;padding-top: 15px; margin-top: -20px;margin-left: 5px;margin-bottom: 5px;">
+						<table style="border-spacing: 0px; border: 0px">
+							<tr>
+								<td class="running" height="1" style="font-size: 6pt; line-height: 10px;">Enqueued: <%=@jobstats["ENQUEUED"].to_i%></td>
+								<td class="success" height="1" style="font-size: 6pt; line-height: 10px;">Done: <%=@jobstats["DONE"].to_i%></td>
+							</tr>
+							<tr>
+								<td class="runningpulse" height="1" style="font-size: 6pt; line-height: 10px;">Running: <%=@jobstats["RUNNING"].to_i%></td>
+								<td class="fail"    height="1" style="font-size: 6pt; line-height: 10px;">Failed: <%=@jobstats["FAILED"].to_i%></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+			<br />
+			<div>
+				<ul class="menu ui-menu ui-widget ui-widget-content ui-corner-all" aria-activedescendant="ui-id-11" role="menu">
+					<% @long_jobs[0..100].each do |job| %>
+						<% item_class = case job.status
+							when LongJob::DONE
+								"success"
+							when LongJob::FAILURE
+								"fail"
+							when LongJob::ENQUEUE
+								"running"
+							when LongJob::STORED
+								"stored"
+							else
+								"runningpulse"
+							end 
+						%>
+						<%= render(partial: "home/menu_item", locals: {
+										caption: "#{job.title} #{job.status} (#{job.started_at})",
+										maxlength: -1,
+										url: long_job_result_path(job.id),
+										opts: {class: "#{item_class} job", 
+														"data-context" => {
+															"open result" => long_job_result_path(job.id),
+															status: long_job_status_path(job.id)
+														}.to_json
+													}
+						})%>
+					<% end %>
+				</ul>			
+			</div>
+	<% else %>
+		No Jobs.
+	<% end %>
+</div>

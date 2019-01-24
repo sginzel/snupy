@@ -1,0 +1,59 @@
+<p>
+	<%=content_tag(:div,
+		"",
+		id: "ppigraph_#{edges.hash}",
+		class: "ppigraph",
+		data: {
+			edges: edges,
+			nodes: nodes,
+			url_template: url_template,
+			colors: colors,
+			groups: groups, 
+			labels: labels,
+			experiment: experiment,
+			width: width,
+			height: height,
+		    missing: missing
+		}
+	)%>
+
+  <%= javascript_tag "makeDataTable($('.snupytable', $(this).parent()));  graph = new SimpleGraph($('#ppigraph_#{edges.hash}'));" %>
+
+</p>
+
+
+<p>
+<div style="float: left;">
+  <%= render_table(edges, title: "Interactions", id: "interactions_#{Time.now.to_i}")%>
+</div>
+<br style="clear:both">
+<div>
+	<%
+		aqua_actions = {}
+		Aqua.route_paths.each do |description, url|
+			aqua_actions[description] = {url: url, params: {experiment_id: @experiment.id, samples: params[:samples], queries: params["queries"], aggregations: params["aggregations"]}}
+		end
+		aqua_actions = aqua_actions.merge(
+				{
+						#"Save" => "save me",
+						"Look-up variations in other samples" => {url: details_experiments_path(experiment: @experiment.id),  params: {samples: params[:samples], tags: 'yes', queries: params["queries"], aggregations: params["aggregations"]}},
+						"Show interactions" => {url: interactions_experiments_path(experiment: @experiment.id),                params: {samples: params[:samples], queries: params["queries"], aggregations: params["aggregations"]}},
+						"Attribute matrix" => {url: attribute_matrix_experiments_path(experiment: @experiment.id),             params: {samples: params[:samples], queries: params["queries"], aggregations: params["aggregations"]}},
+						"Gene panel to subject" => {url: panel_to_subject_matrix_experiments_path(experiment: @experiment.id), params: {samples: params[:samples], queries: params["queries"], aggregations: params["aggregations"]}},
+						"Save selected records" => {url: save_resultset_experiments_path(experiment: @experiment.id),          params: {samples: params[:samples], queries: params["queries"], aggregations: params["aggregations"]}}
+				}
+		)
+	%>
+	<%= render_table(@details,
+					 title: "Variation Calls",
+					 id: "variation_calls_interactions_#{Time.now.to_i}}",
+					 idcol: "variation_calls.id",
+					 base_model: VariationCall,
+					 column_order: %w(regions.name regions.start regions.stop alteration.ref alteration.alt variation_calls.gt variation_calls.dp variation_calls.* .*),
+					 actions: aqua_actions
+					 
+		)%>
+</div>
+
+</p>
+

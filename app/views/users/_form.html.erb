@@ -1,0 +1,126 @@
+<%= form_for(@user) do |f| %>
+	<% if @user.errors.any? %>
+		<div id="error_explanation">
+			<h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+			
+			<ul>
+				<% @user.errors.full_messages.each do |msg| %>
+					<li><%= msg %></li>
+				<% end %>
+			</ul>
+		</div>
+	<% end %>
+	
+	<div class="field" style="float: left">
+		<%= f.label :name %><br/>
+		<%= f.text_field :name %>
+	</div>
+	<div class="field" style="float: left">
+		<%= f.label :full_name %><br/>
+		<%= f.text_field :full_name %>
+	</div>
+	<div class="field" style="float: left">
+		<%= f.label :email %><br/>
+		<%= f.text_field :email %>
+	</div>
+	<div class="field" style="float: left">
+		<%= f.label :is_admin %><br/>
+		<%= f.check_box :is_admin %>
+	</div>
+	<br style="clear: both"/>
+	<div class="field">
+		<%= render_table(
+				@institutions,
+				title:     "Affiliations",
+				id:        "institutions",
+				selected:  @user.institution_ids,
+				selectbox: false,
+				columns:   %w(name contact) + Affiliation.roles.values.map {|r| r.humanize} + %w(email phone Show)
+			) {|rec, i|
+			Affiliation.roles.values.each do |role|
+				rec[role.humanize] = check_box_tag "institution[#{rec[:id]}][]", role,
+												   @user.roles[i].include?(role) ||
+													   ((params["institution"] || {})[rec[:id].to_s] || []).include?(role)
+			end
+			rec
+		}
+		%>
+	</div>
+	
+	<div class="field">
+		<%= render_table (current_user.is_admin) ? (Experiment.all) : (@user.experiments),
+						 title:    "Experiments",
+						 id:       "experiments",
+						 selected: @user.experiment_ids,
+						 columns:  %w(name title description contact institution_id created_at),
+						 css:      {width: "80%"}
+		
+		%>
+	</div>
+	
+	<div class="field">
+		<%= render_table(
+				@entity_groups,
+				title:    "Entity Groups",
+				id:       "entity_groups",
+				selected: @user.entity_group_ids,
+				columns:  %w(name complete contact),
+				colors:   {
+					"complete" => Aqua.color_bool()
+				},
+				css:      {width: "80%"}
+			) {|rec, s|
+			rec
+		}
+		%>
+	</div>
+	
+	<div class="field">
+		<%= render_table(
+				@samples,
+				title:    "Samples",
+				id:       "samples",
+				selected: @user.sample_ids,
+				columns:  %w(name patient gender sample_type vcf_file_id vcf_sample_name ignorefilter status),
+				colors:   {
+					"is_visible?" => Aqua.color_bool()
+				},
+				css:      {width: "80%"}
+			) {|rec, s|
+			rec["can link specimen?"] = !@visible_samples[s.id].nil?
+			rec
+		}
+		%>
+	</div>
+	<div class="field">
+		<%= render_table @lists,
+						 title:    "Lists",
+						 id:       "generic_lists",
+						 selected: @user.generic_list_ids,
+						 columns:  %w(name title description type created_at),
+						 css:      {width: "80%"}
+		%>
+	</div>
+	<% if @user.api_key.nil? then %>
+		<div class="field">
+			<%= hidden_field_tag :api_key, "0" %>
+			<%= check_box_tag :api_key, "1" %>
+			<%= label_tag "api_key", "generate API token" %>
+		</div>
+	<% else %>
+		<div class="field">
+			<%= hidden_field_tag :api_key_remove, "0" %>
+			<%= check_box_tag :api_key_remove, "1" %>
+			<%= label_tag "api_key_remove", "Remove api token (#{@user.api_key.token})" %>
+		</div>
+		<div class="field">
+			<%= hidden_field_tag :api_key_refresh, "1" %>
+			<%= check_box_tag :api_key_refresh, "0" %>
+			<%= label_tag "api_key", "Refresh api token (#{@user.api_key.token})" %>
+		</div>
+	<% end %>
+	
+	<div class="actions">
+		<%= f.submit %>
+	</div>
+<% end %>

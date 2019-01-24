@@ -1,0 +1,330 @@
+---
+- category: DISEASE
+  value: Agammaglobulinemia [C20.673.088]
+  subcategory: MESH
+  description: An immunologic deficiency state characterized by an extremely low level
+    of generally all classes of gamma-globulin in the blood.
+
+- category: DISEASE
+  value: Ataxia Telangiectasia [C18.452.284.060]
+  subcategory: MESH
+  description: An autosomal recessive inherited disorder characterized by choreoathetosis
+    beginning in childhood, progressive CEREBELLAR ATAXIA; TELANGIECTASIS of CONJUNCTIVA
+    and SKIN; DYSARTHRIA; B- and T-cell immunodeficiency, and RADIOSENSITIVITY to
+    IONIZING RADIATIO
+
+- category: DISEASE
+  value: Autistic Disorder [F03.550.325.125]
+  subcategory: MESH
+  description: A disorder beginning in childhood. It is marked by the presence of
+    markedly abnormal or impaired development in social interaction and communication
+    and a markedly restricted repertoire of activity and interest. Manifestations
+    of the disorder vary greatly
+
+- category: DISEASE
+  value: Autoimmune Diseases [C20.111]
+  subcategory: MESH
+  description: Disorders that are characterized by the production of antibodies that
+    react with host tissues or immune effector cells that are autoreactive to endogenous
+    peptides. Autoimmune Disease
+
+- category: DISEASE
+  value: Autoimmune Lymphoproliferative Syndrome [C20.683.515.124]
+  subcategory: MESH
+  description: Rare congenital lymphoid disorder due to mutations in certain Fas-Fas
+    ligand pathway genes. Known causes include mutations in FAS, TNFSF6, NRAS, CASP8,
+    and CASP10 proteins. Clinical features include LYMPHADENOPATHY; SPLENOMEGALY;
+    and AUTOIMMUNITY.ALPS
+
+- category: DISEASE
+  value: Blood Platelet Disorders [C15.378.140]
+  subcategory: MESH
+  description: Disorders caused by abnormalities in platelet count or function.
+
+- category: DISEASE
+  value: Burkitt Lymphoma [C20.683.515.761.480.150.165]
+  subcategory: MESH
+  description: A form of undifferentiated malignant LYMPHOMA usually found in central
+    Africa, but also reported in other parts of the world. It is commonly manifested
+    as a large osteolytic lesion in the jaw or as an abdominal mass. B-cell antigens
+    are expressed on the i
+
+- category: DISEASE
+  value: Chromosomal Instability [C23.550.362.180]
+  subcategory: MESH
+  description: An increased tendency to acquire CHROMOSOME ABERRATIONS when various
+    processes involved in chromosome replication, repair, or segregation are dysfunctional.
+
+- category: DISEASE
+  value: Developmental Disabilities [F03.550.362]
+  subcategory: MESH
+  description: Disorders in which there is a delay in development based on that expected
+    for a given age level or stage of development. These impairments/disabilities
+    originate before age 18, may be expected to continue indefinitely, and constitute
+    a substantial...
+
+- category: DISEASE
+  value: Down Syndrome [C16.320.180.260]
+  subcategory: MESH
+  description: A chromosome disorder associated either with an extra chromosome 21
+    or an effective trisomy for chromosome 21. Clinical manifestations include hypotonia,
+    short stature, brachycephaly, upslanting palpebral fissures, epicanthus, Brushfield
+    spots on the iris, protruding tongue, small ears, short, broad hands, fifth finger
+    clinodactyly, Simian crease, and moderate to severe INTELLECTUAL DISABILITY. Cardiac
+    and gastrointestinal malformations, a marked increase in the incidence of LEUKEMIA,
+    and the early onset of ALZHEIMER DISEASE are also associated with this condition.
+    Pathologic features include the development of NEUROFIBRILLARY TANGLES in neurons
+    and the deposition of AMYLOID BETA-PROTEIN, similar to the pathology of ALZHEIMER
+    DISEASE. (Menkes, Textbook of Child Neurology, 5th ed, p213)
+
+- category: DISEASE
+  value: Fanconi Anemia [C18.452.284.280]
+  subcategory: MESH
+  description: Congenital disorder affecting all bone marrow elements, resulting in
+    ANEMIA; LEUKOPENIA; and THROMBOPENIA, and associated with cardiac, renal, and
+    limb malformations as well as dermal pigmentary changes. Spontaneous CHROMOSOME
+    BREAKAGE
+
+- category: DISEASE
+  value: Glioblastoma [C04.557.580.625.600.380.080.335]
+  subcategory: MESH
+  description: A malignant form of astrocytoma histologically characterized by pleomorphism
+    of cells, nuclear atypia, microhemorrhage, and necrosis. They may arise in any
+    region of the central nervous system, with a predilection for the cerebral hemispheres,
+    basal ga...
+
+- category: DISEASE
+  value: Hemorrhage [C23.550.414]
+  subcategory: MESH
+  description: GEN or unspecified; prefer specifics; coord IM with organ/dis precoord
+    (IM), not organ / blood supply; consider also terms for presence of blood within
+    cavities, as HEMOTHORAX; HEMATOCOLPOS; etc.
+
+- category: DISEASE
+  value: HIV Infections [C20.673.480]
+  subcategory: MESH
+  description: ! 'caused by a lentivirus; GEN or unspecified; coord IM with HIV-1
+    (IM) or HIV-2 (IM); note specific indentions under HIV INFECTIONS; DF: HIV INFECT'
+
+- category: DISEASE
+  value: Immunologic Deficiency Syndromes [C20.673]
+  subcategory: MESH
+  description: Immunological Deficiency Syndromes
+
+- category: DISEASE
+  value: Job's Syndrome [C20.673.774.600]
+  subcategory: MESH
+  description: Primary immunodeficiency syndrome characterized by recurrent infections
+    and hyper IgE. Most cases are sporadic. Of the rare familial forms, the dominantly
+    inherited subtype has additional connective tissue, dental and skeletal involvement,syn.Hyper
+    IgE-Sy
+
+- category: DISEASE
+  value: Leukemia, Biphenotypic, Acute [C04.557.337.428.100]
+  subcategory: MESH
+  description: ! "An acute leukemia exhibiting cell features characteristic of both
+    the myeloid and lymphoid lineages and probably arising from MULTIPOTENT STEM CELLS.\tAcute
+    Biphenotypic Leukemia.Leukemia, Mixed, B- and T-Cell.Leukemia, Mixed-Cell"
+
+- category: DISEASE
+  value: Leukemia, Megakaryoblastic, Acute [C04.557.337.539.275.450]
+  subcategory: MESH
+  description: ! "An acute myeloid leukemia in which 20-30% of the bone marrow or
+    peripheral blood cells are of megakaryocyte lineage. MYELOFIBROSIS or increased
+    bone marrow RETICULIN is common.\tMyeloid Leukemia, Acute, M7,Leukemia, Megakaryocytic,
+    Acute"
+
+- category: DISEASE
+  value: Leukemia, Monocytic, Acute [C04.557.337.539.275.484]
+  subcategory: MESH
+  description: ! "An acute myeloid leukemia in which 80% or more of the leukemic cells
+    are of monocytic lineage including monoblasts, promonocytes, and MONOCYTES.\tLeukemia,
+    Myeloid, Acute, M5"
+
+- category: DISEASE
+  value: Leukemia, Myelogenous,Chronic, BCR-ABL Positive [C04.557.337.539.250]
+  subcategory: MESH
+  description: Clonal hematopoetic disorder caused by an acquired genetic defect in
+    PLURIPOTENT STEM CELLS. CML,Leukemia, Chronic Myeloid.Leukemia, Myeloid, Philadelphia-Positive
+
+- category: DISEASE
+  value: Leukemia, Myeloid, Acute [C04.557.337.539.275]
+  subcategory: MESH
+  description: Clonal expansion of myeloid blasts in bone marrow, blood, and other
+    tissue. Encompasses Leukemia, Myeloblastic, Acute;Myeloid Leukemia, Acute, M0;Myeloid
+    Leukemia, Acute, M1;Myeloid Leukemia, Acute, M2.
+
+- category: DISEASE
+  value: Leukemia, Myelomonocytic, Acute [C04.557.337.539.520]
+  subcategory: MESH
+  description: ! "A pediatric acute myeloid leukemia involving both myeloid and monocytoid
+    precursors. At least 20% of non-erythroid cells are of monocytic origin.\tMyeloid
+    Leukemia, Acute, M4;Myelomonocytic Leukemia, Acute"
+
+- category: DISEASE
+  value: Leukemia, Promyelocytic, Acute [C04.557.337.539.275.700]
+  subcategory: MESH
+  description: An acute myeloid leukemia in which abnormal PROMYELOCYTES predominate.
+    It is frequently associated with DISSEMINATED INTRAVASCULAR COAGULATION.Myeloid
+    Leukemia, Acute, M3
+
+- category: DISEASE
+  value: Leukemia, undifferentiated [C04.557.337]
+  subcategory: MESH
+  description: ! "PLEASE USE SPECIFC TERMS PREFERABLY. USE ONLY IF LEUKEMIA IS NOT
+    SPECIFIED OF FAB TYPE \"AUL\".\r\ngeneral or unspecified; many specific leukemia
+    types are available"
+
+- category: DISEASE
+  value: Leukemia,Myelomonocytic, Juvenile [C04.557.337.539.525]
+  subcategory: MESH
+  description: A leukemia affecting young children characterized by SPLENOMEGALY,
+    enlarged lymph nodes, rashes, and hemorrhages. Traditionally classed as a myeloproliferative
+    disease, it is now considered a mixed myeloproliferative-mylelodysplastic disorder.JMML
+
+- category: DISEASE
+  value: Leukocyte-Adhesion Deficiency Syndrome [C20.673.600]
+  subcategory: MESH
+  description: Rare, autosomal recessive disorder caused by deficiency of the beta
+    2 integrin receptors ( RECEPTORS, LEUKOCYTE-ADHESION) comprising the CD11/CD18
+    family of glycoproteins. The syndrome is characterized by abnormal adhesion-dependent
+    functions, especially defective tissue emigration of neutrophils, leading to recurrent
+    infection.
+
+- category: DISEASE
+  value: Li-Fraumeni Syndrome [C04.700.600]
+  subcategory: MESH
+  description: Rare autosomal dominant syndrome characterized by mesenchymal and epithelial
+    neoplasms at multiple sites. MUTATION of the p53 tumor suppressor gene, a component
+    of the DNA DAMAGE response pathway, apparently predisposes family members...
+
+- category: DISEASE
+  value: Lymphoma, AIDS-Related [C20.683.515.761.480.150.450]
+  subcategory: MESH
+  description: ! 'a B-cell lymphoma but use for any AIDS-related lymphoma; coordinate
+    IM with specific type of lymphoma (IM); coordinate with HIV-1 or HIV-2 if pertinent;
+    DF: LYMPHOMA AIDS RELAT;B-cell lymphoid tumors that occur in association with
+    AIDS.'
+
+- category: DISEASE
+  value: Lymphoma, Large B-Cell, Diffuse [C20.683.515.761.480.150.585]
+  subcategory: MESH
+  description: Malig.lymphoma composed of large Blymphoid c.w./nuclear size can exceed
+    normal macrophage nuclei, or more than twice the size of a normal lymphocyte.
+    The pattern is predominantly diffuse.DLBCL,diffuse large B-cell lymphoma
+
+- category: DISEASE
+  value: Lymphoma, Large-Cell, Anaplastic [C20.683.515.761.480.750.399]
+  subcategory: MESH
+  description: A systemic, large-cell, non-Hodgkin, malignant lymphoma characterized
+    by cells with pleomorphic appearance and expressing the CD30 ANTIGEN. These so-called
+    "hallmark" cells have lobulated and indented nuclei. This lymphoma is often mistaken
+    for metastatic carcinoma and MALIGNANT HISTIOCYTOSIS.
+
+- category: DISEASE
+  value: Lymphoma, Primary Effusion [C20.683.515.761.480.150.592]
+  subcategory: MESH
+  description: A rare neoplasm of large B-cells usually presenting as serious effusions
+    without detectable tumor masses. The most common sites of involvement are the
+    pleural, pericardial, and peritoneal cavities. It is associated with HUMAN HERPESVIRUS
+    8, most often occ
+
+- category: DISEASE
+  value: Lymphopenia [C20.673.627]
+  subcategory: MESH
+  description: ! "Reduction in the number of lymphocytes.\r\n"
+
+- category: DISEASE
+  value: Lymphoproliferative Disorders [C20.683.515]
+  subcategory: MESH
+  description: ! "Disorders characterized by proliferation of lymphoid tissue, general
+    or unspecified;Duncan's Syndrome;EBV-Induced Lymphoproliferative Disease In Males;Familial
+    Fatal Epstein-Barr Infection;\tImmunodeficiency 5;X-Linked Lymphoproliferative
+    Disease;LPS"
+
+- category: DISEASE
+  value: Medulloblastoma [C04.557.580.625.600.380.515]
+  subcategory: MESH
+  description: A malignant neoplasm that may be classified either as a glioma or as
+    a primitive neuroectodermal tumor of childhood (see NEUROECTODERMAL TUMOR, PRIMITIVE).
+    The tumor occurs most frequently in the first decade of life with the most typical
+    location being t
+
+- category: DISEASE
+  value: Microsatellite Instability [C23.550.362.590]
+  subcategory: MESH
+  description: The occurrence of highly polymorphic mono- and dinucleotide MICROSATELLITE
+    REPEATS in somatic cells. It is a form of genome instability associated with defects
+    in DNA MISMATCH REPAIR.
+
+- category: DISEASE
+  value: Neutropenia [C15.378.553.546.184.564]
+  subcategory: MESH
+  description: A decrease in the number of NEUTROPHILS found in the blood.
+
+- category: DISEASE
+  value: Nijmegen Breakage Syndrome [C18.452.284.600]
+  subcategory: MESH
+  description: A chromosome instability syndrome resulting from a defective response
+    to DNA double-strand breaks.syn.:Ataxia-Telangiectasia Variant 1; Ataxia-Telangiectasia
+    Variant V1; Berlin Breakage Syndrome; Seemanova Syndrome 2
+
+- category: DISEASE
+  value: Precursor B-Cell Lymphoblastic Leukemia-Lymphoma [C04.557.337.428.600.600]
+  subcategory: MESH
+  description: A leukemia/lymphoma found predominately in children and adolescents
+    and characterized by a high number of lymphoblasts and solid tumor lesions. Frequent
+    sites involve LYMPH NODES, skin, and bones. It most commonly presents as leukemia.Pre-B
+    ALL
+
+- category: DISEASE
+  value: Precursor T-Cell Lymphoblastic Leukemia-Lymphoma [C04.557.337.428.600.620]
+  subcategory: MESH
+  description: A leukemia/lymphoma found predominately in children and young adults
+    and characterized LYMPHADENOPATHY and THYMUS GLAND involvement. It most frequently
+    presents as a lymphoma, but a leukemic progression in the bone marrow is common.Leukemia,
+    T-Cell, Acut
+
+- category: DISEASE
+  value: Pulmonary Blastoma [C04.557.435.675]
+  subcategory: MESH
+  description: ! "A malignant neoplasm of the lung composed chiefly or entirely of
+    immature undifferentiated cells (i.e., blast forms) with little or virtually no
+    stroma. (From Stedman, 25th ed).syn.\tPulmonary Blastomas"
+
+- category: DISEASE
+  value: Rhabdomyosarcoma, Alveolar [C04.557.450.795.550.660.665]
+  subcategory: MESH
+  description: A form of RHABDOMYOSARCOMA occurring mainly in adolescents and young
+    adults, affecting muscles of the extremities, trunk, orbital region, etc. It is
+    extremely malignant, metastasizing widely at an early stage. Few cures have been
+    achieved and the prognosi
+
+- category: DISEASE
+  value: Rhabdomyosarcoma, Embryonal [C04.557.450.795.550.660.675]
+  subcategory: MESH
+  description: ! 'A form of RHABDOMYOSARCOMA arising primarily in the head and neck,
+    especially the orbit, of children below the age of 10. The cells are smaller than
+    those of other rhabdomyosarcomas and are of two basic cell types: spindle cells
+    and round cells. This canc'
+
+- category: DISEASE
+  value: Severe Combined Immunodeficiency [C20.673.815]
+  subcategory: MESH
+  description: Group of rare congenital disorders characterized by impairment of both
+    humoral and cell-mediated immunity, leukopenia, and low or absent antibody levels.
+    It is inherited as an X-linked or autosomal recessive defect. Mutations occurring
+    in many different genes cause human Severe Combined Immunodeficiency (SCID).
+
+- category: DISEASE
+  value: Thrombocytopenia [C15.378.140.855]
+  subcategory: MESH
+  description: A subnormal level of BLOOD PLATELETS.
+
+- category: DISEASE
+  value: Xeroderma Pigmentosum [C18.452.284.975]
+  subcategory: MESH
+  description: A rare, pigmentary, and atrophic autosomal recessive disease. It is
+    manifested as an extreme photosensitivity to ULTRAVIOLET RAYS as the result of
+    a deficiency in the enzyme that permits excisional repair of ultraviolet-damaged
+    DNA

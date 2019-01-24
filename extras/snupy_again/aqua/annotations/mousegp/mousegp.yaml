@@ -1,0 +1,60 @@
+development:
+  version: 1.0
+  mousegpdir: <%= Rails.root %>/extras/snupy_again/aqua/annotations/mousegp
+  workdir: <%=Rails.root%>/tmp/capture_kits
+  basedir: <%=MousegpAnnotation.config("mousegpdir")%>/<%=CaptureKitAnnotation.config("version")%>
+  datadir: <%=MousegpAnnotation.config("basedir")%>/data
+  bindir: <%=MousegpAnnotation.config("basedir")%>/bin
+  bedops_url: https://github.com/bedops/bedops/releases/download/v2.4.35/bedops_linux_x86_64-v2.4.35.tar.bz2
+  vcfanno_url: https://github.com/brentp/vcfanno/releases/download/v0.2.9/vcfanno_linux64
+  remove_chr: true
+  urls:
+    snp:
+      ftp://ftp-mouse.sanger.ac.uk/REL-1505-SNPs_Indels/mgp.v5.merged.snps_all.dbSNP142.vcf.gz
+    indel:
+      ftp://ftp-mouse.sanger.ac.uk/REL-1505-SNPs_Indels/mgp.v5.merged.indels.dbSNP142.normed.vcf.gz
+  targets:
+    ftp://ftp.ensembl.org/pub/release-84/gff3/mus_musculus/Mus_musculus.GRCm38.84.gff3.gz
+
+test: None.
+production:
+  version: 1.0
+  capturekitdir: <%= Rails.root %>/extras/snupy_again/aqua/annotations/capture_kit
+  workdir: <%=Rails.root%>/tmp/capture_kits
+  basedir: <%=CaptureKitAnnotation.config("capturekitdir")%>/<%=CaptureKitAnnotation.config("version")%>
+  datadir: <%=CaptureKitAnnotation.config("basedir")%>/data
+  bindir: <%=CaptureKitAnnotation.config("basedir")%>/bin
+  bedops_url: https://github.com/bedops/bedops/releases/download/v2.4.35/bedops_linux_x86_64-v2.4.35.tar.bz2
+  remove_chr: true
+  maxdist: 5000 # be aware that the maximum distance is 32768 (2 bytes)
+  species:
+    homo sapiens:
+      AgilentHumanExomeV4plusUTR:
+        description: Agilent SureSelect All Exon V4
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V4plusUTRs_S03723424.bed
+        capture_type: exome_capture
+      AgilentHumanExomeV5plusUTR:
+        description: Agilent SureSelect All Exon V5
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V5plusUTRs_S04380219.bed
+        capture_type: exome_capture
+      AgilentSureSelectHumanAllExonV6:
+        description: Agilent SureSelect All Exon V6
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V6plusUTR_r2_S07604624.bed
+        capture_type: exome_capture
+      SureSelect_Human_All_Exon_V7:
+        description: SureSelect Human All Exon V7
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Human_All_Exon_V7_S31285117_hs_hg19.bed
+        capture_type: exome_capture
+      IlluminTruSeqDNAExome_V1.2:
+        description: TruSeq DNA Exome v1.2 - IDT
+        capture_type: exome_capture
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/Illumina/truseq-dna-exome-targeted-regions-manifest-v1-2.bed
+      SeqCap_EZ_Exome_v2:
+        description: SeqCap EZ Exome Library 2.0 kit
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SeqCap_EZ_Exome_v2_target_without_bait.bed
+        capture_type: exome_capture
+    mus musculus:
+      AgilentMouseExomeMM10:
+        description: Agilent MM10 exome
+        file: <%=CaptureKitAnnotation.config('capturekitdir')%>/bed_files/SureSelect/SureSelect_Mouse_All_Exon_V1_S0276129.bed
+        capture_type: exome_capture

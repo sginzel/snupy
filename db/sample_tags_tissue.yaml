@@ -1,0 +1,45 @@
+---
+- id: 20001
+  tag_name: TISSUE
+  tag_value: "Blood Cells [A15.145.229]"
+  tag_type: MESH
+  description: general; prefer specifics; "blood picture" probably goes here or under
+    BLOOD CELL COUNT
+- id: 20002
+  tag_name: TISSUE
+  tag_value: "Bone Marrow Cells [A15.378.316]"
+  tag_type: MESH
+  description: Cells contained in the bone marrow including fat cells (see ADIPOCYTES);
+    STROMAL CELLS; MEGAKARYOCYTES; and the immediate precursors of most blood cells.
+- id: 20003
+  tag_name: TISSUE
+  tag_value: "Brain [A08.186.211]"
+  tag_type: MESH
+  description: ''
+- id: 20004
+  tag_name: TISSUE
+  tag_value: "Fibroblasts [A11.329.228]"
+  tag_type: MESH
+  description: Connective tissue cells which secrete an extracellular matrix rich
+    in collagen and other macromolecules.
+- id: 20005
+  tag_name: TISSUE
+  tag_value: "Lymphoid Tissue [A15.382.520.604]"
+  tag_type: MESH
+  description: Specialized tissues that are components of the lymphatic system. They
+    provide fixed locations within the body where a variety of LYMPHOCYTES can form,
+    mature and multiply. The lymphoid tissues are connected by a network of LYMPHATIC
+    VESSELS.
+- id: 20006
+  tag_name: TISSUE
+  tag_value: "Mesenchymal Stromal Cells [A11.872.590.500]"
+  tag_type: MESH
+  description: ! 'Bone-marrow-derived, non-hematopoietic cells that support HEMATOPOETIC
+    STEM CELLS. They have also been isolated from other organs and tissues such as
+    UMBILICAL CORD BLOOD, umbilical vein subendothelium, and WHARTON JELLY. These
+    cells are considered to be '
+- id: 20006
+  tag_name: TISSUE
+  tag_value: "Tail [A13.895]"
+  tag_type: MESH
+  description: ''

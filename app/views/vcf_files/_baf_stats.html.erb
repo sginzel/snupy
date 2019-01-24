@@ -1,0 +1,30 @@
+<%if defined? vcf_files || defined? vcf_file %>
+	<h3>BAF Plot</h3>
+	<% plotdata = {} %>
+	<%
+		if defined? vcf_file then
+			vcf_file = [vcf_file] unless vcf_file.is_a?(Array)
+			vcf_files = vcf_file
+		end
+		vcf_files.sort{|s1, s2| s1.name <=> s2.name}.each do |vcf_file|
+			# next if !vcf_file.nickname.index("mutect").nil? && vcf_files.size > 1
+			# next if !vcf_file.nickname.index("varscan").nil? && vcf_files.size > 1
+			# next if !vcf_file.nickname.index("somatic").nil? && vcf_files.size > 1
+			vcf_file.sample_names.each do |smplname|
+				baf_dist = vcf_file.get_baf_histogram(smplname, 20)
+				baf_dist_max = baf_dist.values.max
+				baf_dist_max = 0.0000001 if baf_dist_max == 0 or baf_dist_max.nil?
+				baf_dist_vals = (baf_dist.values.map{|x| x.to_f / baf_dist_max })
+				plotdata[vcf_file.name.gsub(/[ \/_,\-\\]/, ".") + "-#{smplname}" + "(ID##{vcf_file.id})"] = {
+					x: baf_dist.keys,
+					y: baf_dist_vals
+				}
+			end
+		end
+	%>
+	
+	<%= render partial: "statistics/series.html.erb", locals: {plotdata: plotdata, height: 600, width: 700, points: false}%>
+	<script type="text/javascript" charset="utf-8">
+        snupyplot($("#chart_<%=plotdata.hash%>"));
+	</script>
+<%end%>

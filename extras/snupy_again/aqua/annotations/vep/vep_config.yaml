@@ -1,0 +1,57 @@
+development_75:
+  ensembl_version: 75
+  basedir: <%= Rails.root %>/extras/snupy_again/aqua/annotations/vep/bin/<%=VepAnnotation.config("ensembl_version")%>
+  cachedir: <%=VepAnnotation.config("basedir")%>/cache
+  format: vcf
+  ensmirror: feb2014.archive.ensembl.org
+  species: 
+    homo_sapiens: GRCh37
+    mus_musculus: GRCm38
+  opts: --fork 2 --regulatory --ccds --symbol --numbers --domains --canonical --protein --biotype --gmaf --maf_1kg --maf_esp --no_stats
+development_83:
+  ensembl_version: 83
+  basedir: <%= Rails.root %>/extras/snupy_again/aqua/annotations/vep/bin/<%=VepAnnotation.config("ensembl_version")%>
+  cachedir: <%=VepAnnotation.config("basedir")%>/cache
+  format: json
+  ensmirror: grch37.ensembl.org
+  species: 
+    homo_sapiens_merged: GRCh37
+    mus_musculus_merged: GRCm38
+  opts: --fork 2 --regulatory --merged --ccds --uniprot --hgvs --symbol --numbers --domains --canonical --protein --biotype --uniprot --tsl --appris --gene_phenotype --gmaf --maf_1kg --maf_esp --maf_exac --pubmed --variant_class --no_stats --dont_skip
+development:
+  ensembl_version: 84
+  basedir: <%= Rails.root %>/extras/snupy_again/aqua/annotations/vep/bin/<%=VepAnnotation.config("ensembl_version")%>
+  cachedir: <%=VepAnnotation.config("basedir")%>/cache
+  format: json
+  ensmirror: grch37.ensembl.org
+  cnv_threshold: 225000
+  cnv_threshold_too_long: 4000000
+  species: 
+    homo_sapiens_merged: GRCh37
+    mus_musculus_merged: GRCm38
+  opts: --fork 2 --regulatory --merged --ccds --uniprot --hgvs --symbol --numbers --domains --canonical --protein --biotype --uniprot --tsl --appris --gene_phenotype --gmaf --maf_1kg --maf_esp --maf_exac --pubmed --variant_class --no_stats --dont_skip
+
+test:
+  ensembl_version: 84
+  basedir: <%= Rails.root %>/extras/snupy_again/aqua/annotations/vep/bin/<%=VepAnnotation.config("ensembl_version")%>
+  cachedir: <%=VepAnnotation.config("basedir")%>/cache
+  format: json
+  ensmirror: grch37.ensembl.org
+  species:
+    homo_sapiens_merged: GRCh37
+    mus_musculus_merged: GRCm38
+  opts: --fork 2 --regulatory --merged --ccds --uniprot --hgvs --symbol --numbers --domains --canonical --protein --biotype --uniprot --tsl --appris --gene_phenotype --gmaf --maf_1kg --maf_esp --maf_exac --pubmed --variant_class --no_stats --dont_skip
+
+production:
+  ensembl_version: 84
+  basedir: <%= Rails.root %>/extras/snupy_again/aqua/annotations/vep/bin/<%=VepAnnotation.config("ensembl_version")%>
+  cachedir: <%=VepAnnotation.config("basedir")%>/cache
+  format: json
+  ensmirror: grch37.ensembl.org
+  cnv_threshold: 225000
+  cnv_threshold_too_long: 4000000
+  species: 
+    homo_sapiens_merged: GRCh37
+    mus_musculus_merged: GRCm38
+  opts: --fork 2 --regulatory --merged --ccds --uniprot --hgvs --symbol --numbers --domains --canonical --protein --biotype --uniprot --tsl --appris --gene_phenotype --gmaf --maf_1kg --maf_esp --maf_exac --pubmed --variant_class --no_stats --dont_skip 
+

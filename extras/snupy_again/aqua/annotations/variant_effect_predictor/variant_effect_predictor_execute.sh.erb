@@ -1,0 +1,216 @@
+#!/bin/bash
+
+function on_exit()
+{
+	echo "VEP script terminated"
+	echo "VEP script terminated" >&2
+	if [ ! "$OUTPUT" == "" ]; then
+		mv -f "$OUTPUT" "$OUTPUT.error"
+	fi
+	exit 1
+}
+
+trap on_exit SIGHUP SIGINT SIGTERM SIGQUIT
+
+VEPBASE="<%= VariantEffectPredictorAnnotation.load_configuration_variable("vepbase") %>"
+
+ENSEMBLVERSION="<%= VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_version").to_i %>"
+ENSEMBLLIB="<%= VariantEffectPredictorAnnotation.load_configuration_variable("ensembl_lib") %>"
+
+NUMCORES="<%= VariantEffectPredictorAnnotation.load_configuration_variable("num_cores").to_i %>"
+
+HOST="<%=  VariantEffectPredictorAnnotation.load_configuration_variable("host") %>"
+USER="<%=  VariantEffectPredictorAnnotation.load_configuration_variable("username") %>"
+PASSWORD="<%=  VariantEffectPredictorAnnotation.load_configuration_variable("password") %>"
+PORT="<%=  VariantEffectPredictorAnnotation.load_configuration_variable("port") %>"
+
+SCRIPT="<%=  VariantEffectPredictorAnnotation.load_configuration_variable("vepscript") %>"
+FASTA="<%=  VariantEffectPredictorAnnotation.load_configuration_variable("fasta_files") %>"
+CACHE="<%=  VariantEffectPredictorAnnotation.load_configuration_variable("vep_cache") %>"
+PLUGINS="<%=  VariantEffectPredictorAnnotation.load_configuration_variable("plugins") %>"
+
+
+CACHEDIR="--cache --dir_cache $CACHE --no_adaptor_cache --strip"
+
+PLUGINSDIR="--dir_plugins $PLUGINS"
+
+
+PERL5LIB="${PERL5LIB}:$ENSEMBLLIB/bioperl-1.6.1"
+PERL5LIB="${PERL5LIB}:$ENSEMBLLIB/BioPerl-1.6.1"
+PERL5LIB="${PERL5LIB}:$ENSEMBLLIB/ensembl/modules"
+PERL5LIB="${PERL5LIB}:$ENSEMBLLIB/ensembl-compara/modules"
+PERL5LIB="${PERL5LIB}:$ENSEMBLLIB/ensembl-variation/modules"
+PERL5LIB="${PERL5LIB}:$ENSEMBLLIB/ensembl-funcgen/modules"
+export PERL5LIB
+
+
+CONDEL="Condel,<%=VariantEffectPredictorAnnotation.load_configuration_variable("plugins")%>/config/Condel/config,b"
+CONSERVATION="Conservation,GERP_CONSERVATION_SCORE,mammals"
+DBNSFP="dbNSFP,<%=VariantEffectPredictorAnnotation.load_configuration_variable("plugins")%>/dbNFSP/dbNSFPv<%=VariantEffectPredictorAnnotation.load_configuration_variable("dbNSFP_version")%>/dbNSFP.gz,SLR_test_statistic,fold-degenerate,SIFT_score,SIFT_converted_rankscore,SIFT_pred,Polyphen2_HDIV_score,Polyphen2_HDIV_rankscore,Polyphen2_HDIV_pred,Polyphen2_HVAR_score,Polyphen2_HVAR_rankscore,Polyphen2_HVAR_pred,LRT_score,LRT_converted_rankscore,LRT_pred,MutationTaster_score,MutationTaster_converted_rankscore,MutationTaster_pred,MutationAssessor_score,MutationAssessor_rankscore,MutationAssessor_pred,FATHMM_score,FATHMM_rankscore,FATHMM_pred,RadialSVM_score,RadialSVM_rankscore,RadialSVM_pred,LR_score,LR_rankscore,LR_pred,Reliability_index,VEST3_score,VEST3_rankscore,CADD_raw,CADD_raw_rankscore,CADD_phred"
+
+INPUT=
+OUTPUT=
+
+DEBUG="--quiet"
+
+CHR=""
+SPECIES="homo_sapiens"
+
+while getopts "dFi:o:f:s:t:c:C:" OPTION
+do
+	case $OPTION in
+		d)
+			DEBUG="--verbose --no_progress"
+			;;
+		i)
+			INPUT=$OPTARG
+			;;
+		o)
+			OUTPUT=$OPTARG
+			;;
+		s)
+			SCRIPT=$OPTARG
+			;;
+		t)
+			SPECIES=$OPTARG
+			;;
+		c)
+			CACHEDIR="--cache --dir_cache $OPTARG --no_adaptor_cache --strip"
+			;;
+		C)
+			CHR=$(echo $OPTARG | tr -d "\n")
+			;;
+	esac
+done
+
+if [ "$INPUT" == "" ]; then
+	echo "NO INPUT GIVEN. Use -i to give input" 1>&2
+	exit 1
+fi
+
+if [ "$OUTPUT" == "" ]; then
+	OUTPUT="$INPUT.vep.vcf"
+fi
+
+if [ ! -f "$SCRIPT" ]; then
+	echo "$SCRIPT does not exist or is not a regular file"
+	exit 2
+fi
+
+if [ "$SPECIES" == "homo_sapiens" ]; then
+	if [ "$ENSEMBLVERSION" -ge 73 ]; then
+		OUTPUTOPTS="--sift b --polyphen b --ccds --symbol --numbers --domains --regulatory --canonical --protein --gmaf"
+	else
+		OUTPUTOPTS="--sift b --polyphen b --ccds --hgnc --numbers --domains --regulatory --canonical --protein --gmaf"
+	fi
+	# we do not store hgvs notions yet...
+	# OUTPUTOPTS="$OUTPUTOPTS --offline --hgvs --fasta $FASTA/Homo_sapiens.GRCh37.$ENSEMBLVERSION.dna.primary_assembly.fa"
+	OUTPUTOPTS="$OUTPUTOPTS --offline"
+	ASSEMBLY="GRCh37"
+elif [ "$SPECIES" == "mus_musculus" ]; then
+	if [ "$ENSEMBLVERSION" -ge 73 ]; then
+		if [ "$ENSEMBLVERSION" -ge 80 ]; then
+			OUTPUTOPTS="--ccds --sift b --symbol --numbers --domains --regulatory --canonical --protein --gmaf"
+		else
+			OUTPUTOPTS="--ccds --symbol --numbers --domains --regulatory --canonical --protein --gmaf"
+		fi
+	else
+		OUTPUTOPTS="--ccds --hgnc --numbers --domains --regulatory --canonical --protein --gmaf"
+	fi
+	# we do not store hgvs notions yet...
+	# OUTPUTOPTS="$OUTPUTOPTS --offline --hgvs --fasta $FASTA/Mus_musculus.GRCm38.$ENSEMBLVERSION.dna.primary_assembly.fa"
+	OUTPUTOPTS="$OUTPUTOPTS --offline"
+	ASSEMBLY="GRCm38"
+else
+	echo "Only homo sapiens and mus musculus supported so far..."
+	exit 1
+fi
+DBOPTS="--species $SPECIES --db_version=$ENSEMBLVERSION --offline"
+
+<% if Rails.env == "development" then %>
+OUTPUTOPTS="$OUTPUTOPTS --vcf --format vcf --no_progress"
+<% else %>
+<% if VariantEffectPredictorAnnotation.load_configuration_variable("num_cores").to_i > 1 %>
+OUTPUTOPTS="$OUTPUTOPTS --fork $NUMCORES --vcf --format vcf --no_progress"
+<% else %>
+OUTPUTOPTS="$OUTPUTOPTS --vcf --format vcf --no_progress"
+<% end %>
+<% end %>
+
+if [ "$ENSEMBLVERSION" -ge 76 ]; then
+	OUTPUTOPTS="$OUTPUTOPTS --assembly $ASSEMBLY"
+fi
+
+OUTPUTOPTS="$OUTPUTOPTS --check_existing"
+# checking svs requires database - you can uncomment this if you want to.
+# OUTPUTOPTS="$OUTPUTOPTS  --check_svs"
+OUTPUTOPTS="$OUTPUTOPTS --plugin Blosum62"
+#OUTPUTOPTS="$OUTPUTOPTS --plugin Downstream"
+#OUTPUTOPTS="$OUTPUTOPTS --plugin GO"
+#OUTPUTOPTS="$OUTPUTOPTS --plugin miRNA"
+
+#OUTPUTOPTS="$OUTPUTOPTS --plugin $CONSERVATION"
+#OUTPUTOPTS="$OUTPUTOPTS --plugin $DBNSFP"
+#OUTPUTOPTS="$OUTPUTOPTS --plugin $CONDEL"
+
+<% if Rails.env != "development" and 1 == 0 then %>
+	<% # TODO: This makes the annotation process just too long, remove this when ready for shipping %> 
+	# OUTPUTOPTS="$OUTPUTOPTS --plugin Conservation,GERP_CONSERVATION_SCORE,mammals"
+	# OUTPUTOPTS="$OUTPUTOPTS --plugin Downstream"
+
+<% end %>
+
+
+if [ "$CHR" != "" ]; then
+	## create new input file in /tmp that contains only the header an the chromosome
+	chrinput=`basename "$INPUT"`
+	chrinput="/tmp/chr$CHR.$chrinput"
+	
+	chroutput="$(echo $OUTPUT | sed 's/.vcf$//').chr$CHR.vcf"
+	
+	if [ -f "$chrinput" ]; then
+		echo "temporary file $chrinput already exists"
+		exit 255
+	fi
+
+	## copy header
+	grep "#" "$INPUT" > $chrinput
+
+	## copy content and replace possible chr prefixes
+	cat "$INPUT" | sed 's/^chr//i' | grep -E "^$CHR[[:space:]]" >> $chrinput
+	INPUT="$chrinput"
+	ORIGINALOUTPUT="$OUTPUT"
+	OUTPUT="$chroutput"
+	
+fi
+unamestr=`uname`
+if [ "$DEBUG" != "--quiet" ]; then
+	echo "+++++++++++++++++++++++"
+	echo "if [[ "$unamestr" == 'Darwin' ]]; then
+	perl $SCRIPT --no_stats --buffer_size 5000 -i $INPUT -o $OUTPUT $CACHEDIR $PLUGINSDIR $OUTPUTOPTS $DBOPTS --force_overwrite $DEBUG  --compress $"gzip -dc"
+else
+	perl $SCRIPT --no_stats --buffer_size 5000 -i $INPUT -o $OUTPUT $CACHEDIR $PLUGINSDIR $OUTPUTOPTS $DBOPTS --force_overwrite $DEBUG
+fi"
+	echo "-------------------------"
+fi
+
+if [[ "$unamestr" == 'Darwin' ]]; then
+	perl $SCRIPT --no_stats --buffer_size 5000 -i $INPUT -o $OUTPUT $CACHEDIR $PLUGINSDIR $OUTPUTOPTS $DBOPTS --force_overwrite $DEBUG  --compress $"gzip -dc"
+else
+	perl $SCRIPT --no_stats --buffer_size 5000 -i $INPUT -o $OUTPUT $CACHEDIR $PLUGINSDIR $OUTPUTOPTS $DBOPTS --force_overwrite $DEBUG
+fi
+
+
+result=$?
+
+if [ $result -eq 0 ]; then
+	if [ "$CHR" != "" ]; then
+		echo "$OUTPUT" >> "$ORIGINALOUTPUT"
+		# echo "removing temporary chromosome file $chrinput"
+		rm "$chrinput"
+	fi
+else
+	echo "PROCESSING FAILED"
+	touch "$INPUT.failed"
+	exit $result 
+fi

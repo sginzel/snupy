@@ -1,0 +1,36 @@
+---
+- category: GENDER
+  value: male
+  description: Entity genetic background is male
+- category: GENDER
+  value: female
+  description: Entity genetic background is female
+- category: GENDER
+  value: unknown
+  description: Entity genetic gender background is unknown or undetermined
+  
+- category: CLASS
+  value: malignant
+  description: Entity has malignant disease
+- category: CLASS
+  value: primary immune deficiency
+  description: Entity has immune disease
+- category: CLASS
+  value: shared control
+  description: Entity can be used as shared control
+
+- category: AGE_GROUP
+  value: infant
+  description: age < 1 year
+- category: AGE_GROUP
+  value: young_child
+  description: age 1-6 year
+- category: AGE_GROUP
+  value: child
+  description: age 7-12 year
+- category: AGE_GROUP
+  value: young adult
+  description: age 13-20 year
+- category: AGE_GROUP
+  value: adult
+  description: age > 20 year

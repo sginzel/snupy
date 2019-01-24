@@ -1,0 +1,45 @@
+<li class="ui-menu-item">
+	<a href=<%=url_for(controller: controller, action: "index", count: 100)%> class="ui-corner-all" role="menuitem">
+		<span class="ui-menu-icon ui-icon ui-icon-carat-1-e"></span><%=caption%>
+	</a>
+	<ul class="menu ui-menu ui-widget ui-corner-all" style="display: none; font-size: 8pt;" role="menu" aria-expanded="false" aria-hidden="true">
+		<% 
+			if !defined?other_links then 
+				other_links = {
+					"Create new" => url_for(controller: controller, action: "new")
+				}
+			end
+			if defined?links then
+				other_links = other_links.merge((links || {}))
+			end
+		%>
+		<% other_links.each do |linkname, url| %>
+			<%= render(partial: "home/menu_item", locals: {
+									caption: linkname,
+									maxlength: 25,
+									url: url
+			})%>
+		<% end %>
+		
+		<%="<hr />".html_safe if collection.size > 0 %>
+		<% collection.each_with_index do |item, idx| %>
+			<% 
+				if local_assigns[:path_method].nil? then
+					itemurl = url_for(controller: controller, action: "show", id: item.id)
+				else 
+				  itemurl = local_assigns[:path_method].call(item)
+				end 
+				itemcaption = item.send((local_assigns[:name_method] || :name))
+		 	%>
+			<%= render(partial: "home/menu_item", locals: {
+									caption: itemcaption,
+									url: itemurl,
+									maxlength: 25,
+									controller: controller,
+									item: item,
+									links: (defined?subitemlink)?(subitemlink):({})
+									}
+			)%>
+		<% end %>
+	</ul>
+</li>

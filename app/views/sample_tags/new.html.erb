@@ -1,0 +1,19 @@
+<h1>New Sample Tag</h1>
+<br style="clear: both" />
+
+<div style="float:left;width: 100%">
+	<div style="float:left;display: block;width: 20%">
+		<%= render 'form' %>	
+	</div>
+	<div style="float:left;display: block;width: 50%">
+		<p>
+			<h3>Lookup MESH terms here:</h3>
+			<iframe style="width: 100%;height: 600px" id="iframemesh" src="https://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?treetop=Navigate%20from%20tree%20top">
+			    <p>Please visit <a href="https://www.nlm.nih.gov/cgi/mesh/2013/MB_cgi?treetop=Navigate%20from%20tree%20top"> the MESH tree browser </a> to find the correct MESH Terms. </p>
+			</iframe>
+		</p>
+	</div>
+	<br style="clear: both" />
+</div>
+
+<%= link_to 'Back', sample_tags_path %>

@@ -1,0 +1,436 @@
+/* Data Table Functions */
+var oTables = {};
+var aoColumnsParams = {};
+var expansionContainers = {};
+var expandRowTables = {};
+var tmp;
+
+function toggleBigCell(cellcontainer){
+	full = $(".bigcellcontainerfull", $(cellcontainer).parent());
+	summ = $(".bigcellcontainershort", $(cellcontainer).parent());
+	if ($(full).css("display") == "none"){
+		$(full).css("display", "table-cell");
+		$(summ).css("display", "none");
+	} else {
+		$(full).css("display", "none");
+		$(summ).css("display", "table-cell");
+	}
+}
+/*
+function createCheckboxForSubmit(chkbox){
+	// elem = "<input type='hidden' class='dummycheckbox' value="
+	elem = "<input type='checkbox' class='dummycheckbox' value="
+		+ $(chkbox).prop("value") + " name='"
+		+ $(chkbox).prop("name") + "' id="
+		+ $(chkbox).prop("id").replace(/_template$/, "") + " checked=true>";
+	return(elem);
+}
+
+function toggleCheckbox(chkbox){
+	row = $(chkbox).closest("tr");
+	tbl = $(row).closest("table");
+	tblid = $(tbl).attr("id");
+	// if the select_type is a option box we need to empty the container first
+	container = $(".snupytable_selectbox_container", $(tbl).closest(".snupytablecontainer"));
+	if ($(chkbox).attr("type") == "radio"){
+		$("td", tbl).removeClass("ui-state-highlight");
+		$(container).html("");
+	}
+	// add hidden field to container
+	if (chkbox.checked){
+		elem = createCheckboxForSubmit(chkbox);
+		$(container).append(elem);
+		$("td", row).addClass("ui-state-highlight");
+	} else {
+		$("#" + $(chkbox).prop("id").replace(/_template$/, "").replace("/", "\\/"), container).remove();
+		$("td", row).removeClass("ui-state-highlight");
+	}
+	true;
+}
+*/
+function markRow(elem){
+	row = $(elem).closest("tr");
+	if ($(elem).attr("type") == "radio"){
+		tbl = $(row).closest("table");
+		$("td", tbl).removeClass("ui-state-highlight");
+	}
+	$("td", row).addClass("ui-state-highlight");
+}
+
+function unmarkRow(elem){
+	row = $(elem).closest("tr");
+	// tbl = $(row).closest("table");
+	// tblid = $(tbl).attr("id");
+	$("td", row).removeClass("ui-state-highlight");
+}
+
+
+function removeDataTable(elem){
+	$(".snupytable", elem).each(function(){
+		tblid = $(this).attr("id");
+		$(oTables[tblid]).css("display", "none");
+		oTables[tblid].destroy(true);
+		delete oTables[tblid];
+	});
+}
+
+
+function makeDataTable(tableobj, expandable){
+	expandable = isDefined(expandable) ? expandable : false;
+	if (expandable) {
+		$(".snupytableexpander", tableobj).click(function(){
+			expandRow(
+				//$(this).parent().parent().parent() // TR element the event occuered in - now with an additonal layer because of the draggable div
+				$(this).closest("tr")
+			);
+			$(this).toggleClass("ui-icon-circle-triangle-s");
+			$(this).toggleClass("ui-icon-circle-triangle-n");
+		});
+	}
+	if (!isDefined(oTables[$(tableobj).attr("id")])){
+		// make the select all check box mark or unmark all checkboxes in the table
+		$(".snupy_table_selectall", tableobj)
+			.click(jQuery.proxy(function(){
+					chkboxval = $(".snupy_table_selectall", this).is(":checked");
+					nodes = oTables[$(tableobj).attr("id")].$('tr', {"filter":"applied"});
+					// $("input[type=checkbox]", nodes).prop("checked", chkboxval);
+					$(".snupy_table_selectbox", nodes).prop("checked", chkboxval);
+					if (chkboxval){
+						$("td", nodes).addClass("ui-state-highlight");
+					} else {
+						$("td", nodes).removeClass("ui-state-highlight");
+					}
+				}, tableobj)
+			);
+		// handle initial check values
+		$(".snupy_table_selectbox, .snupy_table_option", $(tableobj)).each(function(){
+			if ($(this).is(":checked")){
+				markRow(this);
+				// toggleCheckbox(this);
+			}
+		});
+		// make checkboxes in the table to add and remove themselves from a container
+		$(".snupy_table_selectbox", $(tableobj)).change(function(){
+			if ($(this).is(":checked")) {
+				markRow(this);
+			} else {
+				unmarkRow(this);
+			}
+		});
+		// make checkboxes in the table to add and remove themselves from a container
+		$(".snupy_table_option", $(tableobj)).change(function(){
+			if ($(this).is(":checked")) {
+				markRow(this);
+			} else {
+				unmarkRow(this);
+			}
+		});
+
+		// make the drag icons draggable
+		scopename = $(tableobj).attr("model");
+		if (!isDefined(scopename)){
+			scopename = "" + $.now() + "";
+		}
+		$(".draggable", $(tableobj)).draggable({
+			revert: true,
+			appendTo: "body",
+			opacity: 0.35,
+			delay: 150,
+			scope: scopename,
+			start: function(event, ui){},
+			stop: function(event, ui){},
+			drag: function(event, ui){},
+			helper: function(){
+				return($(this).closest("tr").clone());
+			}
+		});
+
+		// hide the ID column
+		colheader = Array();
+		$("thead th", tableobj).each(function(){
+			header = $.trim($(this).text());
+			colheader.push(header);
+		});
+		// find index of column ID
+		idxid = colheader.indexOf("id");
+		if (idxid >= 0) {
+			invisCols = [ idxid ];
+		} else {
+			invisCols = [ ];
+		}
+
+		// make overlong cells a better to handle
+		$(".bigcell").each(function(){
+			txt = $(this).text();
+			full = $(this).html();
+			$(this).html("");
+			$(this).append("<div class='bigcellcontainer'></div>");
+			$(".bigcellcontainer", this).append("<div ondblclick='toggleBigCell(this);' class='bigcellcontainerfull' style='display: none;cursor: hand; cursor: pointer;'>" + full + "</div>");
+			$(".bigcellcontainer", this).append("<div ondblclick='toggleBigCell(this);' class='bigcellcontainershort' style='display: table-cell;cursor: hand; cursor: pointer;'>" + txt.replace(/(^\s*)|(\s*$)/g, "").substring(0, 10) + "&hellip;</div>");
+		});
+
+		// register double click on every cell so we can hightlight them
+		// TODO Register The EVENT in a differnt way: https://stackoverflow.com/questions/7658775/chrome-jquery-uncaught-rangeerror-maximum-call-stack-size-exceeded
+        //$("td", tableobj).dblclick(function(e){
+        //    $("td", $(this).closest("tr")).toggleClass("ui-state-highlight");
+        //});
+        $(tableobj).on('dblclick', 'td', function(){
+            $("td", $(this).closest("tr")).toggleClass("ui-state-highlight");
+        });
+
+        
+        // register control click on cell to hightligh all all rows that belong to the same id
+        //$("td", tableobj).mousedown(function(e){
+		$(tableobj).on('mousedown', 'td', function(e){
+            if(e.ctrlKey){
+                myids = $("input", $(this).closest("tr")).attr("value")
+				if (isDefined(myids)){
+					myids = myids.split(" | ");
+					switch(e.which)
+					{
+						case 1:
+							$.each(myids, function(i){
+								myid = myids[i];
+								$.each(oTables, function(tblid){
+									otherrows = oTables[tblid].$(":input[value*=" + myid + "]").closest("tr")
+									$("td", otherrows).removeClass("ui-state-highlight");
+									$("td", otherrows).addClass("snupytable-row-hightlight");
+								});
+							})
+							break;
+						case 2:
+							$.each(myids, function(i){
+								myid = myids[i];
+								$.each(oTables, function(tblid){
+									otherrows = oTables[tblid].$(":input[value*=" + myid + "]").closest("tr")
+									$("td", otherrows).removeClass("ui-state-highlight");
+									$("td", otherrows).removeClass("snupytable-row-hightlight");
+								});
+							})
+							break;
+						case 3:
+							$.each(myids, function(i){
+								myid = myids[i];
+								$.each(oTables, function(tblid){
+									otherrows = oTables[tblid].$(":input[value*=" + myid + "]").closest("tr")
+									$("td", otherrows).removeClass("ui-state-highlight");
+									$("td", otherrows).removeClass("snupytable-row-hightlight");
+								});
+							})
+							break;
+						default:
+							break;
+					}
+                }
+			}
+        });
+        
+
+		register_context_menu(tableobj);
+
+		// data Tables 1.10
+		oTables[$(tableobj).attr("id")] = $(tableobj).DataTable({
+			retrieve: true,
+			pagingType: "full_numbers",
+			jQueryUI: true,
+			autoWidth: false,
+			processing: false,
+			colReorder: true,
+			//"dom": 'Bl<"H"Tr>t<"F"ip>',     // without global search field
+			// "dom": 'Bl<"H"Tr>t<"F"pi>',     // without global search field
+            "dom": 'l<"snupytablebuttons"B><"H">t<"F"pi>',     // minimalistic approach
+			buttons: [ 'copy', 'excel', 'pdf' ],
+			//tableTools: {
+			//	"sSwfPath": "<%= asset_path ('dataTables/extras/swf/copy_csv_xls.swf')%>"
+			//},
+			"order":[], // disable sorting by the first column by default
+			"orderClasses": false,
+			"columnDefs": [
+				{
+					"visible": false,
+					"targets": invisCols
+				}
+			],
+			"lengthMenu": [ [5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"] ]
+		});
+		// initialize column filtering
+		// dataTables 1.10
+		$("tfoot th div.snupytable_footer", tableobj).each( function () {
+			// var title = $(this).text();
+			// $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+			footcell = this;
+			tbl = $(this).closest("table");
+			label = $.trim($(this).text());
+			if (label == "Select"){
+				$(footcell).html("");
+			} else {
+				inputid = $(tbl).attr("id") + "_" + label.replace(/[^\w]/g, "");
+				$(footcell).html("");
+				$(footcell).append('<div style="display:inline-block;width:100%;"><input placeholder="' + label + '" type="text" style="width: 85%;float: left;" id=' + inputid + '></div>');
+			}
+		} );
+		oTables[$(tableobj).attr("id")].columns().every( function () {
+			var that = this;
+			$( 'input', this.footer() ).on( 'keyup change', function () {
+				if ( that.search() !== this.value ) {
+						that
+						.search( this.value, true, false )//vaulue, regexp, smartsearch
+						.draw();
+				}
+				return false; // prevent constant redraw events
+			});
+		});
+
+		// make some adjustments that come with the css
+        $(tableobj).css("border-collapse", "collapse")
+		// make the table visible
+		$(".snupytablecontainerloader", $(tableobj).closest(".snupytablecontainer")).css("display", "none");
+		$(tableobj).closest(".snupytablecontainer").css("display", "table");
+		$(tableobj).css("display", "table");
+	} else {
+		console.log($(tableobj).attr("id") + " is already a dataTable");
+		console.log((new Error()).stack);
+	}
+	return($(tableobj).attr("id"));
+}
+
+function getDataTableObject(row){
+	//return(oTables[$(row).parent().parent().attr("id")]);
+	return(oTables[$(row).closest("table").attr("id")]);
+}
+
+function expandRow(row){
+	// rowDom = row.get(0);
+	oTable = getDataTableObject(row);
+	tableDom = $(row).closest("table");
+	rowDom = oTable.row(row);
+
+	//if (!oTable.fnIsOpen(rowDom)){
+	if (!rowDom.child.isShown()){
+		resourceID = row.attr("resource-id");
+		if (isDefined(resourceID)){
+			resource = tableDom.attr("path");
+			if (resource != ""){
+				model = tableDom.attr("model");
+				resource = resource.replace(":id", resourceID);
+				var ajax_params = {};
+				paramfield = $(".ajax_param", tableDom);
+				for (i=0; i<paramfield.length; i++){
+					ajax_params[$(paramfield[i]).attr("name")] = jQuery.parseJSON($(paramfield[i]).prop("value"));
+				}
+                try {
+                    myids = JSON.parse(resourceID);
+                } catch(err) {
+                    myids = resourceID;
+				}
+                ajax_params["ajax_params[ids]"] = myids;
+				// console.log(ajax_params);
+				html_container = 'rowexpansion_' + model + '_' + resourceID;
+				html_container = html_container.replace(/[^A-Za-z0-9:._-]/g, "");
+				html_content = '<div id="' + html_container +'"><%= image_tag asset_path("ajax-loader.gif"), style: "width: 32px; background: #FFF; border-radius: 100px;"  %></div>';
+				expansionContainers[resource] = html_container;
+							/*
+							 * Send AJAX request
+							 * Use jQuery.proxy to create a function that has a specific context.
+							 * this way we can tell the callback exactly where to put the result
+							 * AND avoid race conditions
+							 */
+				$.ajax({
+					url:resource,
+					dataType: "html",
+					data: ajax_params,
+					method: "POST",
+					success: jQuery.proxy(function(data, status, jqXHR){
+						containerid = this.attr("id");
+						// console.log(containerid);
+						container = $("#" + containerid);
+						container.html(data).effect( "highlight", {}, 1500 );
+						$(".snupytable", container).each(function(){
+							makeDataTable(this, true);
+						});
+					}, $(html_content))
+				});
+			} else {
+				html_content = "there is no resource available for this record";
+			}
+		} else {
+			html_content = "No Details available";
+		}
+	}
+	// if ( oTable.fnIsOpen(rowDom) ) {
+	if (rowDom.child.isShown()){
+		// TODO: Remove DataTable object from the row for saftey.
+		// oTable.fnClose( rowDom );
+		rowDom.child.hide();
+	} else {
+		// oTable.fnOpen( rowDom, html_content, "info_row" );
+		rowDom.child(html_content).show();
+	}
+}
+
+var img;
+var tmp;
+function performAction(submitlink){
+	action_resource = $("select option:selected", $(submitlink).parent()).attr("value");
+	tmp =  $("select option:selected", $(submitlink).parent());
+	action_data = $("select option:selected", $(submitlink).parent()).data();
+	//tableobj = oTables[$("table", $(submitlink).parent().parent().parent()).attr("id")];
+	tableobj = oTables[$("table" ,$(submitlink).closest(".snupytablecontainer")).attr("id")];
+	ids = tableobj.$("input:checked").map(function(){
+		return $(this).val();
+	}).get();;
+    action_data["ids"] = ids;
+
+	//$("input option:selected", $(tmp).parent().parent().parent());
+	loader_image = '<%= image_tag asset_path("ajax-loader.gif"), style: "width: 32px; background: #efefef; border-radius: 100px;"  %></div>';
+	img = loader_image;
+	result_container = $($("div", $(submitlink).parent())[0]);
+	// clear the container
+	removeDataTable(result_container);
+	$(submitlink).hide;
+	// $(submitlink).replaceWith(html_container);
+	$.ajax({
+		url:action_resource,
+		dataType: "html",
+		type: "POST",
+		data: action_data,
+		beforeSend: jQuery.proxy(function(jqXHR, settings){
+			$($("div", $(this).parent())[0]).html(""); // empty the result container
+			$(this).hide();
+			$(this).after('<%= image_tag asset_path("ajax-loader.gif"), style: "margin-top: 1px; width: 16px; background: #efefef; border-radius: 100px;"  %></div>');
+		}, $(submitlink)),
+		complete: jQuery.proxy(function(jqXHR, status){
+			console.log(status);
+			$(this).show();
+			$(this).next("img").remove();
+		}, $(submitlink)),
+		statusCode: {
+			500: jQuery.proxy(function(jqXHR, textStatus, errorThrown){
+				$(this).html("[" + textStatus + "] " + jqXHR.responseText + "[" + errorThrown + "]").effect( "highlight", {color: "salmon"}, 10000 );
+			}, $(result_container))
+		},
+		error: jQuery.proxy(function(jqXHR, textStatus, errorThrown){
+			$(this).html("[" + textStatus + "] " + jqXHR.responseText + "[" + errorThrown + "]").effect( "highlight", {color: "salmon"}, 10000 );
+		}, $(result_container)),
+		success: jQuery.proxy(function(data, status, jqXHR){
+			containerid = this.attr("id");
+			container = $("#" + containerid);
+			container.html(data).effect( "highlight", {}, 1500 );
+			$(".snupytable", container).each(function(){
+				makeDataTable(this, true);
+			});
+			$( ".snupycombobox", container ).combobox();
+			$( "input:text", container ).first().select();
+			$( "input:text", container ).first().focus();
+			$("input:text", container).keypress(jQuery.proxy(function(event){
+				if(event.which == 13){
+					$("input:button", this).click();
+				}
+			}, container));
+		}, $(result_container))
+	});
+	// action_result = "not implemented"; // add ajax call to resource here
+	// $(result_container).html(action_result);
+	true;
+}
+

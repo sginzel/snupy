@@ -1,0 +1,24 @@
+<h1>Access Control List</h1>
+<%=form_tag access_control_list_users_path, method: "GET", style: "margin-top: 6px;" do %>
+	<%= render partial: "users/list", locals: {users: @users, compact: true, selected: params[:users]}%>
+	<br />
+	<%= render_combobox(["Panel", "VcfFile", "Sample", "Specimen", "Entity", "EntityGroup", "Experiment"].reverse,
+											id: "object_type",
+											label: "Object Type",
+											allow_empty: false,
+											valid_only: true,
+											selected: params[:object_type]
+	)%>
+	<br />
+	<div class="col actions">
+		<%= submit_tag "Show ACL", {style: "font-size: 1.17em; font-weight: bold; padding: 3px 32px 3px 32px;"} %>
+	</div>
+<% end %>
+<% if (@acl || []).size > 0 then %>
+	<%=render_table(@acl, 
+									title: "Access Control Matrix (#{params[:object_type]})",
+									record_color: @coloring,
+									selectbox: false,
+									collapsecell: -1
+	)%>
+<% end %>

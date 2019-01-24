@@ -1,0 +1,12 @@
+<%= form_tag download_sample_sheet_vcf_files_path, method: 'post' do %>
+	<% table_id = "sample_sheet_#{Time.now.to_i}" %>
+	<%=render_table(
+		@vcf_samples,
+		id: table_id,
+		title: "Sample Sheet",
+		collapsecell: -1,
+		autolink_id: false
+	)%>
+	<%= submit_tag "Download Sheet"%>
+	<%= submit_tag "Start Extraction", data: {confirm: "Are you sure? This potentially adds a lot of data."}%>
+<%end%>

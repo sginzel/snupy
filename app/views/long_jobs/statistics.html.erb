@@ -1,0 +1,39 @@
+<h1>Statistics of previous jobs</h1>
+<%= form_for :long_jobs, method: :post, action: :statistics do |f| %>
+	<%= field_set_tag "Query Queue" do %>
+		<%= label_tag "split_values", "Split values" %>: <%= check_box_tag "split_values", "1", params["split_values"] == "1" %>
+		<br>
+		<%= label_tag "include_combine", "Include combine" %>: <%= check_box_tag "include_combine", "1", params["include_combine"] == "1" %>
+		<br>
+		<%= label_tag "show_filters", "Show filters" %>: <%= check_box_tag "show_filters", "1", params["show_filters"] == "1" %>
+		<br>
+		<%= label_tag "split_gene_id_panel", "Expand gene panels" %>: <%= check_box_tag "split_gene_id_panel", "1", params["split_gene_id_panel"] == "1" %>
+		<br>
+		<%= label_tag "count_variants", "Count variants" %>: <%= check_box_tag "count_variants", "1", params["count_variants"] == "1" %>
+		<br>
+		<%= label_tag "include_sample_info", "Include sample info" %>: <%= check_box_tag "include_sample_info", "1", params["include_sample_info"] == "1" %>
+		<br>
+	<% end %>
+	<%= field_set_tag "Annotation Queue" do %>
+		<%= label_tag "include_vcf_info", "Include VCF info" %>: <%= check_box_tag "include_vcf_info", "1", params["include_vcf_info"] == "1" %>
+		<br>
+	<% end %>
+	<%= submit_tag "OK" %>
+<% end %>
+<p>
+	<%=render_table(@queue_stats[:snupy],
+										title: "Query Queue"
+									)%>
+</p>
+
+<p>
+	<%=render_table(@queue_stats[:annotation],
+									title: "Annotation Queue"
+		 )%>
+</p>
+
+<p>
+	<%=render_table(@user_stats,
+									title: "User statistics"
+		 )%>
+</p>

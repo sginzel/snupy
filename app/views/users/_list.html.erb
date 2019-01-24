@@ -1,0 +1,42 @@
+<% if (defined? compact).nil? || compact == false %>
+	<%= render_table(users,
+										title: (defined?title)?(title):"",
+										id: "users",
+										selected: (defined?selected)?(selected):([]),
+										columns: %w(name full_name email affiliations is_admin created_at),
+										column_order: %w(name full_name email is_admin created_at ^institutions$ Show Edit Destroy)
+										){|rec, user|
+											rec["Edit"] = link_to 'Edit', edit_user_path(user)
+											rec["Destroy"] = link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' }
+											rec["affiliations"] = user.roles().map{|i, roles|
+												link_to "#{i.name}(#{roles.join(', ')})", institution_path(i)
+											}.join(" | ")
+											#rec["institutions"] = user.institutions.select("institutions.name").uniq.map(&:name).join(", ")
+											if user.is_admin then
+												rec[:name] = "<div class='success'>" + rec[:name].to_s + "</div>"
+											end
+											rec	
+										}
+	%>
+<% else %>
+	<%= render_table(users,
+									title: (defined?title)?(title):"",
+									id: "users",
+									css: {width: "700px"},
+									selectbox: (defined? selectbox)?(selectbox):(true),
+									selected: (defined?selected)?(selected):([]),
+									columns: %w(name full_name email affiliations),
+									column_order: %w(name full_name email affiliations Show)
+									){|rec, user|
+										# rec["institutions"] = user.institutions.select("institutions.name").uniq.map(&:name).join(", ")
+										#rec["institutions"] = user.institutions.uniq.map{|inst| link_to inst.name, inst}.join(", ")
+										rec["affiliations"] = user.roles().map{|i, roles|
+												link_to "#{i.name}(#{roles.join(', ')})", institution_path(i)
+											}.join(" | ")
+										if user.is_admin then
+											rec[:name] = "<div class='success'>" + rec[:name].to_s + "</div>"
+										end 
+										rec	
+									}
+	%>
+<% end %>
