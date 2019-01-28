@@ -1,93 +1,36 @@
-namespace :snupy  do
+require 'io/console'
+namespace :snupy do
 	
-	all_models = [:Variation, :Region, :Alteration, :VcfFile, :Sample, :Experiment,
-								:VariationCall, :VariationAnnotation, :GeneticElement, :Consequence, :LossOfFunction,
-								:LongJob, :VariationTag, :VariationCallTag, :SampleTag]
-	
-	desc "clear all annotations"
-	task :clear_annotation => :environment do 
-		[
-			:VariationAnnotation, :GeneticElement, :Consequence, :LossOfFunction
-		].each do |modelname|
-			model = Kernel.const_get(modelname)
-			raise "Not a model (#{modelname})" unless model.ancestors.include?(ActiveRecord::Base)
-			print "Deleting #{modelname}..."
-			model.delete_all
-			print "done\n"
-		end
-		print "Deleting variation_annotation_has_consequence..."
-		ActiveRecord::Base.connection.execute("DELETE FROM variation_annotation_has_consequence")
-		print "Resetting all VcfFiles..."
-		## also reset all VcfFiles status
-		VcfFile.all(select: [:name, :id, :status, :type]).each do |vcf|
-			vcf.status = "CREATED"
-			vcf.save
-		end
+	desc "Lists the required shell variables to use database_setup"
+	task :database_setup_template do
+		puts ((
+		<<EOS
+export SNUPYHOST="localhost"
+export SNUPYPORT=3306
+export SNUPYUSER="snupy"
+export SNUPYPASSWORD="$(pwgen -s 64 1)"
+export SOCKET="/var/run/mysqld/mysqld.sock"
+export SNUPY_APIUSER="snupy"
+export SNUPY_APIPASSWORD="$(pwgen -s 64 1)"
+
+## SETUP database with the appropriate random password
+sudo mysql -h $SNUPYHOST -uroot -P $ SNUPYPORT -e "GRANT ALL PRIVILEGES ON *.* TO '$SNUPYUSER'@'%' IDENTIFIED BY '$SNUPYPASSWORD';"
+### add read-only user to be used for API connections, so people can't do bad things using SQL statements
+sudo mysql -h $SNUPYHOST -uroot -P $ SNUPYPORT -e "GRANT SELECT ON *.* TO '$SNUPY_APIUSER'@'%' IDENTIFIED BY '$SNUPY_APIPASSWORD';"
+EOS
+		).yellow)
 	end
 	
-	desc "clear all data that was created by users-this is nothing to mess around with!"
-	task :clear_variation_data => :environment do 
-		[
-			:VariationAnnotation, :GeneticElement, :Consequence, :LossOfFunction,
-			:VariationCall, :VariationCallTag, :VariationTag, :SampleTag,
-			:Variation, :Alteration, :Region
-		].each do |modelname|
-			model = Kernel.const_get(modelname)
-			raise "Not a model (#{modelname})" unless model.ancestors.include?(ActiveRecord::Base)
-			print "Deleting #{modelname}..."
-			model.delete_all
-			print "done\n"
-		end
-		%w(variation_call_has_variation_call_tag variation_has_variation_tag variation_annotation_has_consequence sample_has_sample_tag).each do |tbl|
-			print "Deleting #{tbl}..."
-  		ActiveRecord::Base.connection.execute("DELETE FROM #{tbl}")
-  		print "done\n"
-		end
-		## also reset all VcfFiles status
-		print "Resetting all VcfFiles..."
-		VcfFile.all(select: [:name, :id, :status, :type]).each do |vcf|
-			vcf.status = "CREATED"
-			vcf.save
-		end
-	end
-	
-  desc "clear the database"
-  task :clear => :environment do
-		all_models.each do |modelname|
-			model = Kernel.const_get(modelname)
-			raise "Not a model (#{modelname})" unless model.ancestors.include?(ActiveRecord::Base)
-			print "Destroying #{modelname}..."
-			model.unscoped.destroy_all
-			print "done\n"
-		end
-	end
-	
-	desc "Delete rows in a tables, but not the migration table"
-  task :delete, [:table, :condition] => :environment do |t, args|  
-  	args.with_defaults(:table => nil, :condition => nil) 
-  	tbl = args[:table]
-  	condition = args[:condition]
-  	tbls = ActiveRecord::Base.connection.execute("SHOW TABLES").to_a.flatten.sort
-  	tbls.reject!{|t| t == "schema_migrations"}
-  	if tbls.include?(tbl) then
-  		print "deleting #{tbl}..."
-  		if condition.nil? then
-  			ActiveRecord::Base.connection.execute("DELETE FROM #{tbl}")
-  		else
-  			ActiveRecord::Base.connection.execute("DELETE FROM #{tbl} WHERE #{condition}")
-  		end
-  		print "done\n"
-  	else
-  		puts "#{tbl} is not a table"
-  	end
+	desc "Parses the database.yml.erb template to STDOUT"
+	task :database_setup do
+		@ask_cache = {}
+		STDOUT.write parse("config/database.yml.erb")
 	end
 	
 	desc "Count all instances of all models"
-  task :size => :environment do
-		all_models.each do |modelname|
-			model = Kernel.const_get(modelname)
-			raise "Not a model (#{modelname}) (#{model.class})" unless model.ancestors.include?(ActiveRecord::Base)
-			printf("%-32s", modelname)
+	task :size => :environment do
+		ActiveRecord::Base.descendants.each do |modelname|
+			printf("%-32s", modelname.name)
 			printf("%-8s", model.count())
 			print "#{model.unscoped.count()} (unscoped)"
 			print "\n"
@@ -95,14 +38,34 @@ namespace :snupy  do
 	end
 	
 	desc "Count all rows in all tables"
-  task :count => :environment do
-  	tbls = ActiveRecord::Base.connection.execute("SHOW TABLES").to_a.flatten.sort
-  	tbls.reject!{|tbl| tbl == "schema_migrations"}
+	task :count => :environment do
+		tbls = ActiveRecord::Base.connection.execute("SHOW TABLES").to_a.flatten.sort
+		tbls.reject! {|tbl| tbl == "schema_migrations"}
 		tbls.each do |tbl|
 			tblsize = ActiveRecord::Base.connection.execute("SELECT COUNT(*) FROM #{tbl}").to_a.flatten.first
 			printf("%-#{tbls.map(&:length).max + 1}s", tbl)
 			print "#{tblsize}\n"
 		end
 	end
+
+	def parse(file)
+		template = File.open(file, "r", &:read)
+		ret = ERB.new(template.to_s).result(binding)
+		return ret
+	end
 	
+	def ask(text="", default = nil, echo=true)
+		if text.to_s.size > 0
+			STDERR.printf("%s(default: %s):\n", text.to_s, default.to_s)
+		end
+		if @ask_cache[text].nil?
+			reply = ((echo)?(STDIN.gets):(STDIN.noecho(&:gets))).strip
+			if reply.to_s == ""
+				@ask_cache[text] = default.to_s
+			else
+				@ask_cache[text] = reply.to_s
+			end
+		end
+		@ask_cache[text]
+	end
 end
