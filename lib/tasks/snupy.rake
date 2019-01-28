@@ -29,10 +29,14 @@ EOS
 	
 	desc "Count all instances of all models"
 	task :size => :environment do
-		ActiveRecord::Base.descendants.each do |modelname|
-			printf("%-32s", modelname.name)
-			printf("%-8s", model.count())
-			print "#{model.unscoped.count()} (unscoped)"
+		ActiveRecord::Base.descendants.sort{|x,y|x.name <=> y.name}.each do |model|
+			if ActiveRecord::Base.connection.table_exists? model.table_name
+				printf("%-32s".green, model.name)
+				printf("%-16s".green, model.count())
+				print "#{model.unscoped.count()} (unscoped)".green
+			else
+				printf("%s for %s does not exist".red, model.table_name, model.name)
+			end
 			print "\n"
 		end
 	end
