@@ -111,7 +111,11 @@ module SnupyAgain
 
 		## force SSL
 		if Rails.env == "production" then
-			config.force_ssl = true
+			if ENV['SSL'].to_s == "true"
+				config.force_ssl = true
+			else
+				config.force_ssl = false
+			end
 		end
 
 		## Setup SSH tunnels
