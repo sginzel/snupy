@@ -1,0 +1,27 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: MyString
+  identifier: MyString
+  xref_id: 1
+  xref_klass: MyString
+  type: 
+  content: 
+  valid_until: 2019-02-01 11:34:47
+  user: 
+  institution: 
+  mime_type: MyString
+  description: MyString
+
+two:
+  name: MyString
+  identifier: MyString
+  xref_id: 1
+  xref_klass: MyString
+  type: 
+  content: 
+  valid_until: 2019-02-01 11:34:47
+  user: 
+  institution: 
+  mime_type: MyString
+  description: MyString

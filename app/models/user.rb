@@ -40,7 +40,8 @@ class User < ActiveRecord::Base
 	has_one :api_key
 
 	has_many :long_jobs, through: :experiments, :conditions => Proc.new { %Q{long_jobs.user = '#{name}'}}
-
+	
+	has_many :reports, dependent: :destroy
 	attr_accessible :email, :full_name, :is_admin, :name
 	
 	validates :name, presence: true, uniqueness: true

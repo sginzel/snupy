@@ -67,6 +67,12 @@
 		collection:  current_user.generic_lists.order("updated_at DESC").first(10)
 	}) %>
 	<%= render(partial: "home/menu_item_with_subitems", locals: {
+		controller:  :reports,
+		caption:     "Reports",
+		name_method: :name,
+		collection:  current_user.visible(Report).order("updated_at DESC").first(10)
+	}) %>
+	<%= render(partial: "home/menu_item_with_subitems", locals: {
 		controller:  :long_jobs,
 		caption:     "Jobs",
 		collection:  current_user.jobs.select([:"long_jobs.title", :"long_jobs.id"]).limit(20).order('updated_at DESC'),

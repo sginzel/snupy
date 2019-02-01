@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20190117105015) do
+ActiveRecord::Schema.define(:version => 20190201103447) do
 
   create_table "affiliations", :force => true do |t|
     t.integer "user_id"
@@ -724,6 +724,39 @@ ActiveRecord::Schema.define(:version => 20190117105015) do
   add_index "regions", ["name"], :name => "index_regions_on_name"
   add_index "regions", ["start"], :name => "index_regions_on_start"
   add_index "regions", ["stop"], :name => "index_regions_on_stop"
+
+  create_table "report_has_variations", :id => false, :force => true do |t|
+    t.integer "report_id"
+    t.integer "variation_id"
+  end
+
+  add_index "report_has_variations", ["report_id", "variation_id"], :name => "index_report_has_variations_on_report_id_and_variation_id"
+  add_index "report_has_variations", ["report_id"], :name => "index_report_has_variations_on_report_id"
+
+  create_table "reports", :force => true do |t|
+    t.string   "name",                                                         :null => false
+    t.string   "identifier",                                                   :null => false
+    t.integer  "xref_id",                                                      :null => false
+    t.string   "xref_klass",                                                   :null => false
+    t.string   "type"
+    t.binary   "content",        :limit => 16777215,                           :null => false
+    t.datetime "valid_until"
+    t.integer  "user_id",                                                      :null => false
+    t.integer  "institution_id",                                               :null => false
+    t.string   "mime_type",                          :default => "text/plain"
+    t.string   "description"
+    t.datetime "created_at",                                                   :null => false
+    t.datetime "updated_at",                                                   :null => false
+  end
+
+  add_index "reports", ["description"], :name => "index_reports_on_description"
+  add_index "reports", ["identifier"], :name => "index_reports_on_identifier"
+  add_index "reports", ["institution_id"], :name => "index_reports_on_institution_id"
+  add_index "reports", ["mime_type"], :name => "index_reports_on_mime_type"
+  add_index "reports", ["name"], :name => "index_reports_on_name"
+  add_index "reports", ["user_id"], :name => "index_reports_on_user_id"
+  add_index "reports", ["xref_id"], :name => "index_reports_on_xref_id"
+  add_index "reports", ["xref_klass"], :name => "index_reports_on_xref_klass"
 
   create_table "sample_has_experiments", :force => true do |t|
     t.integer "sample_id"

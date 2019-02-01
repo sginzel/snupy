@@ -1,0 +1,60 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @report.name %>
+</p>
+
+<p>
+  <b>Identifier:</b>
+  <%= @report.identifier %>
+</p>
+
+<p>
+  <b>Xref:</b>
+  <%= @report.xref_id %>
+</p>
+
+<p>
+  <b>Xref klass:</b>
+  <%= @report.xref_klass %>
+</p>
+
+<p>
+  <b>Type:</b>
+  <%= @report.type %>
+</p>
+
+<p>
+  <b>Content:</b>
+  <%= @report.content.size %> bytes
+</p>
+
+<p>
+  <b>Valid until:</b>
+  <%= @report.valid_until %>
+</p>
+
+<p>
+  <b>User:</b>
+  <%= @report.user.name %>
+</p>
+
+<p>
+  <b>Institution:</b>
+  <%= @report.institution.name %>
+</p>
+
+<p>
+  <b>Mime type:</b>
+  <%= @report.mime_type %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%= @report.description %>
+</p>
+
+<%= link_to 'Download', download_report_path(@report) %> |
+<%= link_to 'Edit', edit_report_path(@report) %> |
+<%= link_to 'Back', reports_path %>

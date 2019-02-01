@@ -1,0 +1,13 @@
+<h1>Reports</h1>
+
+<%=render_table(@reports,
+				title: "",
+				path_method: "reports_path",
+				columns: %w(name identifier mime_type type valid_until xref_id xref_klass Download)
+   ) {|rec, gl|
+	rec["Download"] = link_to rec[:name], download_report_path(rec[:id])
+	rec
+}%>
+<br />
+
+<%= link_to 'New Report', new_report_path %>

@@ -170,6 +170,13 @@ class Ability
 			generic_list.users.include?(user) || user.is_admin?
 		end
 		
+		# Reports
+		can [:index, :show, :download], Report
+		can [:new, :create], Report
+		can [:edit, :update, :destroy], Report do |report|
+			report.user.id == user.id || user.is_admin?
+		end
+		
 		### AQuA
 		can (AquaController.action_methods - ApplicationController.action_methods).map(&:to_sym), Aqua
 		can [:show_log], Aqua if user.is_admin?
