@@ -39,6 +39,8 @@
 }
 %>
 <br/>
+<!--
 <% if current_user.is_admin then %>
 	<%= link_to "Clear cache/successfull jobs", long_jobs_clear_cache_path, method: :delete, data: {confirm: 'Are you sure?'} %>
 <% end %>
+//>
