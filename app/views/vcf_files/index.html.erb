@@ -26,6 +26,7 @@
 									){|rec, vcf|
 										sample_ids = vcf.sample_ids
 										rec["VCFid"] = link_to vcf.id, vcf_file_path(vcf)
+										rec["Reports"] = link_to vcf.reports.count, reports_path(ids:vcf.report_ids)
 										rec["Edit"] = link_to 'Edit', edit_vcf_file_path(vcf)
 										rec["Destroy"] = link_to 'Destroy', vcf, method: :delete, data: { confirm: 'Are you sure?' }
 										rec["Download"] = link_to 'Download', download_vcf_file_path(vcf)

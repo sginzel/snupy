@@ -1,50 +1,50 @@
 <p>
-  <b>Name: </b>
-  <%= @vcf_file.name %>
+	<b>Name: </b>
+	<%= @vcf_file.name %>
 </p>
 <p>
-  <b>Type: </b>
-  <%= @vcf_file.type %>
+	<b>Type: </b>
+	<%= @vcf_file.type %>
 </p>
 <p>
-  <b>Contact: </b>
-  <%= @vcf_file.contact %>
+	<b>Contact: </b>
+	<%= @vcf_file.contact %>
 </p>
 <p>
-  <b>Institution:</b>
-  <%= @vcf_file.institution.name %>
+	<b>Institution:</b>
+	<%= @vcf_file.institution.name %>
 </p>
 <p>
-  <b>Organism:</b>
-  <%= @vcf_file.organism.name %>
+	<b>Organism:</b>
+	<%= @vcf_file.organism.name %>
 </p>
 <p>
-  <b>Filename: </b>
-  <%= @vcf_file.filename %>
+	<b>Filename: </b>
+	<%= @vcf_file.filename %>
 </p>
 <p>
-  <b>Content Size: </b>
-  <%= (@vcf_file["content"].nil?)?"please load the content to determine the size":"#{@vcf_file["content"].length} bytes" %> 
-</p>
-<p>	
-  <b>MD5Sum: </b>
-  <%= @vcf_file.md5checksum %>
+	<b>Content Size: </b>
+	<%= (@vcf_file["content"].nil?)?"please load the content to determine the size":"#{@vcf_file["content"].length} bytes" %>
 </p>
 <p>
-  <b>Samples: </b>
-  <%= @vcf_file.sample_names.join(",") %>
+	<b>MD5Sum: </b>
+	<%= @vcf_file.md5checksum %>
 </p>
 <p>
-  <b>Filters: </b>
-  <%= YAML.load(@vcf_file.filters) %>
+	<b>Samples: </b>
+	<%= @vcf_file.sample_names.join(",") %>
+</p>
+<p>
+	<b>Filters: </b>
+	<%= YAML.load(@vcf_file.filters) %>
 </p>
 <p>
 	<b>Index: </b>
 	<%= @vcf_file.vcf_file_index.to_s %>
 </p>
 <p>
-  <b>Status: </b>
-  <%= @vcf_file.status %>
+	<b>Status: </b>
+	<%= @vcf_file.status %>
 </p>
 
 <p>
@@ -70,22 +70,35 @@
 			rec["tool"] = rec["id"]
 			rec
 		},
-	 id: "aqua_status_annotations",
-	 title: "AQUA Annotation Status",
-	 select_type: :radio,
-	 actions: {
-			 "Run annotation" => aqua_annotate_single_vcf_file_path(id: @vcf_file.id)
-			 # "Run annotation" => {url: aqua_annotate_single_vcf_file(id: @vcf_file.id)}
-			 #aqua_annotate_single_vcf_files_path()
-	 }) %>
+						 id: "aqua_status_annotations",
+						 title: "AQUA Annotation Status",
+						 select_type: :radio,
+						 actions: {
+							 "Run annotation" => aqua_annotate_single_vcf_file_path(id: @vcf_file.id)
+							 # "Run annotation" => {url: aqua_annotate_single_vcf_file(id: @vcf_file.id)}
+							 #aqua_annotate_single_vcf_files_path()
+						 }) %>
 	<% end %>
 </p>
+	<%= render_table(@vcf_file.reports,
+					 id:          "reports",
+					 title:       "Reports",
+					 columns: %w(name identifier filename created_at updated_at download),
+					 select_type: :none){|rec, rep|
+		rec[:name] = link_to rep.name, report_path(rep.id)
+		rec["download"] = link_to rep.name, download_report_path(rep.id)
+		rec
+	} %>
+<p>
+
+</p>
+
 <% if @vcf_file.status == :CREATED %>
 	<%= link_to 'Start AQuA annotation', aqua_annotate_vcf_file_path(@vcf_file), remote: true, id: "long_job_annotation_status#{@vcf_file.id}" %>
 <% else %>
 	'Already annotated'
 <% end %> |
-<%= link_to 'Load Content', vcf_file_path(@vcf_file, content: 1) %> 
-<%= link_to 'Download', download_vcf_file_path(@vcf_file) %> 
-<%= link_to 'Edit', edit_vcf_file_path(@vcf_file) %> 
+<%= link_to 'Load Content', vcf_file_path(@vcf_file, content: 1) %>
+<%= link_to 'Download', download_vcf_file_path(@vcf_file) %>
+<%= link_to 'Edit', edit_vcf_file_path(@vcf_file) %>
 <%= link_to 'Back', vcf_files_path %>

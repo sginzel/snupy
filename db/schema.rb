@@ -740,7 +740,7 @@ ActiveRecord::Schema.define(:version => 20190201103447) do
     t.string   "xref_klass",                                                   :null => false
     t.string   "type"
     t.binary   "content",        :limit => 16777215,                           :null => false
-    t.datetime "valid_until"
+    t.string   "filename"
     t.integer  "user_id",                                                      :null => false
     t.integer  "institution_id",                                               :null => false
     t.string   "mime_type",                          :default => "text/plain"
@@ -750,6 +750,7 @@ ActiveRecord::Schema.define(:version => 20190201103447) do
   end
 
   add_index "reports", ["description"], :name => "index_reports_on_description"
+  add_index "reports", ["filename"], :name => "index_reports_on_filename"
   add_index "reports", ["identifier"], :name => "index_reports_on_identifier"
   add_index "reports", ["institution_id"], :name => "index_reports_on_institution_id"
   add_index "reports", ["mime_type"], :name => "index_reports_on_mime_type"

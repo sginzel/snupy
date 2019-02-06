@@ -6,7 +6,7 @@ class ReportsController < ApplicationController
 	def index
 		@reports = current_user.visible(Report)
 		@reports = filter_collection @reports, [:name, :identifier, :xref_klass, :xref_id, :institution_id, :id], 100
-		@reports = @reports.select(%w(name identifier mime_type type valid_until xref_id xref_klass id))
+		@reports = @reports.select(%w(name identifier mime_type type filename xref_id xref_klass id))
 		
 		respond_to do |format|
 			format.html # index.html.erb
@@ -31,6 +31,15 @@ class ReportsController < ApplicationController
 		@report = Report.new
 		@report.user = current_user
 		@report.institution = Institution.new
+		@xref_objects = []
+		
+		if params[:xref_klass_choice] then
+			# find the report for the klass the user has selected
+			report_klass = Report.subclasses.select{|r| r.klass.name == params[:xref_klass_choice]}.first
+			if report_klass then
+				@xref_objects = Aqua.scope_to_array current_user.visible(report_klass.klass).select([:name, :id])
+			end
+		end
 		
 		respond_to do |format|
 			format.html # new.html.erb
@@ -48,9 +57,6 @@ class ReportsController < ApplicationController
 	def create
 		@report = Report.new(params[:report])
 		@report.user_id = current_user.id
-		@report.mime_type = retrieve_mime_type(params[:report])
-		@report.content = retrieve_content(params[:report])
-
 		
 		respond_to do |format|
 			if @report.save
@@ -68,8 +74,6 @@ class ReportsController < ApplicationController
 	def update
 		@report = Report.find(params[:id])
 		@report.user_id = current_user.id
-		@report.mime_type = retrieve_mime_type(params[:report])
-		@report.content = retrieve_content(params[:report])
 		
 		respond_to do |format|
 			if @report.update_attributes(params[:report])
@@ -101,21 +105,7 @@ class ReportsController < ApplicationController
 
 	def download
 		@report = current_user.visible(Report).find(params[:id])
-		send_data @report.content, filename: @report.name, type: @report.mime_type
+		send_data @report.content, filename: @report.filename, type: @report.mime_type
 	end
-	
-private
-	# returns the content from the uploaded file
-	def retrieve_content(params)
-		params.delete("content_upload").read
-	end
-	
-	def retrieve_mime_type(params)
-		mime = params.delete("mime_type")
-		if mime == "auto" then
-			params["content_upload"].content_type
-		else
-			mime
-		end
-	end
+
 end

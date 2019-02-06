@@ -41,6 +41,7 @@
 	rec[:tags] = smpl.tags_by_category.map{|category, tags| "#{category}: #{tags.map(&:value).join(";")}"}.join(", ")
 	# rec["Group/Entity/Specimen/Sample"] = ([ smpl.entity_group, smpl.entity, smpl.specimen_probe].map{|x| (!x.nil?)?(x.name):("")} + [smpl.nickname]).join(" | ")
 	rec["Group/Entity/Specimen/Sample"] = ([ smpl.entity_group, smpl.entity, smpl.specimen_probe].map{|x| (!x.nil?)?(x.name):("NA")} + [smpl.nickname])
+	rec["Reports"] = link_to smpl.reports.count, reports_path(ids: smpl.report_ids)
 	rec
 }%>
 <br />

@@ -33,7 +33,7 @@ class SamplesController < ApplicationController
 		#@samples = Sample.where(id: smplids)
 		#			 .includes([:tags, :entity, :entity_group, :vcf_file_nodata, :experiments, :institution])
 		@samples = current_user.visible(Sample)
-					   .includes([:tags, :entity, :entity_group, :vcf_file_nodata, :experiments, :institution])
+					   .includes([:tags, :entity, :entity_group, :vcf_file_nodata, :experiments, :institution, :reports])
 		
 		@samples = @samples.where("samples.id" => params[:ids]) unless params[:ids].nil?
 		@samples = filter_collection @samples, [:name, :patient, "vcf_files.name", :vcf_sample_name,

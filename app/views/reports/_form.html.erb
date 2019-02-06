@@ -1,61 +1,72 @@
-<%= form_for(@report.becomes(Report)) do |f| %>
-	<% if @report.errors.any? %>
-		<div id="error_explanation">
-			<h2><%= pluralize(@report.errors.count, "error") %> prohibited this report from being saved:</h2>
-			
-			<ul>
-				<% @report.errors.full_messages.each do |msg| %>
-					<li><%= msg %></li>
-				<% end %>
-			</ul>
+<% if (@report.xref_klass || params[:xref_klass_choice]).nil? then %>
+	<p>
+		<%= label_tag ("Submit report for: ") %>
+		<%= select_tag :xref_klass_choice,
+					   options_for_select(Report.subclasses.map{|r| [r.klass.name, r.klass.name]}, @report.xref_klass),
+					   :onchange => "location.href = '#{new_report_path}?xref_klass_choice='+$(this).val();",
+					   :include_blank => "Please chose"
+		%>
+	</p>
+<% else %>
+	<%=hidden_field(:xref_klass_choice, (@report.xref_klass || params[:xref_klass_choice])) %>
+	<%= form_for(@report.becomes(Report)) do |f| %>
+		<% if @report.errors.any? %>
+			<div id="error_explanation">
+				<h2><%= pluralize(@report.errors.count, "error") %> prohibited this report from being saved:</h2>
+				
+				<ul>
+					<% @report.errors.full_messages.each do |msg| %>
+						<li><%= msg %></li>
+					<% end %>
+				</ul>
+			</div>
+		<% end %>
+		
+		<div class="field">
+			<%= f.label :name %><br/>
+			<%= f.text_field :name %>
+		</div>
+		<div class="field">
+			<%= f.label :identifier %><br/>
+			<%= f.text_field :identifier %>
+		</div>
+		
+		<div class="field">
+			<%= f.label :xref_klass %><br/>
+			<%= f.select :xref_klass,
+						 options_for_select(Report.subclasses.map{|r| [r.klass.name, r.klass.name]}, (@report.xref_klass || params[:xref_klass_choice])),
+						 {},
+						 :onchange => "location.href = '#{new_report_path}?xref_klass_choice='+$(this).val();"
+			%>
+		</div>
+
+		<%= render_table @xref_objects,
+						 title: (@report.xref_klass || params[:xref_klass_choice]),
+						 id: "report[xref_id]",
+						 select_type: :radio
+		%>
+		<div class="field">
+			<%= f.label :content %><br/>
+			<%= f.file_field :content %>
+		</div>
+		<div class="field">
+			<%= f.label :user %><br/>
+			<%= f.label @report.user.name %>
+		</div>
+		<div class="field">
+			<%= f.label :institution %><br/>
+			<%= f.select :institution_id, options_for_select(current_user.affiliations.map(&:institution).uniq.map{|i| [i.name, i.id]}, @report.institution_id)  %>
+		</div>
+		<div class="field">
+			<%= f.label :mime_type %><br/>
+			<%= f.select :mime_type, options_for_select([["auto", "auto"],["text", "text/plain"], ["ZIP", "application/gzip"], ["JSON", "application/json"], ["PDF", "application/pdf"], ["DOCX", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"], ["CSV", "text/comma-separated-values"]], @report.mime_type) %>
+		</div>
+		<div class="field">
+			<%= f.label :description %><br/>
+			<%= f.text_area :description %>
+		</div>
+		<div class="actions">
+			<%= f.submit %>
 		</div>
 	<% end %>
-	
-	<div class="field">
-		<%= f.label :name %><br/>
-		<%= f.text_field :name %>
-	</div>
-	<div class="field">
-		<%= f.label :identifier %><br/>
-		<%= f.text_field :identifier %>
-	</div>
-	<div class="field">
-		<%= f.label :xref_id %><br/>
-		<%= f.number_field :xref_id %>
-	</div>
-	<div class="field">
-		<%= f.label :xref_klass %><br/>
-		<%= f.select :xref_klass, options_for_select(Report.subclasses.map{|r| [r.klass.name, r.klass.name]}, @report.xref_klass) %>
-	</div>
-	<div class="field">
-		<%= f.label :type %><br/>
-		<%= f.text_field :type %>
-	</div>
-	<div class="field">
-		<%= f.label :content %><br/>
-		<%= f.file_field :content_upload %>
-	</div>
-	<div class="field">
-		<%= f.label :valid_until %><br/>
-		<%= f.datetime_select :valid_until, :default => (@report.valid_until || 5.years.from_now) %>
-	</div>
-	<div class="field">
-		<%= f.label :user %><br/>
-		<%= f.label @report.user.name %>
-	</div>
-	<div class="field">
-		<%= f.label :institution %><br/>
-		<%= f.select :institution_id, options_for_select(current_user.affiliations.map(&:institution).uniq.map{|i| [i.name, i.id]}, @report.institution_id)  %>
-	</div>
-	<div class="field">
-		<%= f.label :mime_type %><br/>
-		<%= f.select :mime_type, options_for_select([["auto", "auto"],["text", "text/plain"], ["ZIP", "application/gzip"], ["JSON", "application/json"], ["PDF", "application/pdf"], ["DOCX", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"], ["CSV", "text/comma-separated-values"]], @report.mime_type) %>
-	</div>
-	<div class="field">
-		<%= f.label :description %><br/>
-		<%= f.text_area :description %>
-	</div>
-	<div class="actions">
-		<%= f.submit %>
-	</div>
 <% end %>

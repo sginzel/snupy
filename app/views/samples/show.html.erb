@@ -82,5 +82,17 @@
 	</p>
 <% end %>
 
+</p>
+	<%= render_table(@sample.reports,
+					 id:          "reports",
+					 title:       "Reports",
+					 columns: %w(name identifier filename created_at updated_at download),
+					 select_type: :none){|rec, rep|
+		rec[:name] = link_to rep.name, report_path(rep.id)
+		rec["download"] = link_to rep.name, download_report_path(rep.id)
+		rec
+	} %>
+<p>
+
 <%= link_to 'Edit', edit_sample_path(@sample) %> 
 <%= link_to 'Back', samples_path %>
