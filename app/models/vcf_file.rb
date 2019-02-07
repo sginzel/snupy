@@ -331,7 +331,7 @@ class VcfFile < ActiveRecord::Base
 					if self.respond_to?(:is_record_valid) then
 						verdict = self.send(:is_record_valid, vcfp)
 						if !verdict  then
-							print("#{vcfp["chrom"]}:#{vcfp["pos"]} will be skipped\n".red)
+							print("#{vcfp["chrom"]}:#{vcfp["pos"]} will be skipped-decision by #{self.class.name}\n".red)
 							offset += (line.length + 1)
 							next
 						end

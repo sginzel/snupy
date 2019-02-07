@@ -15,6 +15,16 @@ class Report < ActiveRecord::Base
 	before_save :validate_name
 	before_save :validate_identifier
 	
+	
+	
+	def self.register_template(klass)
+		@templates << klass unless templates.include?(klass)
+	end
+	
+	def self.templates
+		@templates ||= []
+	end
+	
 	def self.register_report
 		klass.class_eval("has_many :reports, class_name: '#{self.name}', foreign_key: :xref_id")
 	end
@@ -41,7 +51,7 @@ class Report < ActiveRecord::Base
 	
 	def validate_type
 		myclass = Report.subclasses.select{|k| k.klass.name == self.xref_klass}.first
-		raise "type is invalid" if myclass.nil?
+		raise "type is invalid(#{self.xref_klass})" if myclass.nil?
 		self.type = myclass.name
 	end
 	
@@ -67,6 +77,10 @@ class Report < ActiveRecord::Base
 		if value.is_a?ActionDispatch::Http::UploadedFile then
 			self.mime_type = value.content_type
 			self.filename = value.original_filename
+			value = value.read
+		elsif value.is_a?(File)
+			self.mime_type = MIME::Types.type_for(value.path).first.content_type
+			self.filename = File.basename value.path
 			value = value.read
 		end
 		dumped = Marshal.dump(value)

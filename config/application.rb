@@ -58,7 +58,9 @@ module SnupyAgain
 		config.autoload_paths += Dir["#{config.root}/app/models/vcf_file/**/"]
 		config.autoload_paths += Dir["#{config.root}/app/models/statistic/**/"]
 		
-#		config.eager_load_paths += Dir["#{config.root}/app/models/query_filter/**/"]
+		config.autoload_paths += Dir["#{config.root}/extras/report_template/**/"]
+		
+		#		config.eager_load_paths += Dir["#{config.root}/app/models/query_filter/**/"]
 #		config.eager_load_paths += Dir["#{config.root}/app/models/query_attribute/**/"]
 #		config.eager_load = true
 

@@ -1,0 +1,1 @@
+ReportTemplate.load_templates()
