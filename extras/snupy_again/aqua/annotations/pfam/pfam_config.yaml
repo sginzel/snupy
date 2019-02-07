@@ -1,0 +1,23 @@
+development:
+  version: 1.0
+  workdir: <%=Rails.root%>/tmp/pfam
+  basedir: <%= PfamAnnotation.annotationdir%>/pfam/<%= PfamAnnotation.config("version")%>
+  datadir: <%= PfamAnnotation.config("basedir")%>/data
+  bindir: <%= PfamAnnotation.config("basedir")%>/bin
+  species:
+    homo sapiens:
+      file1: <%= PfamAnnotation.config('datadir')%>/some_file.txt
+    mus musculus:
+      file1: <%= PfamAnnotation.config('datadir')%>/some_other_file.txt
+test: None.
+production:
+  version: 1.0
+  workdir: <%=Rails.root%>/tmp/pfam
+  basedir: <%= PfamAnnotation.annotationdir%>/pfam/<%= PfamAnnotation.config("version")%>
+  datadir: <%= PfamAnnotation.config("basedir")%>/data
+  bindir: <%= PfamAnnotation.config("basedir")%>/bin
+  species:
+    homo sapiens:
+      file1: <%= PfamAnnotation.config('datadir')%>/some_file.txt
+    mus musculus:
+      file1: <%= PfamAnnotation.config('datadir')%>/some_other_file.txt
