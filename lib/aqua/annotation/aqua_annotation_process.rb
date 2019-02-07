@@ -131,6 +131,7 @@ class AquaAnnotationProcess
 		end
 		result = EventLog.record do |eventlog|
 			missing_log = {}
+			tool_timings = {}
 			@tools.each do |t|
 				Annotation.log_info "**************** Processing [#{t.name}] (#{t.configuration[:label]}) ******************"
 				# skip tool if it is not ready yet.
@@ -167,6 +168,7 @@ class AquaAnnotationProcess
 						# Process the VCF with the tool
 						# Store potential exceptions and fail messages from the tools
 						begin
+							tool_timings[t.name] = Time.now.to_f
 							annot_tool = t.new({})
 							if t.configuration[:input] == :csv then
 								tool_successful = annot_tool.annotate_and_store(tmp_csv_filepath, vcf)
@@ -188,6 +190,8 @@ class AquaAnnotationProcess
 						rescue RuntimeError => e
 							tool_successful = false
 							exceptions << e
+						ensure
+							tool_timings[t.name] = (Time.now.to_f - tool_timings[t.name]).round(3)
 						end
 					end
 					if tool_successful then
@@ -241,6 +245,7 @@ class AquaAnnotationProcess
 			eventlog.data = {
 					tools: @tools.map(&:name),
 					vars_missing_annotation: missing_log,
+					timings: tool_timings,
 					num_tools: @tools.size,
 					failed_tools: failed_tools.map{|t| t.name},
 					num_failed: failed_tools.size,

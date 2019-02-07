@@ -1,0 +1,35 @@
+development:
+  version: 1.0
+  workdir: <%=Rails.root%>/tmp/pfam
+  basedir: <%= PfamAnnotation.annotationdir%>/pfam/<%= PfamAnnotation.config("version")%>
+  datadir: <%= PfamAnnotation.config("basedir")%>/data
+  bindir: <%= PfamAnnotation.config("basedir")%>/bin
+  species: #see http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/tableDescriptions.txt.gz
+    homo sapiens:
+      ucscGenePfam: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ucscGenePfam.txt.gz
+      pfamDesc: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/pfamDesc.txt.gz
+      knownToRefSeq: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/knownToRefSeq.txt.gz
+      ncbiRefSeqLink: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ncbiRefSeqLink.txt.gz
+    mus musculus:
+      ucscGenePfam: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/ucscGenePfam.txt.gz
+        pfamDesc: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/pfamDesc.txt.gz
+        knownToRefSeq: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/knownToRefSeq.txt.gz
+        ncbiRefSeqLink: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/ncbiRefSeqLink.txt.gz
+test: None.
+production:
+  version: 1.0
+  workdir: <%=Rails.root%>/tmp/pfam
+  basedir: <%= PfamAnnotation.annotationdir%>/pfam/<%= PfamAnnotation.config("version")%>
+  datadir: <%= PfamAnnotation.config("basedir")%>/data
+  bindir: <%= PfamAnnotation.config("basedir")%>/bin
+  species: #see http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/tableDescriptions.txt.gz
+    homo sapiens:
+      ucscGenePfam: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ucscGenePfam.txt.gz
+      pfamDesc: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/pfamDesc.txt.gz
+      knownToRefSeq: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/knownToRefSeq.txt.gz
+      ncbiRefSeqLink: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ncbiRefSeqLink.txt.gz
+    mus musculus:
+      ucscGenePfam: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/ucscGenePfam.txt.gz
+        pfamDesc: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/pfamDesc.txt.gz
+        knownToRefSeq: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/knownToRefSeq.txt.gz
+        ncbiRefSeqLink: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/ncbiRefSeqLink.txt.gz
