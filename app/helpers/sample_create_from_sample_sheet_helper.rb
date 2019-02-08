@@ -117,8 +117,8 @@ module SampleCreateFromSampleSheetHelper
 							next
 						end
 					end
-					sattrs.delete("specimen_probe_name")
 				end
+				sattrs.delete("specimen_probe_name")
 				
 				sample = Sample.new(sattrs)
 				sample.status = "ENQUEUED"
