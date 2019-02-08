@@ -185,7 +185,9 @@ gem "color", "1.7.1"
 gem "interpolate", "0.3.0"
 
 ## Enables ZIP file support
-gem "zip", "2.0.2"
+# gem "zip", "2.0.2"
+gem "rubyzip" # necessary for caracal, but requires vcf file archive upload to be reworked
+
 
 ## OJ JSON parser
 # gem "oj", '2.15.0' # incompatible with rails 3.2.22.5 and ruby 2.4

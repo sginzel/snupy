@@ -863,7 +863,7 @@ class VcfFile < ActiveRecord::Base
 		# try to open the content as a zip file
 		is_archive = true
 		begin
-			tmp = Zip::ZipFile.open(content.tempfile.path)
+			tmp = Zip::File.open(content.tempfile.path)
 			tmp.close
 		rescue Zip::ZipError
 			is_archive = false
@@ -913,8 +913,9 @@ class VcfFile < ActiveRecord::Base
 					yield ({vcf_file: nil, alert: "Config detected. Filename and format columns required in config.", created: false})
 				end
 			end
-			
-			Zip::ZipFile.open(content.tempfile.path) do |zip_file|
+			#pp config
+			#puts "...............................".red
+			Zip::File.open(content.tempfile.path) do |zip_file|
 				# Handle entries one by one
 				zip_file.each do |entry|
 					# Read into memory
@@ -982,13 +983,14 @@ class VcfFile < ActiveRecord::Base
 	def self.get_config_from_upload(zipfile)
 		allowed_fields = [:name, :contact, :type, :institution, :institution_id, :organism, :organism_id, :tool]
 		config         = Hash.new({})
-		Zip::ZipFile.open(zipfile) do |zip_file|
+		Zip::File.open(zipfile) do |zip_file|
 			zip_file.each do |entry|
 				next unless entry.name == "config"
 				header = nil
 				entry.get_input_stream.each_line do |line|
 					cols = line.strip.split("\t")
 					next if line[0] == "#"
+					next if line =~ /^$/
 					if header.nil? then
 						header = cols
 						next
@@ -1033,9 +1035,9 @@ class VcfFile < ActiveRecord::Base
 				end
 			end
 		end
-		# d "###################"
-		# pp config
-		# d "###################"
+		#d "###################"
+		#pp config
+		#puts "###################".red
 		config
 	end
 	
@@ -1214,4 +1216,7 @@ class VcfFile < ActiveRecord::Base
 		ret
 	end
 
+end
+Dir["app/models/vcf_file/*.rb"].each do |f|
+	require_dependency "vcf_file/#{File.basename(f, ".rb")}"
 end
