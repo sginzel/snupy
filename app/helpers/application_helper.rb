@@ -324,7 +324,8 @@ module ApplicationHelper
 			colors: colors,
 			record_colors: record_colors,
 			idcol: idcol,
-			table_class: table_class
+			table_class: table_class,
+			css: (opts[:css] || {})
 		}.reverse_merge(opts)
 		
 	end
