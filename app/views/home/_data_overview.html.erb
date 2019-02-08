@@ -3,7 +3,7 @@
 	<%= render_table(data_overview,
 									title: "Dataset summary", 
 									id: "data_overview_#{Time.now.to_i}",
-									selectbox: true,
+									selectbox: (defined?disable_select)?(!disable_select):true,
 									columns: ["Institution", "Entity Group", "Entity", "Specimen", "Sample", "VcfFile", "Queryable?", "Reason"],
 									record_color: {
 										"Institution" => Aqua.color_factor(data_overview.map{|rec| strip_tags rec["Institution"] }.uniq, :light),
