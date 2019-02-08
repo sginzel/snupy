@@ -5,6 +5,7 @@ module SnupyAgain
 			ret = {}
 			quantile_estimators = AquaQuantile.where(model_table: self.table_name, organism_id: organismid)
 			return {} if quantile_estimators.nil?
+			return {} if quantile_estimators.first.nil?
 			model = quantile_estimators.first.model
 			return {} unless model.respond_to?(:summary_categories)
 			quantile_estimators = Hash[quantile_estimators.map{|aq| [aq.attribute_column, aq]}]
