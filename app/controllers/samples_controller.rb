@@ -520,22 +520,28 @@ class SamplesController < ApplicationController
 			render_table_details_params(require_params, label: "Assign specimen to #{params[:ids].size} samples. ")
 			return true
 		else
-			if params[:specimen] != "unlink" then
+			if not params[:specimen] == "unlink" then
 				specimen = SpecimenProbe.find(params[:specimen])
 			else
 				specimen = nil
 			end
 			success = false
-			num_changes = nil
-			Sample.transaction do
-				num_changes = Sample.where(id: params[:ids]).update_all(specimen_probe_id: specimen)
+			num_changes = 0
+			begin
+				Sample.where(id: params[:ids]).find_each do |s|
+					s.specimen_probe_id = (specimen || SpecimenProbe.new).id
+					s.save!
+					num_changes += 1
+				end
 				success = num_changes == params[:ids].size
-				raise ActiveRecord::Rollback if !success
+			rescue => e
+				success = false
+				raise e
 			end
 			if success then
 				render text: "#{num_changes} samples #{(specimen.nil?)?"seperated":"assigned to #{specimen.to_s}"}"
 			else
-				render text: "[ERROR] samples were not updated."
+				render text: "[ERROR] not all samples were updated - stopped after #{num_changes}."
 			end
 		
 		end

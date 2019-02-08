@@ -147,12 +147,15 @@ class Sample < ActiveRecord::Base
 	end
 	
 	def update_sample_annotation_associations
-		if !self.specimen_probe_id.nil? then
+		if self.specimen_probe_id then
 			# we cant use self.entity and self.entity_group here because I guess during the save process this is not set when the sample is first initilized
 			spec = SpecimenProbe.find(self.specimen_probe_id)
 			ent = spec.entity
 			self.entity_id = spec.entity_id
 			self.entity_group_id = ent.entity_group_id
+		else
+			self.entity_id = nil
+			self.entity_group_id = nil
 		end
 	end
 	

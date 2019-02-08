@@ -129,8 +129,16 @@ class SpecimenProbesController < ApplicationController
 			else
 				success = false
 				x = 0
-				Sample.transaction do 
-					x = Sample.joins(:organism).where("vcf_files.organism_id" => specimen.organism.id).where("samples.id" => params[:samples]).update_all(specimen_probe_id: specimen.id)
+				Sample.transaction do
+					Sample.joins(:organism)
+				    .where("vcf_files.organism_id" => specimen.organism.id)
+				    .where("samples.id" => params[:samples]).pluck("samples.id")
+					.each do |sid|
+						s = Sample.find(sid)
+						s.specimen_probe = (specimen || SpecimenProbe.new)
+						s.save
+						x += 1
+					end
 					success = x == params[:samples].uniq.size
 					raise ActiveRecord::Rollback if !success
 				end
