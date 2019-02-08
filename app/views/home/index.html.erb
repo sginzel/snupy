@@ -1,7 +1,7 @@
 <div style="width: 750px">
 	<div class="ui-widget" style="float: left; width: 100%;">
-		<div class="ui-widget-header">
-			<p style="margin-left: auto; margin-right: auto;text-align: center">
+		<div class="homeheader" style="border:none;">
+<!--			<p   style="top: 0px; margin-left: auto; margin-right: auto;text-align: center;"> -->
 				<%=link_to "Projects", experiments_path %> |
 				<%=link_to "Samples", samples_path %> |
 				<%=link_to "Gene Panels", generic_lists_path %> |
@@ -10,7 +10,7 @@
 				<% if File.exists?("public/snupy.tar.gz") %>
 				| <%=link_to "Download", "snupy.tar.gz"%>
 				<% end %>
-			</p>
+			<!--			</p> -->
 		</div>
 	</div>
 

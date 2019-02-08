@@ -1,3 +1,24 @@
 // Place all the styles related to the home controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.homeheader {
+  background-color: $appbackground; /* tuerkis */
+  background: #e3e3e3;
+  font-family: $font-stack-navigation;
+  font-size: $font-size-navigation;
+  /* border: 1px solid; */
+  display: flex;
+  justify-content: space-between;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  padding: 10px 150px 10px 150px;
+  a {
+    font-family: $font-stack-navigation !important;
+    font-size: $font-size-navigation !important;
+    background: #e3e3e3 !important;
+    border-color: #e3e3e3 !important;
+    color: steelblue !important;
+  }
+}
