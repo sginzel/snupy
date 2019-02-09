@@ -82,6 +82,9 @@ class Report < ActiveRecord::Base
 			self.mime_type = MIME::Types.type_for(value.path).first.content_type
 			self.filename = File.basename value.path
 			value = value.read
+		elsif value.is_a?(StringIO)
+			self.filename = value.hash.to_s(36).upcase
+			value = value.read
 		end
 		dumped = Marshal.dump(value)
 		write_attribute(:content, zip(dumped) )
@@ -105,3 +108,8 @@ class Report < ActiveRecord::Base
 	end
 
 end
+require_dependency 'reports/report_entity_group'
+require_dependency 'reports/report_entity'
+require_dependency 'reports/report_specimen_probe'
+require_dependency 'reports/report_sample'
+require_dependency 'reports/report_vcf_file'

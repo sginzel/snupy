@@ -1,0 +1,11 @@
+<% reports = [reports] unless reports.is_a?(Array) || reports.is_a?(ActiveRecord::Relation) %>
+<%=render_table(reports,
+				title: "Reports",
+				path_method: "reports_path",
+				columns: %w(name identifier mime_type Download),
+				selectbox: false
+   ) {| rec, gl |
+	rec["Download"] = "NA"
+	rec["Download"] = link_to rec[:name], download_report_path(rec[:id]) unless rec[:id].nil?
+   	rec
+} %>
