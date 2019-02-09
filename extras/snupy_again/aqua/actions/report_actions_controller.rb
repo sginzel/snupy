@@ -15,13 +15,12 @@ class ReportActionsController < AquaController #ApplicationController
 		entities.instance_variable_set(:@_table_select_type, :radio)
 		
 		available_templates = ReportEntity.templates
-		
-		
+
 		require_params = {
 			ids: params[:ids],
 			entities: entities,
 			report_template: available_templates
-		}
+		}.merge(params)
 		
 		# ask user which entity to report on
 		if determine_missing_params(require_params).size > 0 then

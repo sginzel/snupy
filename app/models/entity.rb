@@ -91,6 +91,16 @@ class Entity < ActiveRecord::Base
 		Entity.where(id: ent_ids)
 	end
 	
+	def father
+		ent_ids = self.entity_group.specimen_probes.joins(:tags).where("tags.value"=> ["CFFTHR"]).pluck(:entity_id)
+		Entity.where(id: ent_ids)
+	end
+	
+	def mother
+		ent_ids = self.entity_group.specimen_probes.joins(:tags).where("tags.value"=> ["CFMTHR"]).pluck(:entity_id)
+		Entity.where(id: ent_ids)
+	end
+	
 	def siblings()
 		# check if I am a control entity
 		#status = self.specimen_probes.joins(:tags).where("tags.category" => "STATUS").pluck("tags.value")

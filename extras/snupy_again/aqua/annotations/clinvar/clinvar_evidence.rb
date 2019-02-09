@@ -14,7 +14,7 @@ class ClinvarEvidence < ActiveRecord::Base
 	has_many :users, through: :samples
 	has_many :experiments, through: :samples
 
-	belongs_to :clinvar_evidence, primary_key: :clinsigincl_alleleid, foreign_key: :alleleid
+	has_many :clinvar, foreign_key: :clinvar_evidence_id
 	
 	# list all attributes here to mass-assign them
 	attr_accessible :variation_id,

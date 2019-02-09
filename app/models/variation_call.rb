@@ -76,5 +76,10 @@ class VariationCall < ActiveRecord::Base
 		end
 		return ret
 	end
+	
+	def baf
+		return nil if self.ref_reads < 0 or self.alt_reads < 0
+		self.alt_reads.to_f/(self.alt_reads+self.ref_reads)
+	end
   
 end

@@ -126,7 +126,7 @@ You will be able to create queries when at least one sample was successfully imp
 			<%
 				aqua_actions = {}
 				Aqua.route_paths.each do |description, url|
-					aqua_actions[description] = {url: url, params: {experiment_id: @experiment.id, samples: params[:samples], queries: params["queries"], aggregations: params["aggregations"]}}
+					aqua_actions[description] = {url: url, params: {experiment_id: @experiment.id, samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}}
 				end
 				aqua_actions = aqua_actions.merge(
 					{

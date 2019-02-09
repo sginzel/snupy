@@ -1,14 +1,154 @@
-<%
-docx.h1 'Page 1 Header'
-docx.hr
-docx.p
-docx.h2 'Section 1'
-docx.p  'Lorem ipsum dolor....'
-docx.p  "#{entity.name}"
+extend AquaParameterHelper
+def create_header
+	user = User.find(user_id)
+	h1 "Genetic Analysis #{entity.name}"
+	h2 "#{user.full_name} | #{user.email} | #{Date.today.strftime("%d %B %Y")}"
+	hr
+end
 
-	puts "#{entity.name}".red
-puts "#{entity.name}".red
-puts "#{entity.name}".red
-puts "#{entity.name}".red
-puts "#{entity.name}".red
-%>
+def snupy_to_caracal_table(arr)
+	return [["No Results"]] if arr.size == 0
+	ret = [arr.first.keys]
+	arr.each do |rec|
+		ret << rec.values
+	end
+	ret
+end
+
+def default_style
+	{
+		color: "000000",
+		color1: "444444",
+		color_highlight: "4682B4",
+		font: "Helvetica",
+		font_serif: "Times",
+		size: 16,
+		
+	}
+end
+
+def set_style
+	defaults = default_style()
+	docx.style do
+		id              'Heading1'  # sets the internal identifier for the style.
+		name            'heading 1' # sets the friendly name of the style.
+		type            'paragraph' # sets the style type. accepts `paragraph` or `character`
+		font            defaults[:font] # sets the font family.
+		color           defaults[:color_highlight]    # sets the text color. accepts hex RGB.
+		size            52          # sets the font size. units in half points.
+		bold            true       # sets the font weight.
+		align           :center       # sets the alignment. accepts :left, :center, :right, and :both.
+		line            360         # sets the line height. units in twips.
+		top             100         # sets the spacing above the paragraph. units in twips.
+		bottom          100           # sets the spacing below the paragraph. units in twips.
+	end
+	docx.style do
+		id              'Heading2'  # sets the internal identifier for the style.
+		name            'heading 2' # sets the friendly name of the style.
+		type            'paragraph' # sets the style type. accepts `paragraph` or `character`
+		font            defaults[:font] # sets the font family.
+		color           defaults[:color]    # sets the text color. accepts hex RGB.
+		size            32          # sets the font size. units in half points.
+		bold            false       # sets the font weight.
+		align           :center       # sets the alignment. accepts :left, :center, :right, and :both.
+		line            360         # sets the line height. units in twips.
+		top             50         # sets the spacing above the paragraph. units in twips.
+		bottom          50           # sets the spacing below the paragraph. units in twips.
+	end
+	docx.style do
+		id              'Heading3'  # sets the internal identifier for the style.
+		name            'heading 3' # sets the friendly name of the style.
+		type            'paragraph' # sets the style type. accepts `paragraph` or `character`
+		font            defaults[:font] # sets the font family.
+		color           defaults[:color1]    # sets the text color. accepts hex RGB.
+		size            42          # sets the font size. units in half points.
+		bold            false       # sets the font weight.
+		caps            true
+		align           :left       # sets the alignment. accepts :left, :center, :right, and :both.
+		line            360         # sets the line height. units in twips.
+		top             50         # sets the spacing above the paragraph. units in twips.
+		bottom          50           # sets the spacing below the paragraph. units in twips.
+	end
+	docx.style do
+		id              'Normal'  # sets the internal identifier for the style.
+		name            'normal' # sets the friendly name of the style.
+		type            'paragraph' # sets the style type. accepts `paragraph` or `character`
+		font            defaults[:font_serif] # sets the font family.
+		color           defaults[:color]    # sets the text color. accepts hex RGB.
+		size            defaults[:size]          # sets the font size. units in half points.
+#		bold            false       # sets the font weight.
+#		italic          false       # sets the font style.
+#		underline       false       # sets whether or not to underline the text.
+#		caps            false       # sets whether or not text should be rendered in all capital letters.
+#		align           :left       # sets the alignment. accepts :left, :center, :right, and :both.
+#		line            120         # sets the line height. units in twips.
+#		top             3         # sets the spacing above the paragraph. units in twips.
+#		bottom          3           # sets the spacing below the paragraph. units in twips.
+#		indent_left     0         # sets the left indent. units in twips.
+#		indent_right    0         # sets the rights indent. units in twips.
+#		indent_first    0         # sets the first line indent. units in twips.
+	end
+	docx.style do
+		id              'notes'  # sets the internal identifier for the style.
+		name            'notes' # sets the friendly name of the style.
+		type            'character' # sets the style type. accepts `paragraph` or `character`
+		font            defaults[:font] # sets the font family.
+		color           defaults[:color]    # sets the text color. accepts hex RGB.
+		size            32          # sets the font size. units in half points.
+		bold            true       # sets the font weight.
+#		italic          false       # sets the font style.
+#		underline       false       # sets whether or not to underline the text.
+#		caps            false       # sets whether or not text should be rendered in all capital letters.
+		align           :left       # sets the alignment. accepts :left, :center, :right, and :both.
+		line            120         # sets the line height. units in twips.
+#		top             3         # sets the spacing above the paragraph. units in twips.
+#		bottom          3           # sets the spacing below the paragraph. units in twips.
+#		indent_left     0         # sets the left indent. units in twips.
+#		indent_right    0         # sets the rights indent. units in twips.
+#		indent_first    0         # sets the first line indent. units in twips.
+	end
+	docx.page_size do
+		width       15840       # sets the page width. units in twips.
+		height      12240       # sets the page height. units in twips.
+		orientation :landscape  # sets the printer orientation. accepts :portrait and :landscape.
+	end
+end
+
+set_style
+create_header
+context = self
+docx.p do
+	
+	text "Name: " + context.entity.name, style: "notes"
+	br
+	text "Parents: " + context.entity.parents.map(&:name).join(" & "), style: "notes"
+	br
+	text "Siblings: " + context.entity.siblings.map(&:name).join(" & "), style: "notes"
+	br
+	context.entity.tags.group_by(&:category).each do |category, tags|
+		text "#{category}: #{tags.map{|t| t.value}.join(",")}", style: "notes"
+		br
+	end
+end
+
+
+tables.each do |tblname, records|
+	docx.page
+	docx.h3 tblname.to_s.humanize
+	records.each do |record_name, tbl|
+		docx.p
+		docx.h4 record_name.to_s.humanize
+		docx.table snupy_to_caracal_table(tbl) do
+			cell_style rows[0], background: '4682B4', color: 'ffffff', bold: true
+			cell_style cols[0], width: 3000
+		end
+	end
+	
+end
+
+
+docx.page
+q = _build_query({queries: queries()})[:query]
+docx.p q.keys.join("\t")
+hr
+#docx.p queries.pretty_inspect

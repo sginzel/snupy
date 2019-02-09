@@ -60,6 +60,10 @@ class Variation < ActiveRecord::Base
 		SampleStatistic.where(type: "SampleStatistic", record_id: self.id)
 	end
 	
+	def coordinates
+		"#{self.region.name}:#{self.region.start}-#{self.region.stop}#{self.alteration.ref}>#{self.alteration.alt}"
+	end
+	
 	# This method returns only genetic elements that are hit by a sequence altering variation  
 	#  def self.affected_genetic_elements(variations, organsim, consequences = Consequence::FATAL)
 	#		vas = VariationAnnotation.joins(:consequences)
