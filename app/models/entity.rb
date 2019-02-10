@@ -15,6 +15,8 @@ class Entity < ActiveRecord::Base
 
 	has_many :variation_calls, through: :specimen_probes
 	
+	has_many :variations, through: :variation_calls
+	
 	has_and_belongs_to_many :entity_tags, class_name: "Tag", join_table: :tag_has_objects, foreign_key: :object_id,
 							:conditions => { "tags.object_type" => "Entity"}
 	has_many :specimen_probe_tags, class_name: "Tag", through: :specimen_probes, :uniq => true
@@ -129,6 +131,140 @@ class Entity < ActiveRecord::Base
 			
 		end
 		created_entities
+	end
+	
+	# Input: list of variation call ids
+	# output: {varid: "0/1"}
+	# INfo: COnflicting genotypes will be returned as "1/1"
+	def genotypes(varcall_ids = nil)
+		varcall_ids = self.variation_call_ids if varcall_ids.nil?
+		genotype_normalization_map = {
+			"0/1" => "0/1",
+			"1/0" => "0/1",
+			"1/1" => "1/1",
+			"0|1" => "0/1",
+			"1|0" => "0/1",
+			"1|1" => "1/1",
+			"1/2" => "0/1",
+			"2/1" => "0/1",
+			"1|2" => "0/1",
+			"2|1" => "0/1"
+		}
+		ret = VariationCall.where(id: varcall_ids).where(sample_id: self.samples).select([:variation_id, :gt]).group_by(&:variation_id)
+		ret.keys.each do |varid|
+			if ret[varid].size > 1
+				ret[varid] = "1/1"
+			else
+				ret[varid] = ret[varid].first.gt
+			end
+		end
+		ret
+	end
+	
+	# Input: list of variatino call ids
+	# output: {varid: "Y|N|?"}
+	def autosomal_dominant(varcall_ids = nil)
+		varcall_ids = self.variation_call_ids if varcall_ids.nil?
+		fathergt = (self.father.first || Entity.new()).genotypes
+		mothergt = (self.mother.first || Entity.new()).genotypes
+		myself = self.genotypes
+		myself.keys.each do |varid|
+			fgt = fathergt[varid] || "?"
+			mgt = mothergt[varid] || "?"
+			if ((fgt == "0/1" && mgt == "0/1") ||
+				(fgt == "?" && mgt == "0/1") ||
+				(fgt == "0/1" && mgt == "?")) &&
+				myself[varid] == "1/0" then
+				myself[varid] = "Y"
+			elsif fgt == "?" && mgt == "?" then
+				myself[varid] = "?"
+			else
+				myself[varid] = "N"
+			end
+		end
+		myself
+	end
+	
+	# Input: list of variatino call ids
+	# output: {varid: "Y|N|?"}
+	def autosomal_recessive(varcall_ids = nil)
+		varcall_ids = self.variation_call_ids if varcall_ids.nil?
+		fathergt = (self.father.first || Entity.new()).genotypes
+		mothergt = (self.mother.first || Entity.new()).genotypes
+		myself = self.genotypes
+		myself.keys.each do |varid|
+			fgt = fathergt[varid] || "?"
+			mgt = mothergt[varid] || "?"
+			if (fgt == "0/1" && mgt == "0/1") &&
+				myself[varid] == "1/1" then
+				myself[varid] = "Y"
+			elsif (fgt == "?" || mgt == "?") &&
+				myself[varid] == "1/1" then
+				myself[varid] = "?"
+			else
+				myself[varid] = "N"
+			end
+		end
+		myself
+	end
+	
+	# Input: list of variatino call ids
+	# output: {varid: "Y|N|?"}
+	def denovo(varcall_ids = nil)
+		varcall_ids = self.variation_call_ids if varcall_ids.nil?
+		fathergt = (self.father.first || Entity.new()).genotypes
+		mothergt = (self.mother.first || Entity.new()).genotypes
+		myself = self.genotypes
+		myself.keys.each do |varid|
+			fgt = fathergt[varid] || "?"
+			mgt = mothergt[varid] || "?"
+			if (fgt == "?" && mgt == "?") then
+				myself[varid] = "Y"
+			else
+				myself[varid] = "N"
+			end
+		end
+		myself
+	end
+	
+	# Input: list of variatino call ids and a scope to retrieve transcripts
+	# output: {varid: "Y|N|?"}
+	def compound_heterozygous(varcall_ids = nil, transcript_scope = Vep::Ensembl.where(canonical: 1, consequence: Vep.DEFAULT_CONSEQUENCES), transcript_attribute = :transcript_id)
+		varcall_ids = self.variation_call_ids if varcall_ids.nil?
+		
+		# get the variations
+		varids = VariationCall.where(sample_id: self.samples).uniq(:variation_id).pluck(:variation_id)
+		trans2vars = transcript_scope
+			                   .where(organism_id: self.organism)
+			                   .where(variation_id: varids)
+			                   .select([:variation_id, transcript_attribute])
+			                   .group_by{|annot| annot[transcript_attribute]}
+		trans2vars.keys.each do |trans|
+			trans2vars[trans] = trans2vars[trans].map(&:variation_id)
+		end
+		
+		fathergt = (self.father.first || Entity.new()).genotypes
+		mothergt = (self.mother.first || Entity.new()).genotypes
+		myself = self.genotypes
+		
+		result = {}
+		myself.keys.each do |varid|
+			result[varid] = nil
+		end
+		
+		trans2vars.each do |transcript, varids|
+			# check if any of the variants occur in father/mother
+			fvarids = varids.reject{|varid| fathergt[varid].nil?}
+			mvarids = varids.reject{|varid| mothergt[varid].nil?}
+			from_father = (fvarids - mvarids)
+			from_mother = (mvarids - fvarids)
+			if from_father.size >= 1 && from_mother.size >= 1 then
+				(from_father|from_mother).each do |varid_hit|
+					result[varid_hit] = transcript
+				end
+			end
+		end
+		result
 	end
 	
 end
