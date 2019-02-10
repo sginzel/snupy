@@ -80,15 +80,7 @@
 						 }) %>
 	<% end %>
 </p>
-	<%= render_table(@vcf_file.reports,
-					 id:          "reports",
-					 title:       "Reports",
-					 columns: %w(name identifier filename created_at updated_at download),
-					 select_type: :none){|rec, rep|
-		rec[:name] = link_to rep.name, report_path(rep.id)
-		rec["download"] = link_to rep.name, download_report_path(rep.id)
-		rec
-	} %>
+	<%= render partial: "reports/report_list", locals: {reports: @vcf_file.reports} %>
 <p>
 
 </p>

@@ -15,7 +15,7 @@ class ReportTemplate
 	end
 	
 	def initialize(report_params)
-		params = {}
+		params = ActiveSupport::HashWithIndifferentAccess.new
 		report_params.each do |k,v|
 			if v =~ /^---.*/ then
 				params[k] = YAML.load(v)
@@ -32,7 +32,7 @@ class ReportTemplate
 			type: report_klass.name,
 			xref_klass: report_klass.klass.name,
 			description: "Some kind of report."
-		}
+		}.with_indifferent_access
 	end
 	
 	def generate_report(klass_instance, update = true)

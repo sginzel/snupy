@@ -68,9 +68,8 @@ module AquaParameterHelper
 			qklass.filters_for(qname).each do |finst|
 				fkey = "#{finst.class.name.underscore}:#{finst.name}"
 				if fkeys.include?(fkey) then
-					queries[qklass.name.underscore][qname]["filters"][finst.class.name] = {
-						finst.name.to_s => "1"
-					}
+					queries[qklass.name.underscore][qname]["filters"][finst.class.name] ||= {}
+					queries[qklass.name.underscore][qname]["filters"][finst.class.name][finst.name.to_s] = "1"
 				end
 			end
 		end

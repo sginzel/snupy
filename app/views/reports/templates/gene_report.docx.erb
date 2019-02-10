@@ -8,7 +8,7 @@ end
 
 def snupy_to_caracal_table(arr)
 	return [["No Results"]] if arr.size == 0
-	ret = [arr.first.keys]
+	ret = [arr.first.keys.map{|s|s.to_s.humanize}]
 	arr.each do |rec|
 		ret << rec.values
 	end
@@ -148,7 +148,19 @@ end
 
 
 docx.page
+h3 "Filter Criteria"
 q = _build_query({queries: queries()})[:query]
-docx.p q.keys.join("\t")
-hr
+p = Aqua.parse_params({queries: q})[:queries]
+# docx.p p.pretty_inspect, style: "notes"
+qtable = [["Query", "Value", "Filters"]]
+p.each do |qklassname, qconfigs|
+	qconfigs.each do |qname, qinst|
+		qtable << [qinst.config[:label], qinst.value.to_s.gsub('\\','').gsub("''",""), qinst.filters.map(&:label).join(" #{qinst.combine} ")]
+	end
+end
+docx.table qtable do
+	cell_style rows[0], background: '4682B4', color: 'ffffff', bold: true
+	cell_style cols[0], width: 3000
+end
+
 #docx.p queries.pretty_inspect

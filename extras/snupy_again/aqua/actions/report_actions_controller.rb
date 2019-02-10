@@ -5,14 +5,16 @@ class ReportActionsController < AquaController #ApplicationController
 	def gene_report
 
 		# get the entities that are linked to the variaiton calls
-		varcallids = params[:ids].map{|x| x.split(" | ")}.flatten.uniq
+		varcallids = (params[:ids] || []).map{|x| x.split(" | ")}.flatten.uniq
 		entities = Entity.find(
 			Sample.joins(:variation_calls)
 				.where("variation_calls.id" => varcallids)
 				.pluck(:entity_id).reject(&:nil?).uniq
 		)
+		entities.select!{|ent| ent.tags.where(category: "CLASS").where("value != 'shared control'").count > 0}
+		
 		entities.instance_variable_set(:@_table_selected, params[:entity_ids])
-		entities.instance_variable_set(:@_table_select_type, :radio)
+		entities.instance_variable_set(:@_table_select_type, :select)
 		
 		available_templates = ReportEntity.templates
 
@@ -36,11 +38,19 @@ class ReportActionsController < AquaController #ApplicationController
 			end
 			# For every entity we generate a report
 			tklass = ReportTemplate.descendants.select{|k| k.name == params[:report_template]}.first
-			ent = Entity.where(id: params[:entities]).first
-			if tklass && ent then
-				tmpl = tklass.new(params.merge({user_id: current_user_id}))
-				report = tmpl.generate_report(ent)
-				render partial: "reports/report_list", locals: {reports: report}
+			success = true
+			reports = []
+			Entity.where(id: params[:entities]).each do |ent|
+			#ent = Entity.where(id: params[:entities]).first
+				if tklass && ent then
+					tmpl = tklass.new(params.dup.merge({user_id: current_user_id}))
+					reports << tmpl.generate_report(ent)
+				else
+					success = false
+				end
+			end
+			if success then
+				render partial: "reports/report_list", locals: {reports: reports}
 				return
 			else
 				render text: "Not a valid template", status: 500

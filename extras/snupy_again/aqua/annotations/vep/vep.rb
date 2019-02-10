@@ -1,4 +1,22 @@
 class Vep < ActiveRecord::Base
+	
+	@@DEFAULT_CONSEQUENCES = %w(frameshift_variant
+								incomplete_terminal_codon_variant
+								inframe_deletion
+								inframe_insertion
+								initiator_codon_variant
+								mature_miRNA_variant
+								missense_variant
+								splice_acceptor_variant
+								splice_donor_variant
+								start_lost
+								5_prime_UTR_premature_start_codon_gain_variant
+								stop_gained
+								stop_lost
+								stop_retained_variant
+								TF_binding_site_variant
+								TFBS_ablation)
+	
 	@@AMINO_ACIDS = {
 			"A" => "Ala",
 			"B" => "Asx",
@@ -119,6 +137,10 @@ class Vep < ActiveRecord::Base
 								:clin_sig,
 								:bp_overlap,
 								:percentage_overlap
+	
+	def self.DEFAULT_CONSEQUENCES
+		@@DEFAULT_CONSEQUENCES
+	end
 	
 	def self.AMINO_ACIDS
 		@@AMINO_ACIDS

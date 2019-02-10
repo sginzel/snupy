@@ -44,6 +44,11 @@
 
 <div class="field">
 	<br />
+	<%= render partial: "reports/report_list", locals: {reports: @entity.reports} %>
+</div>
+
+<div class="field">
+	<br />
 	<%=render_table @institution, 
 						title: "Institution", 
 						id: "institution_id", 

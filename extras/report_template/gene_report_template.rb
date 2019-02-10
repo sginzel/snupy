@@ -16,6 +16,7 @@ class GeneReportTemplate < ReportTemplate
 	
 	def default_attributes
 		super.merge({
+			name: "Gene Report #{self.klass_instance.name}",
 			identifier: "GeneReport",
 			type: report_klass.name,
 			xref_id: self.klass_instance.id,
@@ -53,6 +54,10 @@ class GeneReportTemplate < ReportTemplate
 		}
 		vcids = report_params["ids"].map{|x| x.split(" | ")}.flatten
 		# collect variants from variation calls
+		adom = entity.autosomal_dominant(vcids)
+		arec = entity.autosomal_recessive(vcids)
+		comphet = entity.compound_heterozygous(vcids, Vep::Ensembl.where(canonical: 1), :transcript_id)
+		denovo = entity.denovo(vcids)
 		VariationCall
 		.joins(:sample)
 		.where("samples.entity_id" => entity.id)
@@ -70,29 +75,34 @@ class GeneReportTemplate < ReportTemplate
 			end
 			
 			family_baf = {
-				Variant: var.coordinates}
+				Variant: var.coordinates
+			}
 			entity.specimen_probes.each do |spec|
 				family_baf["#{entity.name} (#{spec.name})"] =  get_baf_in_specimen(varid, spec).round(2)
 			end
 			family_baf = family_baf.merge({
 				Father: get_baf_in_entity(varid, entity.father).round(2),
 				Mother: get_baf_in_entity(varid, entity.mother).round(2),
-				Siblings: get_baf_in_entity(varid, entity.siblings).round(2)
-          })
+				Siblings: get_baf_in_entity(varid, entity.siblings).round(2),
+				autosomal_dominant: adom[varid],
+				autosomal_recessive: arec[varid],
+				compound_heterozygous: comphet[varid],
+				denovo: denovo[varid]
+            })
 			
 			transcripts = {
-				Symbol: veps.map(&:gene_symbol).join(","),
-				Consequence: veps.map(&:consequence).join(","),
-				Transcript: veps.map(&:transcript_id).join(","),
-				HGVSC: veps.map(&:hgvsc).join(","),
-				Exac: veps.map{|vep| "#{vep.exac_adj_maf} (#{vep.exac_adj_allele})"}.join(","),
-				dbsnp: veps.map(&:dbsnp).join(",")
+				Variant: var.coordinates,
+				Symbol: veps.map{|vep| "#{vep.gene_symbol}(#{vep.consequence})"}.join(",\n"),
+				Transcript: veps.map{|vep| "#{vep.transcript_id}#{(vep.hgvsc.nil?)?"":".#{vep.hgvsc}"}"}.uniq.join(",\n"),
+				#HGVSC: veps.map(&:hgvsc).join(","),
+				Exac: veps.reject{|vep|vep.exac_adj_allele.to_s == ""}.map{|vep| "#{vep.exac_adj_maf} (#{vep.exac_adj_allele})"}.uniq.join(","),
+				dbsnp: veps.map(&:dbsnp).uniq.join(",")
 			}
 			
 			phenotypes = {
 				Variant: var.coordinates,
 				CADD: Cadd.where(variation_id: varid, organism_id: entity.organism.id).first.phred,
-				OMIM: veps.map(&:gene_symbol).map{|sym| OmimGenemap.where("symbol = '#{sym}' OR symbol_alias = '#{sym}'").map{|omim| "#{omim.symbol}: #{omim.phenotype} (#{omim.comments})"}}.flatten.uniq.join(","),
+				OMIM: veps.map(&:gene_symbol).map{|sym| OmimGenemap.where("symbol = '#{sym}' OR symbol_alias = '#{sym}'").map{|omim| "#{omim.symbol}: #{omim.phenotype}"}}.flatten.uniq.join(",\n"),
 				Clinvar: ClinvarEvidence.where(variation_id: varid, organism_id: entity.organism.id)
 					         .map{|c|
 						         (c.clinvar.distance!=0)?"":"#{c.symbol}: #{c.clndn}"
