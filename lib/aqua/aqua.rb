@@ -368,6 +368,16 @@ class Aqua
 		query_params = (params[:queries] || params["queries"] || {}).dup
 		aggregation_params = (params[:aggregations] || params["aggregations"] || {}).dup
 		
+		if annotation_params.is_a?(String) and annotation_params[0...3] == "---" then
+			annotation_params = YAML.load(annotation_params)
+		end
+		if query_params.is_a?(String) and query_params[0...3] == "---" then
+			query_params = YAML.load(query_params)
+		end
+		if aggregation_params.is_a?(String) and aggregation_params[0...3] == "---" then
+			aggregation_params = YAML.load(aggregation_params)
+		end
+		
 		annotations = annotation_params.map{|a|
 			_get_klass(a, Annotation)
 		}.delete_if(&:nil?)
