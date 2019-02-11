@@ -364,18 +364,25 @@ class Aqua
 	
 	# parses the params structure for AQuA elements
 	def self.parse_params(params)
+		if params.is_a?(String) and params[0...3] == "---" then
+			params = YAML.load(params)
+			params = params.first if params.is_a?(Array)
+		end
 		annotation_params = (params[:annotations] || params["annotations"] || []).dup
 		query_params = (params[:queries] || params["queries"] || {}).dup
 		aggregation_params = (params[:aggregations] || params["aggregations"] || {}).dup
 		
 		if annotation_params.is_a?(String) and annotation_params[0...3] == "---" then
 			annotation_params = YAML.load(annotation_params)
+			annotation_params = annotation_params.first if annotation_params.is_a?(Array)
 		end
 		if query_params.is_a?(String) and query_params[0...3] == "---" then
 			query_params = YAML.load(query_params)
+			query_params = query_params.first if query_params.is_a?(Array)
 		end
 		if aggregation_params.is_a?(String) and aggregation_params[0...3] == "---" then
 			aggregation_params = YAML.load(aggregation_params)
+			aggregation_params = aggregation_params.first if aggregation_params.is_a?(Array)
 		end
 		
 		annotations = annotation_params.map{|a|
