@@ -240,13 +240,10 @@ class Entity < ActiveRecord::Base
 		mothergt = (self.mother.first || Entity.new()).genotypes
 		myself = self.genotypes
 		myself.keys.each do |varid|
-			fgt = fathergt[varid] || :"?"
-			mgt = mothergt[varid] || :"?"
-			if (fgt == "?" && mgt == :"?") then
-				myself[varid] = :Y
-			else
-				myself[varid] = :N
-			end
+			myself[varid] = :N
+		end
+		(myself.keys - (fathergt.keys|mothergt.keys) || []).each do |varid|
+			myself[varid] = :Y
 		end
 		myself
 	end
