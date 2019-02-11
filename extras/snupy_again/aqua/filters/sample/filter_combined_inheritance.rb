@@ -121,7 +121,7 @@ class FilterCombinedInheritance < SimpleFilter
 	
 	private
 	def create_condition(varids)
-		return "1 = 0" if varids.size == 0
+		return "1 = 0" if (varids || []).size == 0
 		"#{ActiveRecord::Base.connection.quote_table_name(VariationCall.table_name)}.#{ActiveRecord::Base.connection.quote_column_name('variation_id')} IN (#{varids.uniq.sort.join(",")})"
 	end
 
