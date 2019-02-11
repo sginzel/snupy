@@ -7,6 +7,7 @@ module AquaRouter
 			Aqua.routes.each do |controller, methods_to_verbs|
 				methods_to_verbs.each do |method, verbs|
 					verbs.each do |verb, opts|
+						opts = opts.dup
 						named_params = [opts.delete(:named_params)].flatten.reject(&:nil?)
 						pathname = opts.delete(:_url)
 						route = "#{controller}/#{method}"
