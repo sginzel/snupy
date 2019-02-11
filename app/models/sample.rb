@@ -157,6 +157,7 @@ class Sample < ActiveRecord::Base
 			self.entity_id = nil
 			self.entity_group_id = nil
 		end
+		self
 	end
 	
 	def long_jobs
