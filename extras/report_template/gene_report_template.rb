@@ -103,9 +103,9 @@ class GeneReportTemplate < ReportTemplate
 				Variant: var.coordinates,
 				CADD: Cadd.where(variation_id: varid, organism_id: entity.organism.id).first.phred,
 				OMIM: veps.map(&:gene_symbol).map{|sym| OmimGenemap.where("symbol = '#{sym}' OR symbol_alias = '#{sym}'").map{|omim| "#{omim.symbol}: #{omim.phenotype}"}}.flatten.uniq.join(",\n"),
-				Clinvar: ClinvarEvidence.where(variation_id: varid, organism_id: entity.organism.id)
+				Clinvar: Clinvar.where(variation_id: varid, organism_id: entity.organism.id)
 					         .map{|c|
-						         (c.clinvar.distance!=0)?"":"#{c.symbol}: #{c.clndn}"
+						         (c.distance!=0)?"":"#{c.symbol}: #{c.clndn}"
 					         }.flatten.uniq.join(",")
 			}
 			records[:transcripts] << transcripts
