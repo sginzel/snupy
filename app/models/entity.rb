@@ -90,17 +90,17 @@ class Entity < ActiveRecord::Base
 		#status = self.specimen_probes.joins(:tags).where("tags.category" => "STATUS").pluck("tags.value")
 		#return [] if status.any?{|s| s =~ /^C.*/}
 		ent_ids = self.entity_group.specimen_probes.joins(:tags).where("tags.value"=> ["CFFTHR", "CFMTHR"]).pluck(:entity_id)
-		Entity.where(id: ent_ids)
+		Entity.where(id: ent_ids-[self.id])
 	end
 	
 	def father
 		ent_ids = self.entity_group.specimen_probes.joins(:tags).where("tags.value"=> ["CFFTHR"]).pluck(:entity_id)
-		Entity.where(id: ent_ids)
+		Entity.where(id: ent_ids-[self.id])
 	end
 	
 	def mother
 		ent_ids = self.entity_group.specimen_probes.joins(:tags).where("tags.value"=> ["CFMTHR"]).pluck(:entity_id)
-		Entity.where(id: ent_ids)
+		Entity.where(id: ent_ids-[self.id])
 	end
 	
 	def siblings()
@@ -108,7 +108,7 @@ class Entity < ActiveRecord::Base
 		#status = self.specimen_probes.joins(:tags).where("tags.category" => "STATUS").pluck("tags.value")
 		#return [] if status.any?{|s| s =~ /^C.*/}
 		ent_ids = self.entity_group.specimen_probes.joins(:tags).where("tags.value"=> ["CFSSTR", "CFBRTHR"]).pluck(:entity_id)
-		Entity.where(id: ent_ids)
+		Entity.where(id: ent_ids-[self.id])
 	end
 	
 	def self.create_from_template(templates, entity_group = nil)
@@ -150,12 +150,12 @@ class Entity < ActiveRecord::Base
 			"1|2" => "0/1",
 			"2|1" => "0/1"
 		}
-		ret = VariationCall.where(id: varcall_ids).where(sample_id: self.samples).select([:variation_id, :gt]).group_by(&:variation_id)
+		ret = VariationCall.where(id: varcall_ids).where(sample_id: self.samples).select([:variation_id, :gt]).group_by(&:variation_id).with_indifferent_access
 		ret.keys.each do |varid|
 			if ret[varid].size > 1
-				ret[varid] = "1/1"
+				ret[varid] = :"1/1"
 			else
-				ret[varid] = ret[varid].first.gt
+				ret[varid] = ret[varid].first.gt.to_sym
 			end
 		end
 		ret
@@ -165,24 +165,40 @@ class Entity < ActiveRecord::Base
 	# output: {varid: "Y|N|?"}
 	def autosomal_dominant(varcall_ids = nil)
 		varcall_ids = self.variation_call_ids if varcall_ids.nil?
-		fathergt = (self.father.first || Entity.new()).genotypes
-		mothergt = (self.mother.first || Entity.new()).genotypes
+		#fathergt = (self.father.first || Entity.new()).genotypes
+		#mothergt = (self.mother.first || Entity.new()).genotypes
+		affected = (self.parents.joins(:tags).where("tags.category" => "DISEASE"))
 		myself = self.genotypes
-		myself.keys.each do |varid|
-			fgt = fathergt[varid] || "?"
-			mgt = mothergt[varid] || "?"
-			if ((fgt == "0/1" && mgt == "0/1") ||
-				(fgt == "?" && mgt == "0/1") ||
-				(fgt == "0/1" && mgt == "?")) &&
-				myself[varid] == "1/0" then
-				myself[varid] = "Y"
-			elsif fgt == "?" && mgt == "?" then
-				myself[varid] = "?"
-			else
-				myself[varid] = "N"
+		if affected.size == 0 then
+			return Hash[myself.keys.map{|varid| [varid, :N]}]
+		end
+		not_affteced = (self.parents) - affected
+		
+		affectedgt = {}
+		not_affectedgt = {}
+		affected.each do |ent|
+			ent.genotypes.each do |varid, gt|
+				affectedgt[varid] = gt if affectedgt[varid].nil? || gt == :"1/1"
 			end
 		end
-		myself
+		not_affteced.each do |ent|
+			ent.genotypes.each do |varid, gt|
+				not_affectedgt[varid] = gt if not_affectedgt[varid].nil? || gt == :"1/1"
+			end
+		end
+		
+		is_not_autosomal = Variation.joins(:region)
+			                   .where("variations.id" => myself.keys)
+			                   .select(["variations.id", "regions.name IN ('X', 'Y') AS is_not_autosomal"]).group_by(&:id)
+		result = Hash[myself.keys.map{|varid| [varid, :N]}]
+		((myself.keys & affectedgt.keys)-not_affectedgt.keys).each do |varid|
+			if is_not_autosomal[varid].first.is_not_autosomal == 0 then
+				result[varid] = :Y
+			else
+				result[varid] = :xy
+			end
+		end
+		result
 	end
 	
 	# Input: list of variatino call ids
@@ -192,18 +208,26 @@ class Entity < ActiveRecord::Base
 		fathergt = (self.father.first || Entity.new()).genotypes
 		mothergt = (self.mother.first || Entity.new()).genotypes
 		myself = self.genotypes
+		is_not_autosomal = Variation.joins(:region)
+			               .where("variations.id" => myself.keys)
+			               .select(["variations.id", "regions.name IN ('X', 'Y') AS is_not_autosomal"]).group_by(&:id)
 		myself.keys.each do |varid|
-			fgt = fathergt[varid] || "?"
-			mgt = mothergt[varid] || "?"
-			if (fgt == "0/1" && mgt == "0/1") &&
-				myself[varid] == "1/1" then
-				myself[varid] = "Y"
-			elsif (fgt == "?" || mgt == "?") &&
-				myself[varid] == "1/1" then
-				myself[varid] = "?"
+			if is_not_autosomal[varid].first.is_not_autosomal == 1 then
+				myself[varid] = :N
 			else
-				myself[varid] = "N"
+				fgt = fathergt[varid] || :"?"
+				mgt = mothergt[varid] || :"?"
+				if (fgt == :"0/1" && mgt == :"0/1") &&
+					myself[varid] == :"1/1" then
+					myself[varid] = :Y
+				elsif (fgt == :"?" || mgt == :"?") &&
+					myself[varid] == :"1/1" then
+					myself[varid] = :"?"
+				else
+					myself[varid] = :N
+				end
 			end
+			
 		end
 		myself
 	end
@@ -216,12 +240,12 @@ class Entity < ActiveRecord::Base
 		mothergt = (self.mother.first || Entity.new()).genotypes
 		myself = self.genotypes
 		myself.keys.each do |varid|
-			fgt = fathergt[varid] || "?"
-			mgt = mothergt[varid] || "?"
-			if (fgt == "?" && mgt == "?") then
-				myself[varid] = "Y"
+			fgt = fathergt[varid] || :"?"
+			mgt = mothergt[varid] || :"?"
+			if (fgt == "?" && mgt == :"?") then
+				myself[varid] = :Y
 			else
-				myself[varid] = "N"
+				myself[varid] = :N
 			end
 		end
 		myself
