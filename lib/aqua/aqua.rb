@@ -173,8 +173,10 @@ class Aqua
 				named_params: named_params,
 				_url: url
 		}.merge(opts)
+		puts opts.pretty_inspect.yellow
 		@@ROUTES[controller][method] ||= {}
-		@@ROUTES[controller][method][verb] = opts
+		@@ROUTES[controller][method][verb] = opts.dup
+		opts
 	end
 
 	def self.route_paths()
