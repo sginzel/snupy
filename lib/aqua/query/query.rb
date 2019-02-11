@@ -241,7 +241,7 @@ class Query < Aqua
 	end
 	
 	# The query method handles different ways of combining the filters
-	def query(scope_or_array)
+	def query(scope_or_array, params_adjustments = {})
 		raise ArgumentError.new("Not implemented for super class")
 	end
 	
@@ -257,9 +257,9 @@ class Query < Aqua
 end
 
 class SimpleQuery < Query
-	def query(scope)
+	def query(scope, params_adjustments = {})
 		return scope if @config[:type] == :checkbox and @value == false
-		where_cond = filters_to_sql(scope)
+		where_cond = filters_to_sql(scope, params_adjustments)
 		return nil if where_cond.nil?
 		if where_cond.to_s != "" then
 			return scope.where(where_cond)
@@ -268,13 +268,13 @@ class SimpleQuery < Query
 		end
 	end
 	
-	def filters_to_sql(scope)
+	def filters_to_sql(scope, params_adjustments = {})
 		sql = []
 		helpr = scope.except(:where)
 		helpr_used = false
 		@filters.each do |f|
 			#begin
-				condition = f.filter(@value, @params, self)
+				condition = f.filter(@value, @params.merge(params_adjustments), self)
 			#rescue Exception => e
 			#	self.log_error("Error excuting filter (#{f}) in Query #{self.class}")
 			#	self.log_error(f.pretty_inspect)
@@ -317,26 +317,26 @@ class SimpleQuery < Query
 end
 
 class ComplexQuery < Query
-	def query(arr)
+	def query(arr, params_adjustments = {})
 		return arr if @config[:type] == :checkbox and @value == false
 		return arr if arr.size == 0 # dont attempt to process empty results
 		if @combine == "OR" then
-			query_or(arr)
+			query_or(arr, params_adjustments)
 		elsif @combine == "AND"
-			query_and(arr)
+			query_and(arr, params_adjustments)
 		else
 			raise "Only AND and OR are allowed for combine"
 		end
 	end
 	
-	def query_or(arr)
+	def query_or(arr, params_adjustments)
 		# create a hash that contains whether a variation_call survived at least one filter
 		survived_one_filter = Hash[arr.map{|rec| [rec["variation_calls.id"], false]}]
 		process.default = false
 		@filters.each{|f|
 			#begin
 				paramarr = arr.select{|rec| !survived_one_filter[rec["variation_calls.id"]]}
-				farr = f.filter(paramarr, @value, @params, self)
+				farr = f.filter(paramarr, @value, @params.merge(params_adjustments), self)
 				farr.each do |rec|
 					survived_one_filter[rec["variation_calls.id"]] = true
 				end
@@ -354,10 +354,10 @@ class ComplexQuery < Query
 		arr.select{|rec| survived_one_filter[rec["variation_calls.id"]]}
 	end
 	
-	def query_and(arr)
+	def query_and(arr, params_adjustments)
 		@filters.each{|f|
 			#begin
-				arr = f.filter(arr, @value, @params, self)
+				arr = f.filter(arr, @value, @params.merge(params_adjustments), self)
 			#rescue Exception => e
 			#	self.log_error("Error during query_and #{self.class}".red)
 			#	d "END OF ERROR"

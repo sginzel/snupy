@@ -160,13 +160,15 @@ class AquaQueryProcess
 																		sample_batch, organism)
 					simple_queries.each do |q|
 						# TODO Use merge method to merge two scopes
-						# This way multiple where conditions on the same field will be handles better
-						exp_scope = q.query(exp_scope)
+						# This way multiple where conditions on the same field will be handled better
+						exp_scope = q.query(exp_scope, {"samples" => sample_batch, samples: sample_batch, all_samples: @sample_ids, "all_samples" => @sample_ids})
 						break if exp_scope.nil?
 					end
-					Aqua::Query.log_info("[#{self.queryid}] SQL Filter returned nil. ") if exp_scope.nil?
-					# return nil if exp_scope.nil? # this can happen if a filter is not fulfilable. Such as when a compound heterozyogous model could not be found.
-					next if exp_scope.nil? # this can happen if a filter is not fulfilable. Such as when a compound heterozyogous model could not be found.
+					if exp_scope.nil?
+						Aqua::Query.log_info("[#{self.queryid}] SQL Filter returned nil. ")
+						# return nil if exp_scope.nil? # this can happen if a filter is not fulfilable. Such as when a compound heterozyogous model could not be found.
+						next #if exp_scope.nil? # this can happen if a filter is not fulfilable. Such as when a compound heterozyogous model could not be found.
+					end
 					
 					if (Rails.env == "development" || Aqua.settings("log_query") == "true") then
 						File.open("tmp/aqua_query_#{self.queryid}_BATCH#{i}.sql", "w+"){|f| f.write exp_scope.to_sql}
@@ -184,7 +186,7 @@ class AquaQueryProcess
 					@sql_statements << exp_scope.to_sql
 					
 					complex_queries.each do |q|
-						sql_results = q.query(sql_results)
+						sql_results = q.query(sql_results, {"samples": sample_batch, samples: sample_batch})
 						Aqua::Query.log_info("[#{self.queryid}] Complex Filter returned nil. ") if sql_results.nil?
 						break if sql_results.nil?
 					end

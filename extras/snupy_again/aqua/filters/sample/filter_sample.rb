@@ -369,7 +369,7 @@ EOS
 	
 	def present_in_at_least_samples(value, params)
 		return "" if value.to_i <= 1 # return nothing in case the user parameters are useless, because he had to select samples anyway
-		smplids = params["samples"]
+		smplids = params[:all_samples]
 		return nil if value.to_i > smplids.size
 		"variation_calls.variation_id IN (
 			SELECT vcatleast.variation_id FROM variation_calls vcatleast WHERE 
@@ -382,7 +382,7 @@ EOS
 	
 	def present_in_at_least_patient(value, params)
 		return "" if value.to_i <= 1
-		smplids = params["samples"]
+		smplids = params[:all_samples]
 		patients = Sample.where(id: smplids).pluck(:patient)
 		return nil if value.to_i > patients.uniq.size
 		"variation_calls.variation_id IN (
@@ -571,10 +571,10 @@ EOS
 	end
 	
 	def not_present_in_any_other(value, params, gq = 75)
-		org = Sample.where(id: params["samples"]).first.organism.id
-		smpl_varids = VariationCall.where(sample_id: (params["samples"] || params[:samples] || [])).where("gq >= #{gq.to_f}").pluck("variation_id").uniq.sort
+		org = Sample.where(id: params[:all_samples]).first.organism.id
+		smpl_varids = VariationCall.where(sample_id: (params[:all_samples] || params["all_samples"] || [])).where("gq >= #{gq.to_f}").pluck("variation_id").uniq.sort
 		smpl_org = Sample.joins(:organism).where("organisms.id" => org).pluck("samples.id")
-		isSelectedSample = Hash[(params["samples"] || params[:samples] || []).map{|x| [x.to_i, true]}]
+		isSelectedSample = Hash[(params["all_samples"] || params[:all_samples] || []).map{|x| [x.to_i, true]}]
 		varHasOther = Hash[smpl_varids.map{|x| [x, false]}]
 		smpl_varids.each_slice(1000) do |varids|
 			Aqua.scope_to_array(VariationCall
