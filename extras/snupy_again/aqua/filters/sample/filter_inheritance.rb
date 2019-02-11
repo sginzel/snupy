@@ -90,7 +90,7 @@ class FilterInheritance < SimpleFilter
 		ents = Entity.joins(:samples).where("samples.id" => params[:samples])
 		ents.select!{|ent| ent.parents.count == 2}
 		ents.each do |ent|
-			varids += ent.autosomal_recessive.select{|k,is_arec| is_arec == :Y}.map(&:first)
+			varids += ent.autosomal_recessive.select{|k,is_arec| is_arec == :Y || is_arec == :"?"}.map(&:first)
 		end
 		varids
 	end
