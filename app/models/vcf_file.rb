@@ -189,9 +189,9 @@ class VcfFile < ActiveRecord::Base
 	
 	def aqua_annotation_status(aqua_annotation = Aqua.annotations.keys)
 		if Annotation.descendants.include?(aqua_annotation) then
-			asa = aqua_annotation.get_vcf_annotation_status(self.id)
+			asa = (aqua_annotation || []).get_vcf_annotation_status(self.id)
 		else
-			asa = aqua_annotation.map {|aqa| aqua_annotation_status(aqa)}
+			asa = (aqua_annotation || []).map {|aqa| aqua_annotation_status(aqa)}
 		end
 		asa
 	end
