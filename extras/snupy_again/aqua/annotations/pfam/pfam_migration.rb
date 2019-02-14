@@ -10,8 +10,8 @@ class PfamMigration < ActiveRecord::Migration
 			t.timestamps # optional
 		end
 		
-		add_index pfam_table, :variation_id #required
-		add_index pfam_table, :organism_id #required
+		add_index @@TABLENAME, :variation_id #required
+		add_index @@TABLENAME, :organism_id #required
 		
 		puts "#{@@TABLENAME} for pfam has been migrated."
 		puts "In case you used scaffolding: Remember to activate your AQuA components setting activate: true".yellow
