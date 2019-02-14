@@ -1,8 +1,7 @@
 dida:
   type: local
   url: 'http://dida.ibsquare.be/browse/download/DIDA_Digenic-Combinations_16ddf22644411874a6371d3aa056d1c69159b9eab87f2553e5c9e166657adf3c.csv.zip'
-  file: "/opt/database/DIDA/DIDA_Digenic-Combinations_16ddf22644411874a6371d3aa056d1c69159b9eab87f2553e5c9e166657adf3c.csv"
-  zipped: false
+  zipped: true
   header: true
   format: :tsv
   sep: "\t"
@@ -15,18 +14,4 @@ dida:
   source_db_index: NULL
   source_id_index: 0
   organism_id: 1
-  md5sum: '3147279944761d9cc7f8039eba5f47ac'
-triotest:
-  type: local
-  url: ''
-  file: "/opt/database/DIDA/test_trio.csv"
-  zipped: false
-  header: false
-  format: :tsv
-  sep: "\t"
-  quote: '"'
-  gene_id_index: 0
-  gene_partner_id_index: 1
-  disease_name_index: 2
-  organism_id: 1
-  md5sum: '1703c5332d04c840d6494041765933f1'
+  md5sum: '59d5bea319f09d513fde31ed65777701'
