@@ -30,6 +30,7 @@ class Digenic < ActiveRecord::Base
 private
 	def self.import_config(name, conf)
 		defaults = {
+			'file' => Rails.root.join("tmp", "dida.csv").to_s,
 			'type' => 'local', # may be remote or local
 			'zipped' => false, # true or false
 			'header' => true, # has header
@@ -56,20 +57,25 @@ private
 			'source_id_index' => :source_id,
 			
 		}
-		myconf = defaults.merge(conf)
-		raise 'Configuration of digenic associations need to carry organism_id, file and md5sum' if required.any?{|x| myconf[x].nil?}
-		
+		conf = defaults.merge(conf)
+		raise 'Configuration of digenic associations need to carry organism_id, file and md5sum' if required.any?{|x| conf[x].nil?}
+
+		pp conf
+		if !File.exists?(conf['file']) then
+			download(conf['url'], conf['file'])
+		end
+
 		header = nil
-		if !myconf['header'] then
+		if !conf['header'] then
 			header = []
 		end
 		
-		if Digest::MD5.file(myconf['file']) != myconf['md5sum'] then
+		if Digest::MD5.file(conf['file']) != conf['md5sum'] then
 			raise 'given and actual md5sum do not match'
 		end
 		
 		Digenic.transaction do
-			self.read_file(myconf) do |cols|
+			self.read_file(conf) do |cols|
 				if header.nil? then
 					header = cols
 					next
@@ -81,12 +87,12 @@ private
 					[h, cols[i]]
 				}]
 				attrs = Hash[field_to_attribute.map{|from, to|
-					next if myconf[from].nil?
-					[to, cols[myconf[from]]]
+					next if conf[from].nil?
+					[to, cols[conf[from]]]
 				}]
 				## set some defaults
-				attrs['source_file'] = myconf['file']
-				attrs['organism_id'] = myconf['organism_id']
+				attrs['source_file'] = conf['file']
+				attrs['organism_id'] = conf['organism_id']
 				attrs['source_db'] = name if attrs['source_db'].nil?
 				attrs['evidence_record'] = record.to_yaml
 				
@@ -112,8 +118,12 @@ private
 						fin = Zlib::GzipReader.new(fin)
 					end
 				else
-					fin = File.new(conf['file'], 'rb')
-					fin = Zlib::GzipReader.new(fin) if conf['zipped']
+					fin = StringIO.new
+					Zip::InputStream.open(conf['file']) do |zis|
+						fin = zis.get_next_entry.get_input_stream
+					end
+					#fin = File.new(conf['file'], 'rb')
+					#fin = Zlib::GzipReader.new(fin) if conf['zipped']
 				end
 			end
 		rescue Errno::ENOENT
@@ -150,4 +160,23 @@ private
 		end
 		ret
 	end
+
+	def self.download(url, fname)
+		if (url[0..3] == "file") then
+			if File.exist?(url[7..-1])
+				return url[7..-1]
+			else
+				raise "local file #{url} does not exist."
+			end
+		end
+		print sprintf("Downloading %s -> %s...".blue, File.basename(url), fname)
+		if !(File.exists? fname) then
+			bytes = IO.copy_stream(open(url), fname)
+			print sprintf("DONE %d bytes\n".blue, bytes)
+		else
+			print sprintf("EXISTS %d bytes\n".green, bytes)
+		end
+		fname
+	end
+
 end

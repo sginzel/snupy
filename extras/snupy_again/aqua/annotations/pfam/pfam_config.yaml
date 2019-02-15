@@ -12,9 +12,9 @@ development:
       ncbiRefSeqLink: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ncbiRefSeqLink.txt.gz
     mus musculus:
       ucscGenePfam: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/ucscGenePfam.txt.gz
-        pfamDesc: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/pfamDesc.txt.gz
-        knownToRefSeq: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/knownToRefSeq.txt.gz
-        ncbiRefSeqLink: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/ncbiRefSeqLink.txt.gz
+      pfamDesc: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/pfamDesc.txt.gz
+      knownToRefSeq: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/knownToRefSeq.txt.gz
+      ncbiRefSeqLink: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/ncbiRefSeqLink.txt.gz
 test: None.
 production:
   version: 1.0
@@ -30,6 +30,6 @@ production:
       ncbiRefSeqLink: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/ncbiRefSeqLink.txt.gz
     mus musculus:
       ucscGenePfam: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/ucscGenePfam.txt.gz
-        pfamDesc: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/pfamDesc.txt.gz
-        knownToRefSeq: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/knownToRefSeq.txt.gz
-        ncbiRefSeqLink: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/ncbiRefSeqLink.txt.gz
+      pfamDesc: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/pfamDesc.txt.gz
+      knownToRefSeq: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/knownToRefSeq.txt.gz
+      ncbiRefSeqLink: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/ncbiRefSeqLink.txt.gz

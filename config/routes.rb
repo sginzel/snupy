@@ -6,7 +6,6 @@ SnupyAgain::Application.routes.draw do
 		end
 	end
 	Report.subclasses.each do |k|
-		puts k.name.underscore.pluralize.red
 		resources k.name.underscore.pluralize, :controller => 'reports'
 	end
 	
