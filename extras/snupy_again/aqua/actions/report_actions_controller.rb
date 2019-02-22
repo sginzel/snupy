@@ -64,5 +64,5 @@ class ReportActionsController < AquaController #ApplicationController
 	end
 	
 end
-Aqua.register_route("report_actions", :gene_report, :post, {type: "variation_id", description: "Generate a report for selected variants."})
-require_dependency Rails.root.join('extras', 'snupy_again', 'aqua', 'actions', 'report_actions_controller').to_s
+# Aqua.register_route("report_actions", :gene_report, :post, {type: "variation_id", description: "Generate a report for selected variants."})
+# require_dependency Rails.root.join('extras', 'snupy_again', 'aqua', 'actions', 'report_actions_controller').to_s
