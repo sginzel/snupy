@@ -228,4 +228,4 @@ gem 'quantile', '0.2.1'
 # gem 'numo-gsl', '0.1.2'
 #
 gem 'caracal', '1.4.0'
-gem 'caracal-rails', '1.0.1'
+# gem 'caracal-rails', '1.0.1'
