@@ -22,7 +22,7 @@ class Annotation < Aqua
 	end
 	
 	def self.register_tool(opts)
-		Aqua.log_warning("ANNOTATION #{opts[:label]} it NOT ACTIVE") unless opts[:active].nil? or opts[:active] == true
+		Aqua.log_warning("ANNOTATION #{opts[:label]} is NOT ACTIVE") unless opts[:active].nil? or opts[:active] == true
 		return false unless opts[:active].nil? or opts[:active] == true
 		raise "#{self.name} does not provide a model." if (opts[:model] || []).size == 0
 		raise "Only one model may be provided." if opts[:model].size > 1

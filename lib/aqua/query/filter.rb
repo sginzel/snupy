@@ -5,7 +5,7 @@ class Filter < Aqua
 							:add_requirements, :query, :query_name
 	
 	def self.create_filter_for(queryklass, queryname, opts)
-		Aqua.log_warning("Filter #{opts[:name]} it NOT ACTIVE") unless opts[:active].nil? or opts[:active] == true
+		Aqua.log_warning("Filter #{opts[:name]} is NOT ACTIVE") unless opts[:active].nil? or opts[:active] == true
 		return false unless opts[:active].nil? or opts[:active] == true
 		f = self.create(opts, queryklass, queryname)
 		queryklass.register_filter(queryname, f)

@@ -32,7 +32,7 @@ class Query < Aqua
 	end
 	
 	def self.register_query(name, opts)
-		Aqua.log_warning("QUERY #{name} it NOT ACTIVE") unless opts[:active].nil? or opts[:active] == true
+		Aqua.log_warning("QUERY #{name} is NOT ACTIVE") unless opts[:active].nil? or opts[:active] == true
 		return false unless opts[:active].nil? or opts[:active] == true
 		opts[:type] = :text if opts[:type].nil?
 		opts = set_defaults(opts)

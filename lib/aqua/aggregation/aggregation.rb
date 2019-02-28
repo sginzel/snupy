@@ -29,7 +29,7 @@ class Aggregation < Aqua
 	end
 	
 	def self.register_aggregation(name, opts)
-		Aqua.log_warning("AGGREGATION #{name} it NOT ACTIVE") unless opts[:active].nil? or opts[:active] == true
+		Aqua.log_warning("AGGREGATION #{name} is NOT ACTIVE") unless opts[:active].nil? or opts[:active] == true
 		return false unless opts[:active].nil? or opts[:active] == true
 		raise "Aggregation needs an :aggregation_method" if opts[:aggregation_method].nil?
 		opts[:category] = "Miscellaneous" if opts[:category].nil?
