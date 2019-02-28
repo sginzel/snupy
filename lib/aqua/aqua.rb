@@ -540,9 +540,21 @@ class Aqua
 			ActiveSupport::DescendantsTracker.class_variable_set("@@direct_descendants", desc)
 			
 			klasses =  klasses.flatten.map{|k| k.name.to_sym}.uniq
+			## now we need to make sure any additional classes that the modules use are unloaded as well.
+			## for this we will parse the aqua directory and find out which klasses are defined there
+			## but have not been accounted for so far
+			Dir["extras/snupy_again/aqua/**/**.rb"].each do |file|
+				klassname = File.basename(file, ".rb").camelcase.to_sym
+				if !klasses.include?(klassname) then
+					if Object.const_defined?(klassname) then
+						# puts "Adding #{klassname} to things that should be unloaded.".yellow
+						klasses.insert(0, klassname)
+					end
+				end
+			end
 			@@AQUALOCK.synchronize {
 				klasses.each do |klass|
-					# d "    unloading #{klass}"
+					# d "    unloading #{klass}".magenta
 					Object.send(:remove_const, klass)
 				end
 				_init()
