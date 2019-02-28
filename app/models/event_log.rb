@@ -1,7 +1,8 @@
 class EventLog < ActiveRecord::Base
 	include SnupyAgain::Utils
 	
-	attr_accessible :category, :data, :name, :error, :started_at, :finished_at, :duration, :identifier
+	attr_accessible :category, :data, :name, :error, :started_at,
+	                :finished_at, :duration, :identifier
 	
 	def data
 		yml = read_attribute(:data)
@@ -37,5 +38,29 @@ class EventLog < ActiveRecord::Base
 		event.save
 		return ret
 	end
+	
+	def add_message(msg)
+		mymsg = self.messages
+		msg = [msg] unless msg.is_a?(Array)
+		msg.each do |txt|
+			mymsg << txt
+		end
+		self.messages = mymsg
+	end
 
+	def messages
+		txt = read_attribute(:messages)
+		if !txt.nil?
+			YAML.load(txt) || []
+		else
+			[]
+		end
+	end
+	
+	def messages=(msg)
+		msg = [msg] unless msg.is_a?(Array)
+		write_attribute(:messages, msg.to_yaml)
+		msg
+	end
+	
 end
