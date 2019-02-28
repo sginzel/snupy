@@ -573,14 +573,16 @@ class Aqua
 		files = _aqua_files()
 		files.each do |file|
 			next unless file =~ /\.rb$/
-			print "   loading #{File.basename(file.gsub(Rails.root.to_s, "."))}".blue if Rails.env == "development"
+			#print "   loading #{File.basename(file.gsub(Rails.root.to_s, "."))}\r".blue if Rails.env == "development"
 			begin 
 				load(file)
-				print "    -> [OK]\n".green if Rails.env == "development"
+				#print "    -> [OK]\r".green if Rails.env == "development"
 			rescue => e
+				print "   loading #{File.basename(file.gsub(Rails.root.to_s, "."))}\r".blue if Rails.env == "development"
 				print "    -> [FAIL] #{e.message}\n".red if Rails.env == "development"
 			end
 		end
+		puts "AQuA loaded".blue
 		# load configuration
 		self.settings()
 		self._init_loggers()
