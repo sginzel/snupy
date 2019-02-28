@@ -176,7 +176,7 @@ class AquaAggregationProcess
 				d "retrieved results (after grouping)....#{scoperesults.map{|tool, res| "#{tool.name}:#{res.size}"}.join(", ")}"
 				eventlog.add_message("#{Time.now} aggregate annotation data...")
 				attr_aggregations.each do |ainst|
-					eventlog.add_message("#{Time.now} processing #{ainst.class.name}")
+					eventlog.add_message("#{Time.now} processing #{ainst.akey}")
 					ainst.aggregate(scoperesults[ainst.class], params)
 				end
 				eventlog.add_message("#{Time.now} done aggregating annotation data...")
