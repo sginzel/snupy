@@ -517,6 +517,7 @@ private
 		#	return_status(status = 400, text = "#{self.request.format.symbol} not supported you ass")
 		#	return true
 		#end
+		puts params.pretty_inspect.red
 		respond_to do |format|
 			format.html{
 				render_table(tbl,
