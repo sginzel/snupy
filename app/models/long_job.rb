@@ -28,7 +28,7 @@ class LongJob < ActiveRecord::Base
 	
 	belongs_to :delayed_job
 	has_and_belongs_to_many :experiments, join_table: :experiment_has_long_jobs
-
+	
 	
 	attr_accessible :delayed_job, :handle, :method, :parameter, :status, :status_view, :success, :title, :user, :result, :result_view, :delayed_job_id, :checksum, :error, :finished_at, :started_at, :queue
 	attr_reader :obj, :method_name, :args, :job
@@ -52,20 +52,20 @@ class LongJob < ActiveRecord::Base
 	before_destroy :remove_experiment_association
 	
 	def remove_queued_job
-		 self.delayed_job.destroy unless self.delayed_job.nil?
+		self.delayed_job.destroy unless self.delayed_job.nil?
 	end
 	
 	def remove_experiment_association
-		 experiments = []
+		experiments = []
 	end
 	
-  def self.all_without_data(ids = :all, opts = {})
-  	attr = LongJob.attribute_names.reject{|n| n == "result"}
-  	opts[:select] = attr
-  	ret = LongJob.find(ids, opts)
-  	ret = [ret] unless ret.is_a?(Array)
-  	ret
-  end
+	def self.all_without_data(ids = :all, opts = {})
+		attr = LongJob.attribute_names.reject{|n| n == "result"}
+		opts[:select] = attr
+		ret = LongJob.find(ids, opts)
+		ret = [ret] unless ret.is_a?(Array)
+		ret
+	end
 	
 	# == Description
 	# This Job wraps a generic call to a function of an object and can handle callbacks
@@ -105,7 +105,7 @@ class LongJob < ActiveRecord::Base
 			# ObjectSpace.garbage_collect
 			ret
 		end
-
+		
 		# Excuted after the job is processed. Calls the after-method on the object if the object responds to it
 		def after(job)
 			long_job = LongJob.find_by_delayed_job_id(job.id)
@@ -124,7 +124,7 @@ class LongJob < ActiveRecord::Base
 			ObjectSpace.garbage_collect
 			ret
 		end
-
+		
 		# Executed when the job was successful
 		# TODO: This method is called even if the second attempt to process the job failed. This is why we must not reset the job status to SUCCESS if there was a FAILURE
 		def success(job)
@@ -134,7 +134,7 @@ class LongJob < ActiveRecord::Base
 			if long_job.status !=  LongJob::FAILURE then
 				long_job.status = LongJob::DONE
 				long_job.success = true
-			end 
+			end
 			long_job.save!
 			if (obj.respond_to?(:success)) then
 				obj.send(:success, job)
@@ -148,7 +148,7 @@ class LongJob < ActiveRecord::Base
 			# ObjectSpace.garbage_collect
 			ret
 		end
-
+		
 		# executed when there is an error, also stores the error message in the database
 		# TODO: It should delete the failed job from the queue automatically
 		def error(job, exception)
@@ -171,7 +171,7 @@ class LongJob < ActiveRecord::Base
 			# ObjectSpace.garbage_collect
 			ret
 		end
-
+		
 		# executed when there is a failure, also stores the error message in the database
 		def failure()
 			long_job = LongJob.find(long_job_id)
@@ -194,18 +194,18 @@ class LongJob < ActiveRecord::Base
 			# ObjectSpace.garbage_collect
 			ret
 		end
-
+	
 	end
-
+	
 	# returns the resul in JSON format
 	def result_json()
-
+		
 		obj = LongJob.unzip_and_unmarshal(self.result)
 		return [] if obj.nil?
 		if not (obj.is_a?(Array) || obj.is_a?(Hash)) then
 			obj = [obj]
 		end
-
+		
 		return obj.to_json
 	end
 	
@@ -235,7 +235,7 @@ class LongJob < ActiveRecord::Base
 		# ObjectSpace.garbage_collect
 		return self
 	end
-
+	
 	def redirect_to_job(params, action = "status")
 		params_redirect = params.dup
 		params_redirect[:controller] = "long_jobs"
@@ -243,7 +243,7 @@ class LongJob < ActiveRecord::Base
 		params_redirect[:id] = self.id
 		params_redirect
 	end
-
+	
 	# generic functin to marshal and zip and object. This is used to save space in the database when results are cached.
 	def self.marshal_and_zip(obj)
 		mar = Marshal.dump(obj)
@@ -253,25 +253,41 @@ class LongJob < ActiveRecord::Base
 		# ObjectSpace.garbage_collect
 		return comp
 	end
-
+	
 	# see marshal_and_zip
 	def self.unzip_and_unmarshal(data)
 		return nil if data.nil?
-		Dir["#{Rails.root}/app/models/**/"].each do |dirname|
-	  	Dir.new(dirname).to_a.each do |filename|
-		  	next unless filename =~ /.rb$/
-		  	model_name = File.basename(filename)
-		  	#d "loading #{dirname + "/" + filename}"
-		    require_dependency dirname + "/" + filename 
-		    # load dirname + "/" + filename 
-		  end
-	  end 
+		#Dir["#{Rails.root}/app/models/**/"].each do |dirname|
+		#	Dir.new(dirname).to_a.each do |filename|
+		#		next unless filename =~ /.rb$/
+		#		model_name = File.basename(filename)
+		#		#d "loading #{dirname + "/" + filename}"
+		#		require_dependency dirname + "/" + filename
+		#		# load dirname + "/" + filename
+		#	end
+		#end
 		uncomp = Zlib::Inflate.new().inflate(data)
-		obj = Marshal.load(uncomp)
+		# if the data contains an object that has not been autoloaded
+		# Marshal.load will throw and ArgumentError: undefined class/module XXX
+		# One source for this may be Aqua modules that create jobs with classes
+		# that have not been used to far and are not auto loaded.
+		# So we will just hail marry a Aqua._reload(true) in order to rescue the mess
+		obj = nil
+		begin
+			obj = Marshal.load(uncomp)
+		rescue ArgumentError => e
+			
+			Aqua._reload(true)
+			begin
+				obj = Marshal.load(uncomp)
+			rescue NameError => f
+				raise e
+			end
+		end
 		uncomp = nil
 		return obj
 	end
-
+	
 	# Use this method to actually create and enqueue a job from outside of this class.
 	# It handles the caching and returns either the newly created LongJob object, or the
 	# LongJob object that was already cached.
@@ -280,9 +296,9 @@ class LongJob < ActiveRecord::Base
 			attribs[:title] = "No Description (#{attribs[:handle].class.to_s})"
 		end
 		checksum = generate_checksum(attribs[:handle], attribs[:method_name], args)
-
+		
 		result_is_known = false
-
+		
 		## check if it is in the cache and if the results are consistent.
 		if use_cache then
 			jobs = LongJob.where("checksum = ?", checksum)
@@ -296,7 +312,7 @@ class LongJob < ActiveRecord::Base
 				end
 			end
 		end
-
+		
 		# create a new LongJob instance if neccessary
 		if not result_is_known then
 			attribs[:checksum] = checksum
@@ -308,7 +324,7 @@ class LongJob < ActiveRecord::Base
 		return long_job
 	end
 	
-private
+	private
 	def self.generate_checksum(obj, method_name, args)
 		objs = obj.to_yaml
 		method_names = method_name.to_yaml
