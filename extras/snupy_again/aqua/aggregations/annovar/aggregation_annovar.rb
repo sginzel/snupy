@@ -239,7 +239,8 @@ class AggregationAnnovar < Aggregation
 	                     prehook:            :get_summary,
 	                     aggregation_method: :add_summary,
 	                     type:               :attribute,
-	                     checked:            true,
+	                     checked:            false,
+	                     active:             false,
 	                     category:           "AnnoVar",
 	                     color:              {
 		                     /Annovar summary.*qscore_phred.*/ => create_color_gradient([-10, 3, 13, 40], colors = ["palegreen", "lightyellow", "salmon", "indianred"]),
