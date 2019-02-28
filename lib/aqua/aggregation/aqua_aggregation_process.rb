@@ -98,6 +98,7 @@ class AquaAggregationProcess
 				aggregation_scopes[Aggregation] = Aqua.base_scope(@experimentid, sample_ids, false, false, false, false)
 				aggregation_scopes[Aggregation] = group_aggregation.add_required(aggregation_scopes[Aggregation], organismid) unless group_aggregation.nil?
 				akeys = []
+				eventlog.add_message("#{Time.now} preparing scopes for aggregation with #{sample_ids.size} samples")
 				attr_aggregations.each do |a|
 					#aggrs.each do |a|
 						## prepare scope
@@ -122,6 +123,7 @@ class AquaAggregationProcess
 				# Get data from server
 				scoperesults = {}
 				astart = Time.now
+				eventlog.add_message("#{Time.now} retrieving annotation data for #{@varcallids.size} variation calls...")
 				aggregation_scopes.each do |agg, scope|
 					scoperesults[agg] = [] if scoperesults[agg].nil?
 					cnt = 0
@@ -132,15 +134,18 @@ class AquaAggregationProcess
 							fout.write(scope.where("variation_calls.id" => batch).to_sql)
 							fout.close()
 						end
+						eventlog.add_message("#{Time.now} #{agg.name} batch ##{cnt}")
 						scoperesults[agg] += Aqua.scope_to_array(scope.where("variation_calls.id" => batch))
 					end
 				end
+				eventlog.add_message("#{Time.now} Done retrieving data")
 				d "retrieved results for #{@varcallids.size} (before grouping)....#{scoperesults.map{|tool, res| "#{tool.name}:#{res.size}"}.join(", ")}"
 				aretrievend = Time.now
 				
 				# Perform grouping operations -> group by attributes
 				## by default we use the variation_call id which results in one record per row...
 				# if there is a group_aggregation method we use this...
+				eventlog.add_message("#{Time.now} starting to group...")
 				scoperesults.keys.each do |agg|
 					if !group_aggregation.nil? then
 						group_aggregation.execute_hook(scoperesults[agg], group_aggregation.configuration, :prehook, params) unless group_aggregation.configuration[:prehook].nil?
@@ -163,17 +168,22 @@ class AquaAggregationProcess
 						group_aggregation.execute_hook(scoperesults[agg], group_aggregation.configuration, :posthook, params) unless group_aggregation.configuration[:posthook].nil?
 					end
 				end
+				eventlog.add_message("#{Time.now} Done grouping.")
 				agroupend = Time.now
 				
 				## Now parse the SQL results to aggregate records to meaningful
 				## results
 				d "retrieved results (after grouping)....#{scoperesults.map{|tool, res| "#{tool.name}:#{res.size}"}.join(", ")}"
+				eventlog.add_message("#{Time.now} aggregate annotation data...")
 				attr_aggregations.each do |ainst|
+					eventlog.add_message("#{Time.now} processing #{ainst.class.name}")
 					ainst.aggregate(scoperesults[ainst.class], params)
 				end
+				eventlog.add_message("#{Time.now} done aggregating annotation data...")
 				aagregateend = Time.now
 				## now let's construct the array of colnames the user wants to see.
 				## for this we iterate over the selected attribute aggregations and sort the column names
+				eventlog.add_message("#{Time.now} rearranging columns...")
 				colnames = %w(variation_calls.id)# variation_calls.variation_id)
 				colnames += attr_aggregations.sort{|a1, a2|
 					a1cidx = a1.config()[:colindex].to_f
@@ -218,13 +228,16 @@ class AquaAggregationProcess
 					end
 				end
 				aagregateend1 = Time.now
+				eventlog.add_message("#{Time.now} Done rearranging columns...")
 				
+				eventlog.add_message("#{Time.now} Making records uniq...")
 				tbl.each do |rowname, rec|
 					rec.keys.each do |colname|
 						rec[colname] = rec[colname].uniq.join(" | ")
 					end
 				end
 				aagregateend2 = Time.now
+				eventlog.add_message("#{Time.now} Done making records uniq")
 				
 				duration_data_retrieval = (aretrievend - astart).to_f.round(2)
 				duration_rest = (Time.now - aretrievend).to_f.round(2)
@@ -244,6 +257,7 @@ class AquaAggregationProcess
 				log_entry[:duration] = log_entry[:duration_retrieval] + log_entry[:duration_preparation]
 				eventlog.data = log_entry
 				eventlog.identifier = params.hash.abs.to_s(36).upcase
+				eventlog.add_message("#{Time.now} Data retrieved in #{duration_data_retrieval} sec. prepared in #{duration_rest} sec to #{ret.size} grouped records.")
 				
 				flash(:notice, "Data retrieved in #{duration_data_retrieval} sec. prepared in #{duration_rest} sec to #{ret.size} grouped records.")
 			rescue RuntimeError => e

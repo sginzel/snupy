@@ -154,7 +154,9 @@ class AquaQueryProcess
 				Aqua::Query.log_info("[STATS-#{self.queryid}] Starting query on Experiment(##{@experimentid}) with #{slices.size} batches of size #{batch_size} (#{slices.map{|s| s.size}.join(",")}) (max allowed: #{max_result})")
 				Aqua::Query.log_info("[STATS-#{self.queryid}] #samples: #{@sample_ids.size}, #queries: #{simple_queries.size + complex_queries.size}, #filters: #{(simple_queries+complex_queries).map(&:filters).map(&:size).inject(&:+)}")
 				Aqua::Query.log_info("[STATS-#{self.queryid}] SLICES: #{slices.join(";")}")
+				eventlog.add_message("#{Time.now} Querying #{@sample_ids} ...")
 				slices.each_with_index do |sample_batch, i|
+					eventlog.add_message("#{Time.now} processing batch #{i+1}/#{slices.size}")
 					sample_batch = [sample_batch] unless sample_batch.is_a?(Array)
 					exp_scope = prepare_scope(simple_queries, complex_queries,
 																		sample_batch, organism)
@@ -196,6 +198,7 @@ class AquaQueryProcess
 					Aqua::Query.log_info("Capacity reached (#{overall_result.size}) at #{i} slice ") if (overall_result.size >= max_result) & !unlimited
 					break if (overall_result.size >= max_result) & !unlimited
 				end
+				eventlog.add_message("#{Time.now} Done querying #{@sample_ids}")
 				result = overall_result
 				qtime = Time.now - qstart
 				Aqua::Query.log_info("[STATS-#{self.queryid}] Query executed in #{qtime.to_f.round(2)} seconds with #{result.size} records (max allowed: #{max_result})")

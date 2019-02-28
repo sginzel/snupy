@@ -134,6 +134,7 @@ class AquaAnnotationProcess
 			tool_timings = {}
 			@tools.each do |t|
 				Annotation.log_info "**************** Processing [#{t.name}] (#{t.configuration[:label]}) ******************"
+				
 				# skip tool if it is not ready yet.
 				if !t.ready? then
 					d "#{t.name} is not ready for annotation yet..."
@@ -155,6 +156,7 @@ class AquaAnnotationProcess
 				missing_log[t] = missing.size
 				if missing.size > 0 then
 					Annotation.log_info "	Processing #{missing.size} variants with #{t.configuration[:label] || "unknown tool"}"
+					eventlog.add_message("#{Time.now} processing #{missing.size} variants with #{t.name} (#{t.configuration[:label]})")
 					## check if required tools have been processed
 					if !t.get_requirements.all?{|required_tool| @tools_processed.include?(required_tool)} then
 						Annotation.log_warnings "#{t.name} cannot be processed because the requirements are not fulfilled".red
