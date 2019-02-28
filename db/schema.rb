@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20190201103447) do
+ActiveRecord::Schema.define(:version => 20190228190719) do
 
   create_table "affiliations", :force => true do |t|
     t.integer "user_id"
@@ -482,6 +482,7 @@ ActiveRecord::Schema.define(:version => 20190201103447) do
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
     t.string   "identifier"
+    t.text     "messages"
   end
 
   add_index "event_logs", ["category"], :name => "index_event_logs_on_category"
@@ -490,6 +491,7 @@ ActiveRecord::Schema.define(:version => 20190201103447) do
   add_index "event_logs", ["error"], :name => "index_event_logs_on_error", :length => {"error"=>128}
   add_index "event_logs", ["finished_at"], :name => "index_event_logs_on_finished_at"
   add_index "event_logs", ["identifier"], :name => "index_event_logs_on_identifier"
+  add_index "event_logs", ["messages"], :name => "index_event_logs_on_messages", :length => {"messages"=>64}
   add_index "event_logs", ["name"], :name => "index_event_logs_on_name"
   add_index "event_logs", ["started_at"], :name => "index_event_logs_on_started_at"
 
