@@ -2,7 +2,18 @@ class EventLog < ActiveRecord::Base
 	include SnupyAgain::Utils
 	
 	attr_accessible :category, :data, :name, :error, :started_at,
-	                :finished_at, :duration, :identifier
+	                :finished_at, :duration, :identifier, :messages
+	
+	after_initialize :load_messages
+	
+	def load_messages
+		if self.messages.nil? then
+			self.messages = []
+		else
+			self.messages = YAML.load(read_attribute(:messages))
+		end
+		self.messages
+	end
 	
 	def data
 		yml = read_attribute(:data)
@@ -28,7 +39,7 @@ class EventLog < ActiveRecord::Base
 														error: nil,
 														data: nil)
 		begin
-			ret = yield event
+			ret = block.call(event)
 		rescue => e
 			event.update_attribute(:error, [e.message, e.backtrace].join("\n"))
 			raise e
@@ -40,27 +51,16 @@ class EventLog < ActiveRecord::Base
 	end
 	
 	def add_message(msg)
-		mymsg = self.messages
 		msg = [msg] unless msg.is_a?(Array)
 		msg.each do |txt|
-			mymsg << txt
+			self.messages << txt
 		end
-		self.messages = mymsg
-	end
-
-	def messages
-		txt = read_attribute(:messages)
-		if !txt.nil?
-			YAML.load(txt) || []
-		else
-			[]
-		end
+		self.update_attribute(:messages, self.messages.to_yaml)
+		self.load_messages
 	end
 	
-	def messages=(msg)
-		msg = [msg] unless msg.is_a?(Array)
-		write_attribute(:messages, msg.to_yaml)
-		msg
+	def to_s
+		"EventLog(##{self.id})-#{self.name}.#{self.category}.#{self.duration}"
 	end
 	
 end
