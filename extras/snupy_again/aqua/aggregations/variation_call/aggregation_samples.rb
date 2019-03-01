@@ -108,7 +108,7 @@ class AggregationSamples < Aggregation
 												}
 
 	register_aggregation :snupy_freq,
-											 label:              'SNuPy Freq',
+											 label:              'Frequency in SNuPy datasets',
 											 colname:            'SNuPy Freq',
 											 colindex:           2,
 											 prehook:            :get_snupy_freq,
@@ -134,6 +134,7 @@ class AggregationSamples < Aggregation
 
 		smplids = usr.reviewable(Sample).joins(:organism).where("organisms.id" => organismid).pluck("samples.id")
 		num_smpls = smplids.size
+		num_specs = Sample.where(id: smplids).count(:specimen_probe_id, distinct: true)
 		num_entities = Sample.where(id: smplids).count(:entity_id, distinct: true)
 		num_entgroups = Sample.where(id: smplids).count(:entity_group_id, distinct: true)
 #		@total_counts = {
@@ -143,11 +144,13 @@ class AggregationSamples < Aggregation
 #				num_entg: num_entgroups
 #		}
 		varids2smpl = VariationCall.where(variation_id: varids, sample_id: smplids).group(:variation_id).count(:sample_id, distinct: true)
+		varids2spec = VariationCall.joins(:sample).where(variation_id: varids, sample_id: smplids).where("specimen_probe_id IS NOT NULL").group(:variation_id).count(:specimen_probe_id, distinct: true)
 		varids2ents = VariationCall.joins(:sample).where(variation_id: varids, sample_id: smplids).where("entity_id IS NOT NULL").group(:variation_id).count(:entity_id, distinct: true)
 		varids2entg = VariationCall.joins(:sample).where(variation_id: varids, sample_id: smplids).where("entity_group_id IS NOT NULL").group(:variation_id).count(:entity_group_id, distinct: true)
 		varids.each do |varid|
 			@varfreq[varid] = {
 					smpl: ((varids2smpl[varid].to_f || 0.to_f)/num_smpls.to_f).round(3),
+					spec: ((varids2spec[varid].to_f || 0.to_f)/num_specs.to_f).round(3),
 					ents: ((varids2ents[varid].to_f || 0.to_f)/num_entities.to_f).round(3),
 					entg: ((varids2entg[varid].to_f || 0.to_f)/num_entgroups.to_f).round(3)
 			}
@@ -157,6 +160,7 @@ class AggregationSamples < Aggregation
 	def add_snupy_freq(rec)
 		{
 				"Sample" => @varfreq[rec["variation_calls.variation_id"]][:smpl],
+				"Specimen" => @varfreq[rec["variation_calls.variation_id"]][:spec],
 				"Entity" => @varfreq[rec["variation_calls.variation_id"]][:ents],
 				"EntityGroup" => @varfreq[rec["variation_calls.variation_id"]][:entg],
 		}
