@@ -107,7 +107,7 @@ class ReportTable
 		data = to_a.map{|rw|
 			rw.columns.map{|cl|
 				if cl.is_a?(ReportTable) then
-					cl.to_caracal
+					cl.to_caracal()
 				elsif cl.is_a?(Caracal::Core::Models::BaseModel) then
 					if cl.is_a?(Caracal::Core::Models::TableCellModel) then
 						cl
@@ -146,7 +146,9 @@ class ReportTable
 					end
 					
 				end
-				t.instance_eval(&block)
+				if block_given?
+					t.instance_eval(&block)
+				end
 			end
 		end
 	end
