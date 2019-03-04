@@ -109,9 +109,13 @@ class ReportTable
 				if cl.is_a?(ReportTable) then
 					cl.to_caracal
 				elsif cl.is_a?(Caracal::Core::Models::BaseModel) then
-					cellmodel = Caracal::Core::Models::TableCellModel.new
-					cellmodel.contents << cl
-					cellmodel
+					if cl.is_a?(Caracal::Core::Models::TableCellModel) then
+						cl
+					else
+						cellmodel = Caracal::Core::Models::TableCellModel.new
+						cellmodel.contents << cl
+						cellmodel
+					end
 				else
 					Caracal::Core::Models::TableCellModel.new do |cellmodel|
 						cellmodel.p cl.to_s
