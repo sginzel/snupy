@@ -16,12 +16,21 @@ class ReportTable
 		@table_opts                 = table_opts
 	end
 	
+	def table
+		@table
+	end
+	
 	def header
 		@table.first
 	end
 	
-	def rows
-		@table[1...@table.size]
+	def rows(include_header = false)
+		if include_header then
+			start = 0
+		else
+			start = 1
+		end
+		@table[start...@table.size]
 	end
 	
 	def add_row(fields, style = nil)
@@ -32,9 +41,15 @@ class ReportTable
 	end
 	
 	def add_row_style(rowno, style)
-		mystyle = {}.with_indifferent_access
+		mystyle = ActiveSupport::HashWithIndifferentAccess.new
 		[:background, :color, :bold, :italic, :size].each do |x|
-			mystyle[x] = style[x].dup unless style[x].nil?
+			if style[x]
+				if style[x].duplicable?
+					mystyle[x] = style[x].dup
+				else
+					mystyle[x] = style[x]
+				end
+			end
 		end
 		row_styles.insert(rowno, mystyle)
 	end
@@ -44,7 +59,7 @@ class ReportTable
 		colnos = (0...header.columns.size).to_a if colnos.nil?
 		rownos = [rownos] unless rownos.is_a?(Array)
 		colnos = [colnos] unless colnos.is_a?(Array)
-		mystyle = {}.with_indifferent_access
+		mystyle = ActiveSupport::HashWithIndifferentAccess.new
 		[:background, :color, :bold, :italic, :rowspan, :colspan, :size].each do |x|
 			if style[x]
 				mystyle[x] = style[x]
@@ -65,21 +80,21 @@ class ReportTable
 		end
 	end
 	
-	def each_row(&block)
+	def each_row(include_header = false, &block)
 		if (block_given?)
-			rows.each do |rowid|
-				yield @table[rowid]
+			rows(include_header).each do |row|
+				yield row
 			end
 		else
-			rows
+			rows(include_header)
 		end
 	end
 	
-	def each_column(&block)
+	def each_column(include_header = true, &block)
 		ret = []
 		header.each do |colname|
 			colvals = []
-			each_row do |row|
+			each_row(include_header) do |row|
 				colvals << row[colname]
 			end
 			if (block_given?)
@@ -92,15 +107,20 @@ class ReportTable
 		ret
 	end
 	
-	def render_docx(docx, &block)
-		if (docx.is_a?(String)) then
-			docx = generate_docx(docx)
-		end
+	def add_to_document(docx, &block)
 		if (block_given?)
 			docx.table [[to_caracal(&block)]]
 		else
 			docx.table [[to_caracal()]]
 		end
+		docx
+	end
+	
+	def render_docx(docx, &block)
+		if (docx.is_a?(String)) then
+			docx = generate_docx(docx)
+		end
+		add_to_document(docx, &block)
 	end
 	
 	def to_caracal(&block)
@@ -116,11 +136,19 @@ class ReportTable
 						cellmodel.contents << cl
 						cellmodel
 					end
+				elsif cl.is_a?(ReportTableCell) then
+					cl.content
+				elsif cl.is_a?(Array) then
+					cellmodel = Caracal::Core::Models::TableCellModel.new do |tcm|
+						cl.each do |element|
+							tcm.p element.to_s
+						end
+					end
+					cellmodel
 				else
 					Caracal::Core::Models::TableCellModel.new do |cellmodel|
 						cellmodel.p cl.to_s
 					end
-					#cl.to_s
 				end
 			}
 		}
@@ -157,6 +185,20 @@ class ReportTable
 		[header, rows].flatten
 	end
 	
+	def to_s
+		txt = []
+		colwidth = each_column(true).map{|colvals| colvals.map{|x| x || ""}.map(&:size).max + 3}
+		hdr = header.to_s(colwidth)
+		txt << "─" * hdr.size
+		txt << hdr
+		txt << "─" * hdr.size
+		rows(false).each do |row|
+			txt << row.to_s(colwidth)
+		end
+		txt << "─" * hdr.size
+		txt.join("\n")
+	end
+	
 	def generate_docx(file = "tmp/#{Time.now.to_i.to_s(36).upcase}.docx")
 		Caracal::Document.new(file)
 	end
@@ -166,15 +208,18 @@ class ReportTableRow
 	
 	def initialize(fields, header)
 		cnt = 0
-		@columns = {}.with_indifferent_access
+		#@columns = {}.with_indifferent_access
+		@columns = ActiveSupport::HashWithIndifferentAccess.new
 		header = header.columns if header.is_a?(ReportTableRow)
 		if fields.is_a?(Array) then
 			fields = Hash[header.each_with_index.map{|colname, i| [colname, fields[i]] }]
 		else
-			fields = fields.with_indifferent_access
+			fields = ActiveSupport::HashWithIndifferentAccess.new fields
+			myfields = ActiveSupport::HashWithIndifferentAccess.new
 			header.each do |colname|
-				fields[colname] = nil if fields[colname].nil?
+				myfields[colname] = fields[colname]
 			end
+			fields = myfields
 		end
 		header.each do |colname|
 			@columns[colname] = fields[colname]
@@ -219,4 +264,63 @@ class ReportTableRow
 		colnames.include?(colname)
 	end
 	
+	def to_s(colwidth = nil)
+		colwidth = @columns.map{|colname, cell| [colname.size, (cell || "").size].max + 3} unless colwidth
+		columns.each_with_index.map{|cellval, i|
+			sprintf(" %s ", cellval.to_s.ljust(colwidth[i], " "))
+		}.join("│")
+	end
+
+end
+
+class ReportTableCell
+	def initialize(opts = {})
+		@opts = opts
+	end
+	
+	def content
+		Caracal::Core::Models::TableCellModel.new do |tbc|
+			tbc.p opts.to_s
+		end
+	end
+end
+
+class ReportTableImage <  ReportTableCell
+	def content
+		defaults = {
+			width: 100,
+			height: 100
+		}
+		Caracal::Core::Models::TableCellModel.new do |tbc|
+			tbc.img defaults.merge(@opts)#url: "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png", width: 300, height: 300
+		end
+	end
+end
+
+# content should return a proc that is evaluated
+# This would allow us to have arrays of table cells
+class ReportTableLink < ReportTableCell
+	
+	def initialize(url, label, opts = {})
+		@url = url
+		@label = label
+		@opts = opts
+	end
+	
+	def content
+		defaults = {
+			internal:        false,             # sets whether or not the link references an external url. defaults to false.
+			font:            'Courier New',     # sets the font name to use. defaults to nil.
+			color:           '0000ff',          # sets the color of the text. defaults to 1155cc.
+			size:            14,                # sets the font size. units in half-points. defaults to nil.
+			bold:            false,             # sets whether or not the text will be bold. defaults to false.
+			italic:          false,             # sets whether or not the text will be italic. defaults to false.
+			underline:       true,              # sets whether or not the text will be underlined. defaults to true.
+			bgcolor:         'cccccc',          # sets the background color.
+			highlight_color: 'yellow'          # sets the highlight color. only accepts OOXML enumerations. see http://www.datypic.com/sc/ooxml/t-w_ST_HighlightColor.html.
+		}
+		Caracal::Core::Models::TableCellModel.new do |tbc|
+			tbc.link @label, @url, defaults.merge(@opts)
+		end
+	end
 end

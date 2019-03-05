@@ -53,6 +53,22 @@ class ReportTemplate
 		report
 	end
 	
+	def with_docx(&block)
+		tmpfile = "tmp/#{Time.now.to_i.to_s(36).upcase}.docx"
+		docx =Caracal::Document.new(tmpfile)
+		yield docx
+		docx.save
+		ret = ""
+		f = File.open(tmpfile, "r")
+		begin
+			ret = f.read
+		ensure
+			f.close
+			File.unlink(f.path)
+		end
+		ret
+	end
+	
 	def generate_docx(template, locals)
 		tmpfile = "tmp/#{Time.now.to_i.to_s(36).upcase}.docx"
 		docx =Caracal::Document.new(tmpfile)
@@ -78,7 +94,9 @@ class ReportTemplate
 				super
 			end
 		end
-		template = File.open(template){|f|f.read}
+		if File.exists?(template)
+			template = File.open(template){|f|f.read}
+		end
 		result = ERB.new("<%@docx=docx;#{template}%>").result(namespace.instance_eval { binding })
 		docx.save
 		ret = ""
