@@ -63,6 +63,13 @@ class ReportActionsController < AquaController #ApplicationController
 		render text: params.pretty_inspect
 	end
 	
+	def acmg_report
+		gene_report
+	end
+
 end
-# Aqua.register_route("report_actions", :gene_report, :post, {type: "variation_id", description: "Generate a report for selected variants."})
-# require_dependency Rails.root.join('extras', 'snupy_again', 'aqua', 'actions', 'report_actions_controller').to_s
+if Rails.env == "development"
+	Aqua.register_route("report_actions", :gene_report, :post, {type: "variation_id", description: "Create a gene report."})
+	Aqua.register_route("report_actions", :acmg_report, :post, {type: "variation_id", description: "Create ACMG/AMP variant interpretation report."})
+	require_dependency Rails.root.join('extras', 'snupy_again', 'aqua', 'actions', 'report_actions_controller').to_s
+end
