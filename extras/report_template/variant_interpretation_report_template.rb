@@ -53,7 +53,10 @@ class VariantInterpretationReportTemplate < ReportTemplate
 				gl.genes
 			end
 			genes = genes.flatten.uniq.sort
-			varids = query_vep(varids).where(gene_symbol: genes).pluck(:variation_id).uniq
+			varids_symbols = query_vep(varids).where(gene_symbol: genes).pluck(:variation_id).uniq || []
+			varids_transcripts = query_vep(varids).where(transcript_id: genes).pluck(:variation_id).uniq || []
+			varids_genes = query_vep(varids).where(gene_id: genes).pluck(:variation_id).uniq || []
+			varids = (varids_symbols + varids_transcripts + varids_genes).uniq
 		end
 		
 		
