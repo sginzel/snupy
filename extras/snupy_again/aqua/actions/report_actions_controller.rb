@@ -68,8 +68,8 @@ class ReportActionsController < AquaController #ApplicationController
 	end
 
 end
-if Rails.env == "development"
+#if Rails.env == "development"
 	Aqua.register_route("report_actions", :gene_report, :post, {type: "variation_id", description: "Create a gene report."})
 	Aqua.register_route("report_actions", :acmg_report, :post, {type: "variation_id", description: "Create ACMG/AMP variant interpretation report."})
 	require_dependency Rails.root.join('extras', 'snupy_again', 'aqua', 'actions', 'report_actions_controller').to_s
-end
+#end
