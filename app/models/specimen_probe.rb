@@ -110,6 +110,14 @@ class SpecimenProbe < ActiveRecord::Base
 		"[Specimen-#{name}]"
 	end
 	
+	def baf(varids = nil)
+		varids = self.samples.variation_calls.pluck(:variation_id).uniq if varids.nil?
+		varids = [varids] unless varids.is_a?(Array)
+		bafs = self.variation_calls.where(variation_id: varids).pluck("alt_reads/(alt_reads+ref_reads)").map(&:to_f)
+		return bafs.first if varids.size == 1
+		bafs
+	end
+	
 	def self.create_from_template(templates, entity = nil)
 		created_specimen = []
 		(templates || []).each do |idx, template|

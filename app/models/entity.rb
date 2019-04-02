@@ -111,6 +111,12 @@ class Entity < ActiveRecord::Base
 		Entity.where(id: ent_ids-[self.id])
 	end
 	
+	def baf(varids = nil)
+		Hash[specimen_probes.map{|spec|
+			[spec, spec.baf(varids)]
+		}]
+	end
+	
 	def self.create_from_template(templates, entity_group = nil)
 		created_entities = []
 		(templates || []).each do |idx, template|
