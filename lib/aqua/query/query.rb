@@ -224,7 +224,7 @@ class Query < Aqua
 					 when :checkbox
 						 @value.to_s == "1"
 					 when :range
-						 [ActiveRecord::Base::sanitize(@value).split("-")[0], ActiveRecord::Base::sanitize(@value).split("-")[1]]
+						 [ActiveRecord::Base::sanitize(@value).split("-")[0].gsub("'", "").to_f, ActiveRecord::Base::sanitize(@value).split("-")[1].gsub("'", "").to_f]
 					 when :range_gt
 						 ActiveRecord::Base::sanitize(@value).gsub("'", "").to_i
 					 when :range_lt
