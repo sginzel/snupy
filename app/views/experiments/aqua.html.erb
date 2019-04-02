@@ -133,16 +133,14 @@ You will be able to create queries when at least one sample was successfully imp
 						aqua_actions[description] = {url: url, params: {experiment_id: @experiment.id, samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}}
 					end
 				end
-				aqua_actions = aqua_actions.merge(
-					{
-							#"Save" => "save me",
-							"Look-up variations in other samples" => {url: details_experiments_path(experiment: @experiment.id),   params: {samples: params[:samples], tags: 'yes', queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
-							"Show interactions" => {url: interactions_experiments_path(experiment: @experiment.id),                params: {samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
-							"Attribute matrix" => {url: attribute_matrix_experiments_path(experiment: @experiment.id),             params: {samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
-							"Gene panel to subject" => {url: panel_to_subject_matrix_experiments_path(experiment: @experiment.id), params: {samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
-							"Save selected records" => {url: save_resultset_experiments_path(experiment: @experiment.id),          params: {samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
-					}
-				)
+				aqua_actions = {
+					#"Save" => "save me",
+					"Look-up variations in other samples" => {url: details_experiments_path(experiment: @experiment.id), params: {samples: params[:samples], tags: 'yes', queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
+					"Show interactions"                   => {url: interactions_experiments_path(experiment: @experiment.id), params: {samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
+					"Attribute matrix"                    => {url: attribute_matrix_experiments_path(experiment: @experiment.id), params: {samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
+					"Gene panel to subject"               => {url: panel_to_subject_matrix_experiments_path(experiment: @experiment.id), params: {samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
+					"Save selected records"               => {url: save_resultset_experiments_path(experiment: @experiment.id), params: {samples: params[:samples], queries: params["queries"].to_yaml, aggregations: params["aggregations"].to_yaml}},
+				}.merge(aqua_actions)
 			%>
 			<%=render_table(@result, 
 											title: "Query Results",
