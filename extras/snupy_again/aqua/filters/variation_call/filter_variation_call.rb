@@ -7,6 +7,15 @@ class FilterVariationCall < SimpleFilter
 						requires: {VariationCall => [:dp]},
 						checked: true,
 						tool: Annotation
+	
+	create_filter_for QueryVariationCall, :allele_frequency,
+	                  name: :allele_freq,
+	                  label: "Allele frequency.",
+	                  filter_method: :allele_freq,
+	                  organism: [organisms(:human), organisms(:mouse)],
+	                  requires: {VariationCall => [:ref_reads, :alt_reads]},
+	                  checked: false,
+	                  tool: Annotation
 						
 	create_filter_for QueryVariationCall, :genotype,
 					  name: :vcgt,
@@ -69,6 +78,10 @@ class FilterVariationCall < SimpleFilter
 	## create as SQL condition  
 	def dp(value)
 		"variation_calls.dp >= #{value}"
+	end
+	
+	def allele_freq(values)
+		"(variation_calls.alt_reads/(variation_calls.ref_reads+variation_calls.alt_reads)*100) BETWEEN #{values[0]} AND #{values[1]}"
 	end
 	
 	def gt(value)

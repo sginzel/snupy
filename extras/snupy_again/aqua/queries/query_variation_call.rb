@@ -18,6 +18,15 @@ class QueryVariationCall < SimpleQuery
 								 priority: 10,
 								 group: "Basic"
 	
+	register_query :allele_frequency,
+	               label: "Allele Frequency in %",
+	               default: [0, 100, 0, 100],
+	               type: :range,
+	               tooltip: "Frequency of alternative allele is between...",
+	               organism: [organisms(:human), organisms(:mouse)],
+	               priority: 10,
+	               group: "Basic"
+	
 	register_query :genotype, 
 								 label: "Genotype",
 								 type: :collection,
