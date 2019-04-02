@@ -517,7 +517,7 @@ class VariantInterpretationReportTemplate < ReportTemplate
 			polyphen2_hvar_pred: av.map{|x| x.polyphen2_hvar_pred }.uniq.join(","),
 			sift_pred: av.map{|x| x.sift_pred }.uniq.join(","),
 			"GERP_rs > 2?" => av.map{|x| x.gerp_rs }.uniq.join(","),
-			"CADD > 15?" => av.map{|x| x.cadd_phred > 15 }.uniq.join(",")
+			"CADD > 15?" => av.map{|x| (x.cadd_phred || 0) > 15 }.uniq.join(",")
 		}.map{|name, preds|
 			"#{name.upcase}: #{preds}"
 		}.join("\n")
