@@ -36,8 +36,16 @@ module SnupyAgain
 			# (A<->G + C<->T)/(A<->C+A<->T+G<->C+G<->T)
 			def get_trtv(sample)
 				# find alteration ids for transition and trasversions
-				trstatement = [["A", "G"], ["C", "T"]].map{|a1,a2| sprintf("((ref = '%s' AND alt = '%s') OR (ref = '%s' AND alt = '%s') )", a1, a2, a2, a1)}.join(" OR ")
-				tvstatement = [["A", "C"], ["A", "T"], ["G", "C"], ["G", "T"]].map{|a1,a2| sprintf("((ref = '%s' AND alt = '%s') OR (ref = '%s' AND alt = '%s') )", a1, a2, a2, a1)}.join(" OR ")
+				trstatement = [["A", "G"], ["C", "T"]].map{|a1,a2|
+					a1 = Digest::MD5.hexdigest a1
+					a2 = Digest::MD5.hexdigest a2
+					sprintf("((refmd5 = '%s' AND altmd5 = '%s') OR (refmd5 = '%s' AND altmd5 = '%s') )", a1, a2, a2, a1)
+				}.join(" OR ")
+				tvstatement = [["A", "C"], ["A", "T"], ["G", "C"], ["G", "T"]].map{|a1,a2|
+					a1 = Digest::MD5.hexdigest a1
+					a2 = Digest::MD5.hexdigest a2
+					sprintf("((refmd5 = '%s' AND altmd5 = '%s') OR (refmd5 = '%s' AND altmd5 = '%s') )", a1, a2, a2, a1)
+				}.join(" OR ")
 				trids = Alteration.where(trstatement).pluck(:id)
 				tvids = Alteration.where(tvstatement).pluck(:id)
 

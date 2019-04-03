@@ -749,7 +749,7 @@ class VcfFile < ActiveRecord::Base
 		missing_alterations = missing.map {|var| {ref: var[:ref], alt: var[:alt]}}.uniq
 		Alteration.transaction do
 			missing_alterations.each do |var|
-				alteration = Alteration.find_or_create_by_ref_and_alt_and_alttype(var[:ref], var[:alt], Alteration.determine_alttype(var[:ref], var[:alt]))
+				alteration = Alteration.find_or_create_by_ref_and_alt_and_alttype_and_refmd5_and_altmd5(var[:ref], var[:alt], Alteration.determine_alttype(var[:ref], var[:alt]), Digest::MD5.hexdigest(var[:ref]), Digest::MD5.hexdigest(var[:alt]))
 				if !alteration.persisted?
 					raise "Could not save alteration #{alteration} from #{var}" unless alteration.save
 				end

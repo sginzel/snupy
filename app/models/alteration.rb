@@ -12,7 +12,7 @@ class Alteration < ActiveRecord::Base
   has_many :variations, inverse_of: :alteration, dependent: :destroy
   #has_many :variation_annotations, through: :variations, inverse_of: :alteration
   
-  attr_accessible :alt, :ref, :alttype
+  attr_accessible :alt, :ref, :alttype, :refmd5, :altmd5
   
   validates_inclusion_of :alttype, :in => [:snp, :indel, :cnv, :sv]
 
