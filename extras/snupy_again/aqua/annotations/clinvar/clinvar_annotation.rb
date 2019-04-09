@@ -11,6 +11,7 @@ class ClinvarAnnotation < Annotation
 	
 	def self.ready?
 		ready = super
+		ready = ready && (!ClinvarAnnotation.vcf_file.nil?)
 		ready
 	end
 	
