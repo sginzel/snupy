@@ -24,7 +24,7 @@ class VcfFilesController < ApplicationController
 		# @vcf_files = [] unless current_user.is_admin
 		@vcf_files = current_user.visible(VcfFile).nodata #.select([:created_at, :updated_at]).order("updated_at DESC")
 		@vcf_files = @vcf_files.where("vcf_files.id" => params[:ids]) unless params[:ids].nil?
-		@vcf_files = filter_collection @vcf_files, [:name, :filename, :sample_names, :status, :organism_id, :contact, :id], 100
+		@vcf_files = filter_collection @vcf_files, [:name, :filename, :sample_names, :status, :organism_id, :contact, :id, :institution_id], 100
 		@vcf_files = @vcf_files.includes([:tags, :samples, :aqua_status_annotations, :reports])
 		@vcf_files.map!{|vcf|vcf.becomes(VcfFile)}
 		
