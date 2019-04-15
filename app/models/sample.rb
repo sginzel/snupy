@@ -248,14 +248,6 @@ class Sample < ActiveRecord::Base
 	end
 	
 	def self.variation_calls(smplids)
-		# TODO: Beim Projekt AllSamples passiert hier ein Fehler
-		# NoMethodError (undefined methonild `id' for nil:NilClass):
-		# app/models/sample.rb:107:in `map'
-		# app/models/sample.rb:107:in `variation_calls'
-		# app/controllers/experiments_controller.rb:346:in `query_details'
-		# Das koennte darauf hinweisen, dass nicht alle samples einen organismus haben-was komisch wäre. 
-		# Wahrscheinlicher ist, dass smplids nicht richtig übermittelt wird, weil es so viele sind 
-		# könnte eine ID abgeschnitten werden, die nicht existiert und die dann den Fehler wirft.
 		organisms = Sample.where(id: smplids).map(&:organism).uniq.map(&:id)
 		VariationCall.joins(:sample)
 								 .joins(variation: [:alteration, :region])
@@ -342,6 +334,7 @@ class Sample < ActiveRecord::Base
 		end
 		vcfsamplename = self.vcf_sample_name
 		
+		# TODO this should be refactored to utilize vcf file index
 		d 'creating variation lookup'
 		var_lookup = self.vcf_file_full.create_lookup
 		
