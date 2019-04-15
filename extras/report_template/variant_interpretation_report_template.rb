@@ -528,7 +528,7 @@ class VariantInterpretationReportTemplate < ReportTemplate
 	end
 	# PP5 Reputable source recently reports variant as pathogenic, but the evidence is not available to the laboratory to perform an independent evaluation
 	def pp5(varid)
-		"Please consider PMID: 29543229"
+		""
 	end
 	
 	# BA1 Allele frequency is >5% in Exome Sequencing Project, 1000 Genomes Project, or Exome Aggregation Consortium
