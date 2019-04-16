@@ -6,7 +6,8 @@ class DruggableGenomeReportTemplate < ReportTemplate
 	
 	def self.required_parameters(params)
 		params.merge({
-			             report_name: "Drug target report"
+						report_druggable_only: false,
+			            report_name: "Drug target report"
 		             })
 	end
 	
@@ -96,7 +97,7 @@ class DruggableGenomeReportTemplate < ReportTemplate
 			end
 			data = [%w(geneID drug(interaction) sources).join("\t")]
 			data += records.map{|gene, records|
-				[gene, records[:drugs].sort.uniq.join(";"), records[:sources].sort.uniq.join(";")].join("\t").gsub('"', '')
+				[gene, records[:drugs].sort.uniq.join("; "), records[:sources].sort.uniq.join("; ")].join("\t").gsub('"', '')
 			}
 			puts "Adding #{data.size} drug/gene interactions"
 			
@@ -251,86 +252,37 @@ class DruggableGenomeReportTemplate < ReportTemplate
 		pnl = GenericGeneList.where(name: "DGIDB-drug-gene-interactions", description: "DGIDB interactions.").first
 		pnl.items.each do |itm|
 			x = itm.value
-			gene2drug[x["gene"]] = x.delete("gene")
+			gene = x.delete("gene")
+			gene2drug[gene] = x
 		end
 		
 		# row for each variant
 		#    Query HGVS, Gene Name, CADD Score and BAF
 		#    Add drug interaction info
 		
-		header = %w(Variant HGVS Gene CADD AlleleFreq DGIDB-drugs DGIDB-sources)
+		header = %w(Variant Gene Mutation CADD DGIDB-drugs DGIDB-sources)
 		rt = ReportTable.new(header)
-		records.each do |code, description|
-			drugs = gene2drug[hgnc.upcase]["drugs(interaction)"]
-			sources = gene2drug[hgnc.upcase]["sources"]
-			row = [coords, hgvs, hgnc, cadd, bafs, drugs, sources]
-			rt.add_row(row, {size: 18})
+		varids.each do |varid|
+			cadd = Cadd.where(variation_id: varid, organism_id: entity.organism.id).first.phred
+			var = Variation.find(varid)
+			
+			hgvscs = query_vep(varid).select([:gene_symbol, :transcript_id, :hgvsc]).uniq
+				        .reject{|vep| vep.hgvsc.nil?}
+				        .map{|vep|
+					        [vep.gene_symbol, "#{vep.transcript_id}.#{vep.hgvsc})"]
+				        }.uniq
+			hgvscs.each do |hgnc, hgvsc|
+				drugs   = (gene2drug[hgnc.upcase] || {})["drug(interaction)"]
+				sources = (gene2drug[hgnc.upcase] || {})["sources"]
+				if report_params["report_druggable_only"] == "1" then
+					next if drugs.to_s.strip == ""
+				end
+				row = [var.coordinates, hgnc, hgvsc, cadd, drugs, sources]
+				rt.add_row(row, {size: 18})
+			end
+			
 		end
-	end
-	
-	def call_criteria(varid, *args)
-		args.map{|arg|
-			"#{arg.to_s.upcase}: #{self.send(arg, varid)}"
-		}.join("\n")
-	end
-	
-	def create_acmg_page(varid)
-		expected_pop_frequency = (report_params["expected_population_frequency"] || 1.0).to_f
-		header = ["Strong benign", "Supporting benign", "Supporting pathogenic", "Moderate pathogenic", "Strong pathogenic", "Very strong pathogenic"]
-		records = {
-			population_data: {
-				"Strong benign" => "BA1: #{ba1(varid)},\nBS1: #{bs1(varid, expected_pop_frequency)},\nBS2: #{bs2(varid)}",
-				"Moderate pathogenic" => call_criteria(varid, :pm2),
-				"Strong pathogenic" => call_criteria(varid, :ps4)
-			},
-			compulational_predictive_data: {
-				"Supporting benign" =>  call_criteria(varid, :bp4, :bp1, :bp7, :bp3),
-				"Supporting pathogenic" => call_criteria(varid, :pp3),
-				"Moderate pathogenic" =>  call_criteria(varid, :pm4, :pm5),
-				"Strong pathogenic" => call_criteria(varid, :ps1),
-				"Very strong pathogenic" => pvs1(varid)
-			},
-			functional_data: {
-				"Strong benign" => call_criteria(varid, :bs3),
-				"Supporting pathogenic" => call_criteria(varid, :pp2),
-				"Moderate pathogenic" => call_criteria(varid, :pm1),
-				"Strong pathogenic" => call_criteria(varid, :ps3),
-			},
-			segregation_data: {
-				"Strong benign" => call_criteria(varid, :bs4),
-				"Supporting pathogenic" => call_criteria(varid, :pp1)
-			},
-			denovo_data: {
-				"Moderate pathogenic" => call_criteria(varid, :pm6),
-				"Strong pathogenic" => call_criteria(varid, :ps2),
-			},
-			allelic_data: {
-				"Supporting benign" => call_criteria(varid, :bp2),
-				"Moderate pathogenic" => call_criteria(varid, :pm3)
-			},
-			other_database: {
-				"Supporting benign" => call_criteria(varid, :bp6),
-				"Supporting pathogenic" => call_criteria(varid, :pp5)
-			},
-			other_data: {
-				"Supporting benign" => call_criteria(varid, :bp5),
-				"Supporting pathogenic" => call_criteria(varid, :pp4)
-			}
-		}
-		rt = ReportTable.new(%w(Category|Evidence)+header)
-		records.each do |category, columns|
-			row = columns.dup
-			row["Category|Evidence"] = category.to_s.humanize
-			rt.add_row(row, {size: 14})
-		end
-		tbl_header = query_vep(varid).select([:gene_symbol, :transcript_id, :hgvsc]).uniq
-			             .reject{|vep| vep.hgvsc.nil?}
-			             .map{|vep| "#{vep.gene_symbol}(#{vep.transcript_id}.#{vep.hgvsc})"}
-						 .join(" | ")
-		if tbl_header == "" then
-			tbl_header = query_vep(varid).select([:gene_symbol]).uniq.join(" | ")
-		end
-		{header: tbl_header, table: rt}
+		rt
 	end
 	
 	def query_vep(varid)
@@ -355,75 +307,6 @@ class DruggableGenomeReportTemplate < ReportTemplate
 		@user ||= User.find(report_params[:user_id])
 	end
 	
-	
-	def create_table(entity, genes = nil)
-		records = {
-			transcripts: [],
-			inheritance: [],
-			phenotypes: []
-		}
-		vcids = report_params["ids"].map{|x| x.split(" | ")}.flatten
-		# collect variants from variation calls
-		adom = entity.autosomal_dominant(vcids)
-		arec = entity.autosomal_recessive(vcids)
-		comphet = entity.compound_heterozygous(vcids, Vep::Ensembl.where(canonical: 1), :transcript_id)
-		denovo = entity.denovo(vcids)
-		VariationCall
-			.joins(:sample)
-			.where("samples.entity_id" => entity.id)
-			.where("variation_calls.id" => vcids)
-			.group_by(&:variation_id).each do |varid, varcalls|
-			var = Variation.find(varid)
-			
-			veps = Vep::Ensembl.where(variation_id: varid, organism_id: entity.organism.id, canonical: true)
-			
-			if genes then
-				# next unless its in the gene list
-				if not veps.any?{|vep| genes.include?(vep.gene_symbol) || genes.include?(vep.gene_id)}
-					next
-				end
-			end
-			
-			family_baf = {
-				Variant: var.coordinates
-			}
-			entity.specimen_probes.each do |spec|
-				family_baf["#{entity.name} (#{spec.name})"] =  get_baf_in_specimen(varid, spec).round(2)
-			end
-			family_baf = family_baf.merge({
-				                              Father: get_baf_in_entity(varid, entity.father).round(2),
-				                              Mother: get_baf_in_entity(varid, entity.mother).round(2),
-				                              Siblings: get_baf_in_entity(varid, entity.siblings).round(2),
-				                              autosomal_dominant: adom[varid],
-				                              autosomal_recessive: arec[varid],
-				                              compound_heterozygous: comphet[varid],
-				                              denovo: denovo[varid]
-			                              })
-			
-			transcripts = {
-				Variant: var.coordinates,
-				Symbol: veps.map{|vep| "#{vep.gene_symbol}(#{vep.consequence})"}.join(",\n"),
-				Transcript: veps.map{|vep| "#{vep.transcript_id}#{(vep.hgvsc.nil?)?"":".#{vep.hgvsc}"}"}.uniq.join(",\n"),
-				#HGVSC: veps.map(&:hgvsc).join(","),
-				Exac: veps.reject{|vep|vep.exac_adj_allele.to_s == ""}.map{|vep| "#{vep.exac_adj_maf} (#{vep.exac_adj_allele})"}.uniq.join(","),
-				dbsnp: veps.map(&:dbsnp).uniq.join(",")
-			}
-			
-			phenotypes = {
-				Variant: var.coordinates,
-				CADD: Cadd.where(variation_id: varid, organism_id: entity.organism.id).first.phred,
-				OMIM: veps.map(&:gene_symbol).map{|sym| OmimGenemap.where("symbol = '#{sym}' OR symbol_alias = '#{sym}'").map{|omim| "#{omim.symbol}: #{omim.phenotype}"}}.flatten.uniq.join(",\n"),
-				Clinvar: Clinvar.where(variation_id: varid, organism_id: entity.organism.id)
-					         .map{|c|
-						         (c.distance!=0)?"":"#{c.symbol}: #{c.clndn}"
-					         }.flatten.uniq.join(",")
-			}
-			records[:transcripts] << transcripts
-			records[:inheritance] << family_baf
-			records[:phenotypes] << phenotypes
-		end
-		records
-	end
 	
 	def get_baf_in_specimen(variation, specimen)
 		varcalls = VariationCall.joins(:sample).where("samples.specimen_probe_id" => specimen).where("variation_id" => variation)
