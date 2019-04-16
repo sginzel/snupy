@@ -54,6 +54,9 @@
 					<% end %>
 				<% elsif value.is_a?(String) then %>
 					<%= text_field_tag name, value %>
+				<% elsif value.is_a?(TrueClass) || value.is_a?(FalseClass) then %>
+					<%= hidden_field_tag name,	 "0" %>
+					<%= check_box_tag name, "1", value %>
 				<% else %>
 					Invalid field type.
 				<% end %>
