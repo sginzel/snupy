@@ -560,6 +560,7 @@ class VcfFile < ActiveRecord::Base
 	end
 	
 	# creates a hash with the values from a Vcf object
+	# any alternative that starts with "<" is rejected unless it is a CNV
 	def parse_variant_record(vcfp)
 		variants = []
 		chr      = vcfp.chrom
@@ -574,6 +575,7 @@ class VcfFile < ActiveRecord::Base
 		if alt.index(",") then
 			alts = alt.split(",")
 			alts.each do |altread|
+				next if altread.first == "<" and altread != "<CNV>"
 				if altread != "<CNV>" then
 					stop = pos + ([ref.length, altread.length].max - 1)
 				else
@@ -588,6 +590,7 @@ class VcfFile < ActiveRecord::Base
 				variants << {chr: chr, pos: pos, ref: ref, alt: altread, start: start, stop: stop}
 			end
 		else
+			return [] if alt.first == "<" and alt != "<CNV>"
 			if alt != "<CNV>" then
 				stop = pos + ([ref.length, alt.length].max - 1)
 			else
