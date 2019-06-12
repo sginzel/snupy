@@ -544,9 +544,9 @@ EOS
 		selected_samples = params["samples"].map(&:to_i)
 		filtered_samples  = smplids.map(&:to_i)
 		var2smpl2baf.each do |varid, smpl2baf|
-			selected_sample_baf_max = (selected_samples.map{|sid| smpl2baf[sid]}.reject(&:nil?).max  || 0) # default BAF is 0 
-			filtered_sample_baf_min  = (filtered_samples.map{|sid| smpl2baf[sid]}.reject(&:nil?).min || (selected_sample_baf_max - threshold)) # this way a variant is retained if its not present in the filtered sample but in the selected samples
-			vars2retain << varid if (selected_sample_baf_max - filtered_sample_baf_min).abs >= threshold
+			selected_sample_baf_max = (selected_samples.map{|sid| smpl2baf[sid]}.reject(&:nil?).map(&:to_f).max  || 0.0) # default BAF is 0
+			filtered_sample_baf_min  = (filtered_samples.map{|sid| smpl2baf[sid]}.reject(&:nil?).reject(&:nan?).map(&:to_f).min || (selected_sample_baf_max - threshold.to_f)) # this way a variant is retained if its not present in the filtered sample but in the selected samples
+			vars2retain << varid if (selected_sample_baf_max - filtered_sample_baf_min).abs >= threshold.to_f
 		end
 		
 		return nil if vars2retain.size == 0
